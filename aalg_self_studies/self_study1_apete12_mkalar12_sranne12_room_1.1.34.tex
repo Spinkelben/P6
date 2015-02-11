@@ -1,0 +1,125 @@
+\documentclass[koma,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[danish]{babel}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage[hidelinks]{hyperref}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{tikz}
+\usepackage{todonotes}
+\usepackage{booktabs}
+\usepackage{subcaption}
+\usepackage{color}
+\usepackage{lmodern}
+\graphicspath{{graphics/}}
+\usetikzlibrary{trees}
+
+\title{AALG Self Study 1}
+\author{Andreas Petersen\\
+Mads E. Kalør\\
+Søren B. Ranneries\\
+Room 1.1.34}
+\begin{document}
+\maketitle
+
+\pagebreak
+
+\section{Exercise 1}
+$A$ is an adjacency matrix of the graph. s\_a.size is the size of the resulting list of the topological sort. .out on some vertex is the outgoing edges of that vertex. .to of some edge is the vertex that the edge leads to. $.w$ on some edge is the weight of that edge.
+
+The recurrence for the algorithm is shown in Equation \ref{eq:longest_path_recurrence}.
+
+\begin{equation}
+  c(A, s, t) = \begin{cases}
+    0 &\text{if } s = t \\
+    -\infty &\text{if } s.out < 1 \text{ and } s \neq t \\
+    \max\limits_{e \in s.\text{out}} \{ e.w + c(A, e.\text{to}, t) \} &\text{otherwise}
+  \end{cases}
+  \label{eq:longest_path_recurrence}
+\end{equation}
+
+\begin{align*}
+  &\text{LongestPath}(A, s, t)\\
+  &~~~~\text{s\_a} \leftarrow \text{topological\_sort}(A)\\
+  &~~~~\text{for } i \leftarrow \text{s\_a}.\text{size to } 1\\
+  &~~~~~~~~\text{if } \text{s\_a}[i] = t \text{ then}\\
+  &~~~~~~~~~~~~c[\text{s\_a}[i]] \leftarrow 0\\
+  &~~~~~~~~\text{else if } \text{s\_a}[i].\text{out}.w < 1 \text{ then}\\
+  &~~~~~~~~~~~~c[\text{s\_a}[i]] \leftarrow - \infty \\
+  &~~~~~~~~\text{else }\\
+  &~~~~~~~~~~~~\text{max\_val} \leftarrow - \infty \\
+  &~~~~~~~~~~~~\text{for } e \in \text{s\_a}[i].\text{out} \\
+  &~~~~~~~~~~~~~~~~\text{if } e.w + c[e.\text{to}] > \text{max\_val} \\
+  &~~~~~~~~~~~~~~~~~~~~c[\text{s\_a}[i]] \leftarrow e.w + c[e.\text{to}]\\
+  &~~~~~~~~~~~~~~~~~~~~e.\text{to}.\text{par} \leftarrow \text{s\_a}[i] \\
+  &~~~~\text{return } c[t]
+\end{align*}
+
+Topological sort is $\Theta(|V| + |E|)$. The total running time of LongestPath is $\Theta(|V|^2)$.
+
+\pagebreak
+\section{Exercise 2}
+The recurrence can be seen in Equation \ref{eq:longest_palindrome}.
+
+\begin{equation}
+  c(s, i, j) = \begin{cases}
+    1 &\text{if } i = j \\
+    0 &\text{if } i > j \\
+    2 + c(s, i + 1, j - 1) &\text{if } s[i] = s[j] \\
+    \text{max}(c(s, i + 1, j),~c(s, i, j - 1)) &\text{otherwise}
+  \end{cases}
+  \label{eq:longest_palindrome}
+\end{equation}
+
+\begin{align*}
+  &\text{LongestPalindrome}(s, i, j)\\
+  &~~~~c \leftarrow [1..n, 1..n]\\
+  &~~~~p \leftarrow \text{new list}\\
+  &~~~~\text{for } j \leftarrow 1 \text{ to len}(s)\\
+  &~~~~~~~~\text{for } i \leftarrow j \text{ to } 1\\
+  &~~~~~~~~~~~~\text{if } i = j \text{ then}\\
+  &~~~~~~~~~~~~~~~~c[i, j] \leftarrow 1\\
+  &~~~~~~~~~~~~\text{else if } s[i] = s[j] \text{ then}\\
+  &~~~~~~~~~~~~~~~~\text{if } j - i = 1\\
+  &~~~~~~~~~~~~~~~~~~~~c[i, j] \leftarrow 2~\#~c[i + 1, j - 1] = 0 \text{ in this case}\\
+  &~~~~~~~~~~~~~~~~\text{else}\\
+  &~~~~~~~~~~~~~~~~~~~~c[i, j] \leftarrow 2 + c[i + 1, j - 1] \\
+  &~~~~~~~~~~~~~~~~~~~~p.add(i)\\
+  &~~~~~~~~~~~~~~~~~~~~p.add(j)\\
+  &~~~~~~~~~~~~\text{else}\\
+  &~~~~~~~~~~~~~~~~c[i, j] = \text{max}(c[i + 1, j],~c[i, j - 1])\\
+  &~~~~\text{return } \langle c[1, n],~p \rangle
+\end{align*}
+
+The complexity of LongestPalindrome is $\frac{1}{2} |s|(|s| + 1) = \Theta(|s|^2)$.
+
+\pagebreak
+\section{Exercise 3: Exam Sheet Exercise 1}
+\subsection{Sub Exercise 1}
+If the emp cannon is activated during the 2nd second, it will kill $\text{min}(10, f(2 - 0)) = 3$ robots. It does not matter if the cannon is fired during the third or the fourth second. If the cannon is activated during the third second, it will only have charged up enough to kill 1 robot. If it is fired during the fourth second only, it can kill 3 robots, but there is only 1 robot to kill. The optimal strategy is to activate it during the third and fourth second. It will then kill a total of 5 robots.
+
+If the cannon is not activated during the 2nd second it will kill no robots during the second second. If the cannon is fired during the third second it will kill $\text{min}(10, f(3 - 0)) = 6$ robots. It can then be fired again the fourth second and kill 1 robot. It does not pay of to save the cannon for fourth second, as there is only one robot to kill then. The optimal strategy is then to fire the cannon at the third and fourth second, killing a total of 7 robots.
+
+If the cannon is activated during the first second it will kill $\text{min}(1, f(1 - 0)) = 1$ robot. Then the optimal strategy is to fire the cannon during the third second, where it will kill $\text{min}(10, f(3 - 1)) = 3$ robots. It can then be fired again in the fourth second to kill 1 robot, resulting a total of 5 kills.
+
+\subsection{Sub Exercise 2}
+On the input shown in Table \ref{tab:shed_cannon_bad_input} the Schedule-Cannon will give the incorrect answer. It will fire during the 1, 4 and 5 second killing 7 robots. The optimal solution is to fire during the 3, 4, and 5 second killing a total of 8 robots.
+
+\begin{table}[htp]%
+  \centering
+  \begin{tabular}{llllll}
+    \toprule
+    $i$ & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} \\
+    \midrule
+    $x_i$  & 1 & 5 & 10 & 5 & 1 \\
+    $f(i)$ & 1 & 3 & 6 & 9 & 12 \\
+    \bottomrule
+  \end{tabular}
+\caption{Input to Schedule-Cannon}
+\label{tab:shed_cannon_bad_input}
+\end{table}
+
+\end{document}
