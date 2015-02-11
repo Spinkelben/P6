@@ -1,0 +1,91 @@
+% Emit warnings on deprecated things.
+\RequirePackage[l2tabu, orthodox]{nag}
+
+\documentclass{scrreprt}
+
+% Load custom packages+settings and commands.
+\usepackage{style_and_commands/style}
+\input{style_and_commands/commands}
+
+\begin{document}
+
+%\linenumbers
+
+% Cover page.
+\let\oldthepage\thepage{}
+\renewcommand\thepage{Cover}
+\bookmark[page=1,level=0]{Cover}
+\tikzexternaldisable{}
+\includepdf[pages=-]{frontmatter/frontpage.pdf}
+\tikzexternalenable{}
+\renewcommand\thepage{\oldthepage}
+
+\input{frontmatter/colophon.tex}
+
+% Start roman numbering.
+\cleardoublepage{}
+\pagenumbering{roman}
+\setcounter{page}{1}
+
+\bookmark[page=3,level=0]{Title Page}
+\input{frontmatter/titlepage.tex}
+\input{frontmatter/signatures.tex}
+\bookmark[page=5,level=0]{Preface}
+\input{frontmatter/preface.tex} % The empty line below must be there!
+
+\begingroup % Next chapter on same page.
+\let\cleardoublepage\relax
+\bookmark[page=5,level=0]{Reading Guide}
+\input{frontmatter/reading_guide.tex}
+\endgroup
+
+% Table of contents.
+\bookmark[page=7,level=0]{Contents}
+\microtypesetup{protrusion=false} % Protrusion may interfere with the dotted lines in the TOC.
+\ohead{{\MakeUppercase\leftmark}} % UGLY HACK. The correct way should be to store the old value, set new value, then restore old value!
+\tableofcontents
+\microtypesetup{protrusion=true}
+
+% Start arabic numbering and restore page header.
+\cleardoublepage{}
+\ohead{{\MakeUppercase\leftmark}\rightmark}
+\pagenumbering{arabic}
+
+% Main content.
+\input{part_introduction/introduction}
+\input{part_sprint1/sprint1}
+\input{part_sprint2/sprint2}
+\input{part_sprint3/sprint3}
+\input{part_sprint4/sprint4}
+\label{LastPageLabel}
+
+% To end the parts.
+\bookmarksetup{startatroot}
+\addtocontents{toc}{\bigskip}
+
+\cleardoublepage
+\ohead{{\MakeUppercase\leftmark}} % UGLY HACK. The correct way should be to store the old value, set new value, then restore old value!
+\phantomsection\addcontentsline{toc}{chapter}{List of Figures}%
+\listoffigures
+\begingroup % Next chapter on same page.
+\let\cleardoublepage\relax
+\phantomsection\addcontentsline{toc}{chapter}{List of Tables}%
+\listoftables
+\endgroup
+
+% Bibliography.
+\cleardoublepage
+\phantomsection\addcontentsline{toc}{chapter}{Bibliography}
+\label{bibliography}
+\printbibliography{}
+\cleardoublepage{}
+\ohead{{\MakeUppercase\leftmark}\rightmark}
+
+
+
+% Appendix
+%\begin{appendices}
+%\input{appendix/appendix}
+%\end{appendices}
+
+\end{document}
