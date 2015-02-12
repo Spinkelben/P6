@@ -1,0 +1,44 @@
+{
+    %set up various length
+    \ifx\titlepageleftcolumnwidth\undefined{}
+      \newlength{\titlepageleftcolumnwidth}
+      \newlength{\titlepagerightcolumnwidth}
+    \fi
+    \setlength{\titlepageleftcolumnwidth}{0.46\textwidth-\tabcolsep}
+    \setlength{\titlepagerightcolumnwidth}{\textwidth-2\tabcolsep-\titlepageleftcolumnwidth}
+    %create title page
+    \thispagestyle{empty}
+    \noindent%
+    \begin{tabular}{@{}ll@{}}
+      \parbox{0.97\titlepageleftcolumnwidth}{
+          \includegraphics[width=0.97\titlepageleftcolumnwidth]{aau_logo_en}
+      } &
+      \vspace{1cm}
+      \parbox{0.97\titlepagerightcolumnwidth}{\raggedleft\sffamily\small
+        \textbf{\color{sectioning}Department of Computer Science}\\
+        Selma Lagerlöfs Vej 300\\
+        DK-9220 Aalborg Ø\\
+        \href{http://cs.aau.dk}{http://cs.aau.dk}
+      }\bigskip\\
+        \parbox[t]{\titlepageleftcolumnwidth}{
+        \textbf{\color{sectioning}\sffamily{Title:}}\\ \projecttitle{}\bigskip\par
+        \textbf{\color{sectioning}\sffamily{Theme:}}\\ \projecttheme{}\bigskip\par
+        \textbf{\color{sectioning}\sffamily{Project period:}}\\ \projectperiod\bigskip\par
+        \textbf{\color{sectioning}\sffamily{Project group:}}\\ \groupname{}\bigskip\par
+        \textbf{\color{sectioning}\sffamily{Participants:}}\\ \groupmembersbyfirstname{}\bigskip\par
+        \textbf{\color{sectioning}\sffamily{Supervisor:}}\\ \supervisor\bigskip\par
+        \textbf{\color{sectioning}\sffamily{Copies:}} \projectcopies\bigskip\par
+        \textbf{\color{sectioning}\sffamily{Pages:}}~\pageref*{LastPageLabel}\bigskip\par
+        \textbf{\color{sectioning}\sffamily{Date of completion:}}\\ \projectcompletion
+  } &
+      \parbox[t]{0.97\titlepagerightcolumnwidth}{%
+      \textbf{\color{sectioning}\sffamily{Abstract:}}\smallskip\par{}
+        \fbox{\parbox{0.97\titlepagerightcolumnwidth-2\fboxsep-2\fboxrule}{%
+          \input{frontmatter/abstract.tex}
+        }}
+      }\\
+    \end{tabular}
+    \vfill
+      \noindent{\footnotesize\emph{The content of this report is freely available, but publication (with reference) may only be pursued due to agreement with the authors.}}
+    \clearpage
+  }
