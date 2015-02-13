@@ -51,6 +51,10 @@
 \ohead{{\MakeUppercase\leftmark}\rightmark}
 \pagenumbering{arabic}
 
+%\renewcommand*{\partformat}{\partname~\thepart}
+\renewcommand{\thepart}{\arabic{part}}
+\renewcommand{\partname}{Sprint}
+
 % Main content.
 \input{part_introduction/introduction}
 \input{part_sprint1/sprint1}
