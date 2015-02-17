@@ -1,0 +1,25 @@
+\chapter{Jenkins}%\label{chap:...}
+This chapter will describe the things we have setup in Jenkins.
+
+\section{Automated Build}
+Vi har fikset det (noget med APK-filer) + skeduleret det nightly.
+
+\section{Automated Test}
+\subsection{Unit Testing}
+\subsection{Integration Testing}
+\subsection{UI Testing / Monkey Testing}
+\subsection{Concolic Testing}
+We don't want this.
+
+\section{Automated Javadoc Generation}
+
+\section{Automated Lint Check}
+We have investigated the possibility of automating lint checks on the source code. There are some important considerations to consider before linting the source code automatically.
+
+\todo{Write short paragraph on why lint is useful and wanted.}
+
+The code base is inherited from earlier years and no lint checking was performed on this. Linting the code will produce a considerable amount of warnings. This is not desirable, as it will make the builds fail.
+
+\todo{Write about how to diff lint results with baseline}
+
+\todo{Write about how to 
