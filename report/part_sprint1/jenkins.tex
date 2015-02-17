@@ -1,8 +1,15 @@
 \chapter{Jenkins}%\label{chap:...}
 This chapter will describe the things we have setup in Jenkins.
 
+\section{Upgrading Jenkins and Plugins}
+Upgraded Jenkins and plugins to their latest version.\\
+Removed unused Jenkins plugins.
+
+\section{Setting up Roles in Jenkins}
+Before, everybody had full access.
+
 \section{Automated Build}
-Vi har fikset det (noget med APK-filer) + skeduleret det nightly.
+Vi har fikset det (noget med APK-filer) + skeduleret det nightly (nighly builds)
 
 \section{Automated Test}
 \subsection{Unit Testing}
@@ -20,6 +27,6 @@ We have investigated the possibility of automating lint checks on the source cod
 
 The code base is inherited from earlier years and no lint checking was performed on this. Linting the code will produce a considerable amount of warnings. This is not desirable, as it will make the builds fail.
 
-\todo{Write about how to diff lint results with baseline}
+\todo{Write about how to diff lint results with baseline.}
 
-\todo{Write about how to 
+\todo{Write about how to ignore the warnings found many times.}
