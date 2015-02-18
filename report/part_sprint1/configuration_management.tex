@@ -1,24 +1,31 @@
-\chapter{Jenkins}%\label{chap:...}
-This chapter will describe the things we have setup in Jenkins.
+\chapter{Configuration Management}%\label{chap:...}
+This chapter will describe how we plan configuration management.
 
-\section{Upgrading Jenkins and Plugins}
+\section{Jenkins}
+
+
+\subsection{Upgrading Jenkins and Plugins}
 Upgraded Jenkins and plugins to their latest version.\\
 Removed unused Jenkins plugins.
 
-\section{Setting up Roles in Jenkins}
+\subsection{Setting up Roles in Jenkins}
 Before, everybody had full access.
 
-\section{Automated Build}
+\section{Merging With Master}
+% PendingHead: http://martinfowler.com/bliki/PendingHead.html
+% Continuous Integration: http://www.martinfowler.com/articles/continuousIntegration.html
+Pending Head/pre-tested commit vs alle committer til master
+
+\section{Build Automation}
 Vi har fikset det (noget med APK-filer) + skeduleret det nightly (nighly builds)
 
-\section{Automated Test}
+\section{Test Automation}
+% Skal være tosset hurtig
 \subsection{Unit Testing}
 \subsection{Integration Testing}
 \subsection{UI Testing / Monkey Testing}
 \subsection{Concolic Testing}
 We don't want this.
-
-\section{Automated Javadoc Generation}
 
 \section{Automated Lint Check}
 We have investigated the possibility of automating lint checks on the source code. There are some important considerations to consider before linting the source code automatically.
@@ -30,3 +37,5 @@ The code base is inherited from earlier years and no lint checking was performed
 \todo{Write about how to diff lint results with baseline.}
 
 \todo{Write about how to ignore the warnings found many times.}
+
+\section{Automated Javadoc Generation}
