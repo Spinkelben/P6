@@ -37,6 +37,18 @@
 
     \newcommand{\code}[1]{#1}
 
+% Structure.
+\newcounter{sprintcounter}\addtocounter{sprintcounter}{1}
+\newcommand{\sprint}[1]{
+	\part*{#1}
+	\addcontentsline{toc}{part}{Sprint \arabic{sprintcounter}: #1}
+	\stepcounter{sprintcounter}
+}
+\newcommand{\chaptergroup}[1]{
+	\part*{#1}
+	\addcontentsline{toc}{part}{#1}
+}
+
 % Figures.
 \newcommand{\fig}[3]{
   \begin{figure}[tbp]
