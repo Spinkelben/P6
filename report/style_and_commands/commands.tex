@@ -39,8 +39,8 @@
 
 % Structure.
 \newcounter{sprintcounter}\addtocounter{sprintcounter}{1}
-\newcommand{\sprint}[1]{
-	\part*{#1}
+\newcommand{\sprint}[1]{%
+	\part*{Sprint \arabic{sprintcounter}\\\vspace{1cm}#1}
 	\addcontentsline{toc}{part}{Sprint \arabic{sprintcounter}: #1}
 	\stepcounter{sprintcounter}
 }
