@@ -1,58 +1,59 @@
 % Project related.
-    % Project information.
-    \newcommand{\projecttitle}{Some name}
-    \newcommand{\projecttheme}{Developing Complex Software Systems}
-    \newcommand{\projectperiod}{Spring semester 2015}
-    \newcommand{\projectcopies}{8}
-    \newcommand{\projectcompletion}{May 27, 2015}
+  % Project information.
+  \newcommand{\projecttitle}{Some name}
+  \newcommand{\projecttheme}{Developing Complex Software Systems}
+  \newcommand{\projectperiod}{Spring semester 2015}
+  \newcommand{\projectcopies}{8}
+  \newcommand{\projectcompletion}{May 27, 2015}
 
-    % Names.
-    \newcommand{\groupname}{sw609f15}
-    \newcommand{\supervisor}{Kim A. Jakobsen} % no \@ here!
-    \newcommand{\groupmembersbyfirstname}[0]{%
-      Andreas Petersen\\
-      Mads Ellersgaard Kalør\\
-      Michael Toft Jensen\\
-      Søren Bøtker Ranneries
-    }
+  % Names.
+  \newcommand{\groupname}{sw609f15}
+  \newcommand{\supervisor}{Kim A. Jakobsen} % no \@ here!
+  \newcommand{\groupmembersbyfirstname}[0]{%
+    Andreas Petersen\\
+    Mads Ellersgaard Kalør\\
+    Michael Toft Jensen\\
+    Søren Bøtker Ranneries
+  }
 
 % Custom styling commands.
-    % Monospaced text.
-    \newcommand{\mono}{\texttt}
+  % Monospaced text.
+  \newcommand{\mono}{\texttt}
 
-    % Chapter introductions.
-    \newcommand{\chapterintro}[1]{#1}
-		
-		% Group X.
-		\newcommand{\group}[1]{Group #1}
+  % Chapter introductions.
+  \newcommand{\chapterintro}[1]{#1}
+  
+  % Group X.
+  \newcommand{\group}[1]{Group #1}
 
-    % CD paths with icon.
-    \newcommand{\cdpath}[1]{%
-      % Param1: path
-      \hyperref[app:cd]{\raisebox{-0.28ex}{\includegraphics[height=0.85em]{cd}}\mono{/#1}}%
-    }
+  % CD paths with icon.
+  \newcommand{\cdpath}[1]{%
+    % Param1: path
+    \hyperref[app:cd]{\raisebox{-0.28ex}{\includegraphics[height=0.85em]{cd}}\mono{/#1}}%
+  }
 
-    % Margin text.
-    \newcommand{\margintext}[1]{\marginline{\textsf{\footnotesize #1}}}
+  % Margin text.
+  \newcommand{\margintext}[1]{\marginline{\textsf{\footnotesize #1}}}
+  
+  \newcommand{\code}[1]{#1}
+  
+  % Todo.
+  \newcommand{\todo}[1]{\fxnote{#1}}
+  
+  % Dummy line.
+  \newcommand{\dummy}{Lorem ipsum dolor sit amet, consectetur adipiscing elit.}
 
-    \newcommand{\code}[1]{#1}
-		
-		% Todo.
-		\newcommand{\todo}[1]{\fxnote{#1}}
-		
-		% Dummy line.
-		\newcommand{\dummy}{Lorem ipsum dolor sit amet, consectetur adipiscing elit.}
-
-% Structure.
+% Document structure.
 \newcounter{sprintcounter}\addtocounter{sprintcounter}{1}
 \newcommand{\sprint}[1]{%
-	\part*{Sprint \arabic{sprintcounter}\\\vspace{1cm}\textnormal{\textsf{#1}}}
-	\addcontentsline{toc}{part}{Sprint \arabic{sprintcounter}: #1}
-	\stepcounter{sprintcounter}
+  \part*{Sprint \arabic{sprintcounter}\\\vspace{1cm}\textnormal{\textsf{#1}}}
+  \addcontentsline{toc}{part}{Sprint \arabic{sprintcounter}: #1}
+  \stepcounter{sprintcounter}
 }
+
 \newcommand{\chaptergroup}[1]{
-	\part*{#1}
-	\addcontentsline{toc}{part}{#1}
+  \part*{#1}
+  \addcontentsline{toc}{part}{#1}
 }
 
 % Figures.
