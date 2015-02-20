@@ -26,7 +26,7 @@
     open=right,
     %parskip=full, % To make space between paragraphs.
     fontsize=11pt,
-    numbers=noenddot % '1 Chapter' vs. '1. Chapter' in titles.
+    numbers=noenddot
   }
   % Margins.
   \usepackage{typearea}
@@ -150,13 +150,13 @@
   }
   \usetikzlibrary{calc}
   \usetikzlibrary{arrows.meta}
-  \usepackage{tikz-qtree}
+  %\usepackage{tikz-qtree}
   \usetikzlibrary{decorations.pathmorphing}
   \usetikzlibrary{matrix,shapes,positioning}
   \usepgfplotslibrary{external}
   \tikzexternalize[prefix=graphics/tikz/]
   %\tikzexternaldisable % Disable by default
-  \usepackage{pgfgantt}
+  %\usepackage{pgfgantt}
 
 % Code and monospaced things.
   \usepackage{algorithm}
@@ -252,12 +252,13 @@
   \usepackage{fixme}
     \fxsetup{
         status=draft,
-        author=,
-        layout=margin,
+        author={Todo},
+        layout=inline,
+				%marginclue,
         theme=color,
         silent=true
     }
-  \usepackage{todonotes}
+  %\usepackage{todonotes}
 
 % Misc.
   \usepackage{lastpage}
