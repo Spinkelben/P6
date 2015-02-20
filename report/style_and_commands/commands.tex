@@ -41,7 +41,7 @@
   \newcommand{\todo}[1]{\fxnote{#1}}
   
   % Dummy line.
-  \newcommand{\dummy}{Lorem ipsum dolor sit amet, consectetur adipiscing elit.}
+  \newcommand{\dummy}{\textcolor{javared}{Lorem ipsum dolor sit amet, consectetur adipiscing elit.}}
 
 % Document structure.
   % Sprints.
@@ -58,8 +58,15 @@
     \addcontentsline{toc}{part}{#1}
   }
   
+  % Document organization.
+  \newenvironment{documentorganization}
+    {\vspace{.5cm}\noindent\textbf{Report Organization}\quad The remainder of this report is organized in the following fashion:\begin{itemize}}
+    {\end{itemize}}
+  
   % Chapter organization.
-  \newenvironment{chapterorganization}{\vspace{.5cm}\noindent\textbf{Chapter Organization}\quad The remainder of this chapter is organized in the following fashion:\begin{itemize}}{\end{itemize}}
+  \newenvironment{chapterorganization}
+    {\vspace{.5cm}\noindent\textbf{Chapter Organization}\quad The remainder of this chapter is organized in the following fashion:\begin{itemize}}
+    {\end{itemize}}
 
 % Figures.
   % Normal figure.

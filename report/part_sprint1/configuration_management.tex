@@ -1,7 +1,16 @@
-\chapter{Configuration Management}%\label{chap:...}
-This chapter describes how we plan configuration management.
+\chapter{Configuration Management}\label{chap:config_management}
+This chapter describes how we plan configuration management. We are the group that has this responsibility. \dummy~\dummy~\dummy~\dummy~\dummy~\dummy
 
-\section{Jenkins}
+\begin{chapterorganization}
+  \item in \sectionref{sec:jenkins} we describe the continuous integration tool that we use in the project;
+  \item in \sectionref{sec:branching_strategy} we discuss branching strategies and adopt one of them;
+  \item in \sectionref{sec:build_automation} we explain how we set up automation of the builds.
+  \item in \sectionref{sec:test_automation} we explain how we set up automated testing.
+  \item in \sectionref{sec:automated_lint} we explain how we set up automated linting.
+  \item in \sectionref{sec:automated_documentation_gen} we explain how we set up automated documentation generation.
+\end{chapterorganization}
+
+\section{Jenkins}\label{sec:jenkins}
 Jenkins had been installed and setup by previous years. Jenkins is an open source tool for continuous integration. \todo{Write shortly about what Jenkins is and capable of}. The setup by previous years is rather basic and we have improved it in several ways.
 
 \subsection{Upgrading Jenkins and Plugins}
@@ -12,15 +21,15 @@ There are a number of unused plugins enabled in Jenkins. We tried to disable the
 \subsection{Setting up Roles in Jenkins}
 Before, everybody had full access.
 
-\section{Merging With Master}
+\section{Merging With Master}\label{sec:branching_strategy}
 % PendingHead: http://martinfowler.com/bliki/PendingHead.html
 % Continuous Integration: http://www.martinfowler.com/articles/continuousIntegration.html
 Pending Head/pre-tested commit vs alle committer til master
 
-\section{Build Automation}
+\section{Build Automation}\label{sec:build_automation}
 Vi har fikset det (noget med APK-filer) + skeduleret det nightly (nighly builds)
 
-\section{Test Automation}
+\section{Test Automation}\label{sec:test_automation}
 % Skal være tosset hurtig
 \subsection{Unit Testing}
 \subsection{Integration Testing}
@@ -28,7 +37,7 @@ Vi har fikset det (noget med APK-filer) + skeduleret det nightly (nighly builds)
 \subsection{Concolic Testing}
 We don't want this.
 
-\section{Automated Lint Check}
+\section{Automated Lint Check}\label{sec:automated_lint}
 We have investigated the possibility of automating lint checks on the source code. There are some important considerations to consider before linting the source code automatically.
 
 \todo{Write short paragraph on why lint is useful and wanted.}
@@ -39,4 +48,4 @@ The code base is inherited from earlier years and no lint checking was performed
 
 \todo{Write about how to ignore the warnings found many times.}
 
-\section{Automated Javadoc Generation}
+\section{Automated Javadoc Generation}\label{sec:automated_documentation_gen}
