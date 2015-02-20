@@ -1,4 +1,13 @@
 \chapter{Software Development Method}%\label{chap:...}
+Short introduction to this chapter. \dummy~\dummy~\dummy~\dummy~\dummy~\dummy
+
+\begin{chapterorganization}
+  \item in \sectionref{sec:project_overview} we describe how the multi-project is organized and introduce the levels in the project;
+  \item in \sectionref{sec:responsibilities} we something something.
+  \item in \sectionref{sec:redmine} we something something;
+\end{chapterorganization}
+
+\section{Project Organization Method}\label{sec:project_overview}
 The multi-project consists of 14 groups of approximately 4 people each. All groups collaborate on building the Giraf applications. The groups are organized into three subprojects: \emph{GUI}, \emph{databases}, and \emph{build and deployment}.
 
 To organize these teams we use Scrum of Scrums. The project period is divided into four sprints. There are a total of three levels: The group level, subproject level, and the project level.
@@ -9,23 +18,27 @@ To organize these teams we use Scrum of Scrums. The project period is divided in
 	\item[Project Level] A weekly meeting is held where we maintain the product backlog, discuss the status of each subproject, and evaluate the method and roles. This meeting differs from the daily Scrum meeting. The purpose of the overall level is to ensure that the roles, work products, and meetings are followed as intended.
 \end{description}
 
-The following sections describe in details the work products, roles, and meetings that we use.
+%The following sections describe in details the work products, roles, and meetings that we use.
 
-\section{Work Products}
+\subsection{Work Products}
 In Scrum we use three work products: Product backlog, release backlog, and sprint backlog.
 
-\subsection{Product Backlog}
+\begin{description}
+
+\item[Product Backlog]
 On the project level we use a product backlog that contains all the user stories for the entire multi-project. The purpose of the project level is to maintain the product backlog. The user stories in the product backlog are categorized according to each subproject. This enables each subproject to manage their user stories themselves, removing unnecessary management from the project level.
 
-\subsection{Release Backlog}
+\item[Release Backlog]
 The release backlog contains those user stories that we must finish in the current sprint. These user stories are decided on sprint planning meetings that each subproject hold.
 
-\subsection{Sprint Backlog}
+\item[Sprint Backlog]
 When user stories are selected from the product backlog into the release backlog, those user stories are divided into tasks. These tasks constitute the sprint backlog. It is up to each subproject to decide how these tasks are made. They can do it at the subproject sprint planning meeting or they can decide to delegate the task creation to each group based on their selected user stories.
 
 This is where there are difficulties from the fact that not every group use Scrum at the group level. If a group does not use Scrum, there is no guarantee that they will make tasks, or even update tasks should they have been created at the subproject level.
 
-\section{Roles}
+\end{description}
+
+\subsection{Roles}
 In Scrum there are two roles besides the Scrum team and the chickens:
 
 \begin{description}
@@ -33,23 +46,16 @@ In Scrum there are two roles besides the Scrum team and the chickens:
   \item[Product Owner] The product owner is responsible for maintaining contact with the customers and being their representatives. A group has been designated this role.
 \end{description}
 
-\section{Meeting Times}
+\subsection{Meeting Times}
 A vital part of working agile involves being able to easily communicate with all members of the team. To ensure this we decided that all groups should be present in their group rooms all weekdays from at least 09:00--15:00. However, as we cannot enforce that each group follows Scrum, we have no guarantee that groups will follow this schedule. In fact, two groups specifically said that they cannot. They would, however, be available on e-mail at the same times.
 
-\section{User Stories Aggregation}
+\subsection{User Stories Aggregation}
 Andreas sad og lavede en masse sager sammen med Lukas?
 
-\section{Software Development Method in Our Group}
+\subsection{Software Development Method in Our Group}
 As all groups are recommended to follow the Scrum development method, our group also follows it.
 
-\section{Setting up Redmine}
-\fxnote{Introduction to Redmine and why we use it.}
-
-Customization of Redmine is needed to incorporate some Scrum practices. In particular, the issue tracker feature of Redmine is customized to be able to hold product, release, and sprint backlog. We collaborated with \group{3} (Redmine general) and \group{10} (issue tracker) to set this up. 
-
-Also, a Gantt chart feature had been installed by previous years. The Scrum method does not advocate Gantt charts or other dependency charts. As such, we collaborated with \group{3} to remove this.
-
-\section{Further Responsibilities}
+\section{Further Responsibilities}\label{sec:responsibilities}
 Not only should these subprojects be developed on, but the development process and other components should also be managed. Thus, many groups also have responsibilities to manage other parts than the actual code base. Here is a short description of these responsibilities:
 
 \begin{description}
@@ -68,3 +74,11 @@ Not only should these subprojects be developed on, but the development process a
 	\item[Google Analytics and Google Play] \dummy \dummy
 	\item[Graphics] \dummy \dummy
 \end{description}
+
+\section{Setting up Redmine}\label{sec:redmine}
+\fxnote{Introduction to Redmine and why we use it.}
+
+Customization of Redmine is needed to incorporate some Scrum practices. In particular, the issue tracker feature of Redmine is customized to be able to hold product, release, and sprint backlog. We collaborated with \group{3} (Redmine general) and \group{10} (issue tracker) to set this up. 
+
+Also, a Gantt chart feature had been installed by previous years. The Scrum method does not advocate Gantt charts or other dependency charts. As such, we collaborated with \group{3} to remove this.
+
