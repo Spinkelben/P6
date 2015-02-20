@@ -65,9 +65,12 @@
   % Typographic tweaks.
   \usepackage[babel]{microtype} % Enables kerning. Load after fonts.
   \usepackage{textcomp} % Uses the glyphs present in the fonts, rather than LaTeX workarounds for old fonts.
+  
+  % Parts style.
+  \setkomafont{part}{\normalfont\Huge\fontseries{k}\sffamily\color{partcolor}}
 
   % Chapters style.
-  \setkomafont{chapter}{\normalfont\Huge\fontseries{k}\sffamily\color{sectioning}}
+  \setkomafont{chapter}{\normalfont\Huge\fontseries{k}\sffamily\color{chaptercolor}}
   % Spacing before chapter.
   \renewcommand{\chapterheadstartvskip}{\vspace*{1\baselineskip}}
 
@@ -81,10 +84,8 @@
   \setkomafont{subsubsection}{\normalfont\normalsize\fontseries{k}\sffamily\color{sectioning}}
 
   % Section numbering in margin.
-  %\renewcommand*{\othersectionlevelsformat}[1]{%
-  %  \makebox[0pt][r]{%
-  %  \csname the#1\endcsname\enskip}%
-  %}
+  %\renewcommand*{\othersectionlevelsformat}[3]{%
+  %  \llap{#3\autodot\enskip}}
 
   % Lists and similar.
   \renewcommand{\descriptionlabel}[1]{\hspace{\labelsep}\color{descriptionlabeling}\sffamily{#1}}
@@ -118,8 +119,11 @@
   
   \usepackage{xcolor}
     % Text colors.
-    \definecolor{sectioning}{gray}{0.44}
-    \definecolor{descriptionlabeling}{gray}{0.25}
+    \definecolor{sectioning}{gray}{0.33}
+    \definecolor{partcolor}{gray}{0.15}
+    \definecolor{chaptercolor}{gray}{0.15}
+    \definecolor{descriptionlabeling}{gray}{0.15}
+    % Hyperlink colors.
     \definecolor{pdflinkcolor}{RGB}{36,42,158}
     \definecolor{urlcolor}{RGB}{133,52,52}
 
@@ -128,25 +132,25 @@
     \definecolor{clshade}{gray}{0.95}
 
     % Graphs.
-    \definecolor{color1}{cmyk}{100,50,0,0}   % blue
-    \definecolor{color2}{cmyk}{0,80,100,0}   % vermillion
-    \definecolor{color3}{cmyk}{97,0,75,0}    % blueish green
-    \definecolor{color4}{cmyk}{10,70,0,0}    % reddish purple
-    \definecolor{color5}{cmyk}{0,50,100,0}   % orange
+    \definecolor{color1}{cmyk}{100,50,0,0} % blue
+    \definecolor{color2}{cmyk}{0,80,100,0} % vermillion
+    \definecolor{color3}{cmyk}{97,0,75,0}  % blueish green
+    \definecolor{color4}{cmyk}{10,70,0,0}  % reddish purple
+    \definecolor{color5}{cmyk}{0,50,100,0} % orange
 
     % Code colors.
-    \definecolor{javared}{rgb}{0.6,0,0} % for strings
-    \definecolor{javagreen}{rgb}{0.25,0.5,0.35} % comments
-    \definecolor{javapurple}{rgb}{0.6,0,0.5} % keywords
+    \definecolor{javared}{rgb}{0.6,0,0}            % for strings
+    \definecolor{javagreen}{rgb}{0.25,0.5,0.35}    % comments
+    \definecolor{javapurple}{rgb}{0.6,0,0.5}       % keywords
     \definecolor{javadocblue}{rgb}{0.25,0.35,0.75} % javadoc
 
   \usepackage{tikz}
   \usepackage{pgfplots}
-  \pgfplotsset{compat=1.10}
-  \pgfplotsset{
-    every axis label/.append style={font=\footnotesize},
-    every axis/.append style={font=\scriptsize}
-  }
+    \pgfplotsset{compat=1.10}
+    \pgfplotsset{
+      every axis label/.append style={font=\footnotesize},
+      every axis/.append style={font=\scriptsize}
+    }
   \usetikzlibrary{calc}
   \usetikzlibrary{arrows.meta}
   %\usepackage{tikz-qtree}
@@ -155,14 +159,13 @@
   \usepgfplotslibrary{external}
   \tikzexternalize[prefix=graphics/tikz/]
   %\tikzexternaldisable % Disable by default
-  %\usepackage{pgfgantt}
 
 % Code and monospaced things.
-  \usepackage{algorithm}
-  \usepackage{algorithmic}
+  %\usepackage{algorithm}
+  %\usepackage{algorithmic}
   \usepackage{listings}
   
-  \lstdefinestyle{javastyle}{
+  \lstdefinestyle{javastyle}{%
     language=Java,
     keywordstyle=\color{javapurple}\bfseries,
     stringstyle=\color{javared},
@@ -170,21 +173,27 @@
     morecomment=[s][\color{javadocblue}]{/**}{*/}
   }
   
-  \lstnewenvironment{javacode}[1]{
+  \lstnewenvironment{javacode}[1]{%
     \lstset{style=javastyle, #1}
   }{}
     
   \lstset{
-    columns=flexible, keepspaces, escapechar=",
+    columns=flexible,
+    escapechar="
+    escapeinside={(*@}{@*)},
     basicstyle=\ttfamily\footnotesize,
     frame=single, backgroundcolor=\color{clshade}, rulecolor=\color{clframe},
     framerule=\fboxrule, xleftmargin=3.4pt, xrightmargin=3.4pt, belowskip=\smallskipamount,
     captionpos=b,
-    escapeinside={(*@}{@*)},
+    %numbers=left,
+    %numberstyle=\scriptsize,
+    %numbersep=7pt,
     tabsize=2,
+    keepspaces=true,
     showspaces=false,
-    showstringspaces=false,
+    showstringspaces=true,
     breaklines=true,
+    breakatwhitespace=true,
     postbreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\color{red}\hookrightarrow\space}}
   }
 
