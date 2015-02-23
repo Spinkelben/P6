@@ -1,25 +1,25 @@
 \chapter{Configuration Management}\label{chap:config_management}
-This chapter describes how we plan configuration management. We are the group that has this responsibility. \dummy~\dummy~\dummy~\dummy~\dummy~\dummy
+Configuration management is an important if not crucial part of any large software project. Our group has taken the responsibility to setup and maintain this area. This chapter describes how we plan and execute configuration management. \dummy~\dummy~\dummy~\dummy~\dummy~\dummy
 
 \begin{chapterorganization}
-  \item in \sectionref{sec:jenkins} we describe the continuous integration tool that we use in the project;
+  \item in \sectionref{sec:jenkins} we describe the continuous integration tool, Jenkins, that we use in the project;
   \item in \sectionref{sec:branching_strategy} we discuss branching strategies and adopt one of them;
-  \item in \sectionref{sec:build_automation} we explain how we set up automation of the builds.
-  \item in \sectionref{sec:test_automation} we explain how we set up automated testing.
-  \item in \sectionref{sec:automated_lint} we explain how we set up automated linting.
+  \item in \sectionref{sec:build_automation} we explain how we set up automation of the builds;
+  \item in \sectionref{sec:test_automation} we investigate and implement automated testing;
+  \item in \sectionref{sec:automated_lint} we investigate and implement automated linting;
   \item in \sectionref{sec:automated_documentation_gen} we explain how we set up automated documentation generation.
 \end{chapterorganization}
 
 \section{Jenkins}\label{sec:jenkins}
-Jenkins had been installed and setup by previous years. Jenkins is an open source tool for continuous integration. \todo{Write shortly about what Jenkins is and capable of}. The setup by previous years is rather basic and we have improved it in several ways.
+Jenkins had been installed and setup by previous years. Jenkins is an open source tool for continuous integration. It supports source control management tools such as Git, as well as build automation tools such as Maven. It is extensible via numerous available plugins. Jenkins allows for a sophisticated continuous integration setup, however the setup by previous years is rather basic and we want to improve it in several ways.
 
 \subsection{Upgrading Jenkins and Plugins}
 We inherited the old installation which had not been updated in a long time. Jenkins itself and all the Jenkins plugins had updates available. We updated everything to the newest versions.
 
-There are a number of unused plugins enabled in Jenkins. We tried to disable these, but this resulted in failure to start Jenkins. We undid the changes and have decided not to remove these unused plugins. \todo{Write why this is good enough.}
+There are a number of unused plugins enabled in Jenkins. We tried to disable these, but this resulted in failure to start Jenkins. We undid the changes and have decided not to remove these unused plugins as it will not hinder further configuration of Jenkins.
 
 \subsection{Setting up Roles in Jenkins}
-Before, everybody had full access.
+The inherited Jenkins installation was open to anybody. We modify the settings to sensible values. Our group has full configuration access, while everybody else has read access.
 
 \section{Merging With Master}\label{sec:branching_strategy}
 % PendingHead: http://martinfowler.com/bliki/PendingHead.html
@@ -38,11 +38,13 @@ Vi har fikset det (noget med APK-filer) + skeduleret det nightly (nighly builds)
 We don't want this.
 
 \section{Automated Lint Check}\label{sec:automated_lint}
-We have investigated the possibility of automating lint checks on the source code. There are some important considerations to consider before linting the source code automatically.
+Lint checking is static code analysis and scans the source code for potential bugs and improvements. We investigate the possibility of automating lint checks on the source code, as we suspect this will uncover a wide range of improvements.
 
-\todo{Write short paragraph on why lint is useful and wanted.}
+A tool for linting Android project source files exists. It checks for potential bugs and optimization improvements for correctness, security, performance, usability, accessibility, and internationalization \todo{Insert citation: http://developer.android.com/tools/help/lint.html.}
 
-The code base is inherited from earlier years and no lint checking was performed on this. Linting the code will produce a considerable amount of warnings. This is not desirable, as it will make the builds fail.
+There are some important considerations to consider before linting the source code automatically. The code base is inherited from earlier years and no lint checking was performed on this. Linting the code will produce a considerable amount of warnings. It is therefore not possible for us to let a build fail should it contain any warnings.
+
+In this first sprint, we set up automating the lint check in Jenkins to be performed on all builds. The warnings are presented in the build log and 
 
 \todo{Write about how to diff lint results with baseline.}
 
