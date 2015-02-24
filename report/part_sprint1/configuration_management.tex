@@ -1,5 +1,5 @@
 \chapter{Configuration Management}\label{chap:config_management}
-Configuration management is an important if not crucial part of any large software project. Our group has taken the responsibility to setup and maintain this area. This chapter describes how we plan and execute configuration management. \dummy~\dummy~\dummy~\dummy~\dummy~\dummy
+Configuration management is an important if not crucial part of any large software project. Our group has taken the responsibility to setup and maintain this area. Configuration management can greatly ease the workflow of the developers and increase their productivity. This chapter describes how we plan and execute configuration management. We aim to make it as easy as possible for the developers, and therefore we will automate as much as possible.
 
 \begin{chapterorganization}
   \item in \sectionref{sec:jenkins} we describe the continuous integration tool, Jenkins, that we use in the project;
@@ -11,7 +11,7 @@ Configuration management is an important if not crucial part of any large softwa
 \end{chapterorganization}
 
 \section{Jenkins}\label{sec:jenkins}
-Jenkins had been installed and setup by previous years. Jenkins is an open source tool for continuous integration. It supports source control management tools such as Git, as well as build automation tools such as Maven. It is extensible via numerous available plugins. Jenkins allows for a sophisticated continuous integration setup, however the setup by previous years is rather basic and we want to improve it in several ways.
+Jenkins had been installed and setup by previous years. Jenkins is an open source tool for continuous integration \parencite{JenkinsWebsite}. It supports source control management tools such as Git, as well as build automation tools such as Maven. It is extensible via numerous available plugins. Jenkins allows for a sophisticated continuous integration setup, however the setup by previous years is rather basic and we want to improve it in several ways.
 
 \subsection{Upgrading Jenkins and Plugins}
 We inherited the old installation which had not been updated in a long time. Jenkins itself and all the Jenkins plugins had updates available. We updated everything to the newest versions.
@@ -24,18 +24,24 @@ The inherited Jenkins installation was open to anybody. We modify the settings t
 \section{Merging With Master}\label{sec:branching_strategy}
 % PendingHead: http://martinfowler.com/bliki/PendingHead.html
 % Continuous Integration: http://www.martinfowler.com/articles/continuousIntegration.html
-Pending Head/pre-tested commit vs alle committer til master
+\todo{Pending Head/pre-tested commit vs alle committer til master}
 
 \section{Build Automation}\label{sec:build_automation}
-Vi har fikset det (noget med APK-filer) + skeduleret det nightly (nighly builds)
+\todo{Vi har fikset det (noget med APK-filer) + skeduleret det nightly (nighly builds)}
 
 \section{Test Automation}\label{sec:test_automation}
+\dummy~\dummy~\dummy~
 % Skal være tosset hurtig
 \subsection{Unit Testing}
+\dummy~\dummy~\dummy~\dummy~\dummy~\dummy~
 \subsection{Integration Testing}
+\dummy~\dummy~\dummy
+
+\dummy~\dummy~\dummy~
 \subsection{UI Testing / Monkey Testing}
+\dummy~\dummy~\dummy~\dummy~\dummy~\dummy~
 \subsection{Concolic Testing}
-We don't want this.
+\todo{Andreas: Write about why we don't want this.}
 
 \section{Automated Lint Check}\label{sec:automated_lint}
 Lint checking is static code analysis and scans the source code for potential bugs and improvements. We investigate the possibility of automating lint checks on the source code, as we suspect this will uncover a wide range of improvements.
