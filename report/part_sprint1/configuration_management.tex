@@ -11,6 +11,7 @@ Configuration management is an important if not crucial part of any large softwa
 \end{chapterorganization}
 
 \section{Jenkins}\label{sec:jenkins}
+\todo{Rename evt. til continuous integration og forklar hvorfor vi vil have noget af det. Så kan vi skrive, at Jenkins er et værktøj til at udføre det. På den måde argumenterer vi hvorfor vi bruger Jenkins.}
 Jenkins had been installed and setup by previous years. Jenkins is an open source tool for continuous integration \parencite{JenkinsWebsite}. It supports source control management tools such as Git, as well as build automation tools such as Maven. It is extensible via numerous available plugins. Jenkins allows for a sophisticated continuous integration setup, however the setup by previous years is rather basic and we want to improve it in several ways.
 
 \subsection{Upgrading Jenkins and Plugins}
@@ -27,7 +28,7 @@ The inherited Jenkins installation was open to anybody. We modify the settings t
 \todo{Pending Head/pre-tested commit vs alle committer til master}
 
 \section{Build Automation}\label{sec:build_automation}
-\todo{Vi har fikset det (noget med APK-filer) + skeduleret det nightly (nighly builds)}
+\todo{Vi har fikset det (noget med APK-filer) + skeduleret det nightly (nighly builds) som det aller første, da det overhovedet ikke var automatiseret til at starte med. Efterfølgende har vi så sat det op til at build ved hvert push til master.}
 
 \section{Test Automation}\label{sec:test_automation}
 \dummy~\dummy~\dummy~
@@ -46,7 +47,7 @@ The inherited Jenkins installation was open to anybody. We modify the settings t
 \section{Automated Lint Check}\label{sec:automated_lint}
 Lint checking is static code analysis and scans the source code for potential bugs and improvements. We investigate the possibility of automating lint checks on the source code, as we suspect this will uncover a wide range of improvements.
 
-A tool for linting Android project source files exists. It checks for potential bugs and optimization improvements for correctness, security, performance, usability, accessibility, and internationalization \parencite{AndroidLint}.
+A tool for linting Android project source files exists \todo{Hvad hedder det?}. It checks for potential bugs and optimization improvements for correctness, security, performance, usability, accessibility, and internationalization \parencite{AndroidLint}.
 
 There are some important considerations to consider before linting the source code automatically. The code base is inherited from earlier years and no lint checking to our knowledge was performed on this. Linting the code will produce a considerable amount of warnings. It is therefore not possible for us to let a build fail should it contain any warnings.
 
