@@ -79,5 +79,11 @@ Over time, we hope that the presence of serious lint warnings can be a reason to
 %\todo{Write about how to ignore the warnings found many times.}
 
 \section{Automated Documentation Generation}\label{sec:automated_documentation_gen}
-\todo{Mads: Fill this in.}\\
-We have tested Javadoc. We will use Doxygen. How we set it up in Jenkins.
+When working with a large code base, people will most likely not have insight in all parts of the code. Some kind of documentation is helpful in order to know how to use different libraries. However, the developers of the multi project do not want more documentation than absolutely necessary, nor do they want to use much time writing it. In addition, the developers wanted the documentation for all projects in one place. Due to these requirements, we have chosen to use a documentation generator which can generate documentation from the code rather than writing such documentation manually.
+
+Initially, we investigated the Javadoc tool. This is the official documentation generator for Java and generates documentation based on special formatted comments embedded in the source code. This format is integrated in Android Studio, making the documentation easily accessible where needed. In addition, parts of the existing code already contain Javadoc comments. A problem with Javadoc, however, is that it follows the packages and classes referred in a Java file. A requirement for this is that the source code must be a correctly structure Java project in order for the tool to find the different classes. This makes it complicated to comply with the requirement of having documentation of all projects in one place, because a combination of all projects may not form a valid Java project. The source code of all projects cannot simply be copied into one directory and fed to the Javadoc tool. Because of this, we investigated the Doxygen tool, which is a cross-language documentation generator that supports the same documentation syntax as Javadoc. However, Doxygen does not follow the class dependencies but simply parses the specified files. The HTML-documentation is very similar to that of Javadoc, and because it is more convenient to use, we have chosen to use this tool for documentation generation.
+\todo{Jenkins, ftp etc.}
+\todo{Sources}
+
+http://www.stack.nl/~dimitri/doxygen/
+http://www.oracle.com/technetwork/java/javase/documentation/index-jsp-135444.html
