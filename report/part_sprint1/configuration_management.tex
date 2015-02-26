@@ -42,6 +42,24 @@ The inherited Jenkins installation was open to anybody. We modify the settings t
 \subsection{UI Testing / Monkey Testing}
 \dummy~\dummy~\dummy~\dummy~\dummy~\dummy~
 \subsection{Concolic Testing}
+At the sprint planning a desire to do automatic checking of null pointer exceptions was expressed. To this end we investigated the possibility of utilizing concolic testing. Concolic testing automatically tests all execution branches \parencite{concolic_testing_2015}. These tests can check for null pointer exceptions.
+
+\todo{Vi har kigget på:}
+
+\begin{itemize}
+  \item LIME testbench \url{http://www.tcs.hut.fi/Software/lime/}.
+  \item ACTEve \url{http://delivery.acm.org/10.1145/2400000/2393666/a59-anand.pdf?ip=130.225.198.195&id=2393666&acc=ACTIVE%20SERVICE&key=36332CD97FA87885%2E1DDFD8390336D738%2E4D4702B0C3E38B35%2E4D4702B0C3E38B35&CFID=627209490&CFTOKEN=76801213&__acm__=1424945812_ab641600a5058e5b199a617b521e4023}
+\end{itemize}
+
+\todo{Vi burde også kigge på:}
+
+\begin{itemize}
+  \item LCT \url{http://users.ics.aalto.fi/ktkahkon/KahLauSaaKauHelNie-BYTECODE2011.pdf}
+  \item jCUTE \url{http://osl.cs.illinois.edu/software/jcute/}
+  \item jFuzz \url{http://people.csail.mit.edu/akiezun/jfuzz/documentation.html}
+  \item CATG \url{https://github.com/ksen007/janala2}
+\end{itemize}
+
 \todo{Andreas: Write about why we don't want this.}
 
 \section{Automated Lint Check}\label{sec:automated_lint}
