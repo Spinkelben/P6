@@ -34,8 +34,8 @@ The inherited Jenkins installation was open to anybody. We modify the settings t
 \dummy~\dummy~\dummy~
 % Skal være tosset hurtig
 \subsection{Unit Testing}
-During the initial investigation of the inherited code base we found some existing unit tests in the \gproject{Oasis-lib} project. These tests utilize the Android unit testing framework included in the Android framework \parencite{AndroidUnit}. The unit tests are run on an emulated android environment, or on actual android devices, if any are connected to the computer. We therefore decide to postpone any further investigation into unit testing frameworks. Instead we focus on getting the existing unit tests to run, both locally and on Jenkins. The tests were immediately runnable through Android Studio 0.4.6\todo{check this version number}. However Android studio does something behind the scenes when it runs the tests, and therefore we couldn't run them from the command line, which means that we can not run them with Jenkins. However the new Android studio, version 1.0.2, uses gradle exclusively to run the tests. This means that when the projects got migrated to the new version, we became able to run the tests with Jenkins. 
-The other projects didn't have any tests, so we created test projects, with examples of tests to verify that Jenkins could run the tests, and to show the other groups how to create new tests. 
+During the initial investigation of the inherited code base we found some existing unit tests in the \gproject{Oasis-lib} project. These tests utilize the Android unit testing framework included in the Android framework \parencite{AndroidUnit}. The unit tests are run on an emulated android environment, or on actual android devices, if any are connected to the computer. We therefore decide to postpone any further investigation into unit testing frameworks. Instead, we focus on getting the existing unit tests to run, both locally and in Jenkins. The tests were immediately runnable through Android Studio 0.4.6\todo{check this version number}. However, Android Studio does something behind the scenes when it runs the tests, and therefore we could not run them from the command line, which means that we cannot run them in Jenkins. However, the new Android studio, version 1.0.2, uses Gradle exclusively to run the tests. This means that when the projects got migrated to the new version, we became able to run the tests with Jenkins. 
+The other projects did not have any tests, so we created test projects, with examples of tests to verify that Jenkins could run the tests, and to show the other groups how to create new tests.
 \subsection{Integration Testing}
 \dummy~\dummy~\dummy
 
@@ -49,13 +49,13 @@ At the sprint planning a desire to do automatic checking of null pointer excepti
 
 \begin{itemize}
   \item LIME testbench \url{http://www.tcs.hut.fi/Software/lime/}.
-  \item ACTEve \url{http://delivery.acm.org/10.1145/2400000/2393666/a59-anand.pdf?ip=130.225.198.195&id=2393666&acc=ACTIVE%20SERVICE&key=36332CD97FA87885%2E1DDFD8390336D738%2E4D4702B0C3E38B35%2E4D4702B0C3E38B35&CFID=627209490&CFTOKEN=76801213&__acm__=1424945812_ab641600a5058e5b199a617b521e4023}
+  \item ACTEve \href{http://delivery.acm.org/10.1145/2400000/2393666/a59-anand.pdf?ip=130.225.198.195&id=2393666&acc=ACTIVE\%20SERVICE&key=36332CD97FA87885\%2E1DDFD8390336D738\%2E4D4702B0C3E38B35\%2E4D4702B0C3E38B35&CFID=627209490&CFTOKEN=76801213&__acm__=1424945812_ab641600a5058e5b199a617b521e4023}{LINK}
 \end{itemize}
 
 \todo{Vi burde også kigge på:}
 
 \begin{itemize}
-  \item LCT \url{http://users.ics.aalto.fi/ktkahkon/KahLauSaaKauHelNie-BYTECODE2011.pdf}
+  \item LCT \href{http://users.ics.aalto.fi/ktkahkon/KahLauSaaKauHelNie-BYTECODE2011.pdf}{LINK}
   \item jCUTE \url{http://osl.cs.illinois.edu/software/jcute/}
   \item jFuzz \url{http://people.csail.mit.edu/akiezun/jfuzz/documentation.html}
   \item CATG \url{https://github.com/ksen007/janala2}
@@ -89,5 +89,5 @@ The Doxygen tool is a cross-language documentation generator that supports the s
 \todo{Jenkins, ftp etc.}
 \todo{Sources}
 
-http://www.stack.nl/~dimitri/doxygen/
-http://www.oracle.com/technetwork/java/javase/documentation/index-jsp-135444.html
+\href{http://www.stack.nl/~dimitri/doxygen/}{Doxygen link}\\
+\href{http://www.oracle.com/technetwork/java/javase/documentation/index-jsp-135444.html}{javadoc link}
