@@ -1,0 +1,21 @@
+Old name      Name (2014)
+-------------------------------------------------------------------------
+              Giraf Admin (Website)
+              Giraf Components
+              Giraf Launcher
+              Kategorispillet
+              Kategoriværktøjet
+              Livshistorier
+              LocalDB
+              Oasis App
+              Oasis Library
+              Pictosearch
+Parrot        Piktooplæser
+              Piktotegner
+              Sekvens
+              Stemmespillet
+              Tal For Mig (iOS app)
+              Tidstager
+              Ugeskema (Android app)
+              Ugeskema (Website)
+              Visual Scheduler (iOS app)
