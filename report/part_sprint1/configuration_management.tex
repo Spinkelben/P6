@@ -31,17 +31,18 @@ The inherited Jenkins installation was open to anybody. We modify the settings t
 \todo{Vi har fikset det (noget med APK-filer) + skeduleret det nightly (nighly builds) som det aller første, da det overhovedet ikke var automatiseret til at starte med. Efterfølgende har vi så sat det op til at build ved hvert push til master.}
 
 \section{Test Automation}\label{sec:test_automation}
-\dummy~\dummy~\dummy~
+Test are only useful if they are run. Therefore we are interested in automating the running of tests to ensure that they are run frequently. We will set automatic testing in Jenkins.  
 % Skal være tosset hurtig
 \subsection{Unit Testing}
 During the initial investigation of the inherited code base we found some existing unit tests in the \gproject{Oasis-lib} project. These tests utilize the Android unit testing framework included in the Android framework \parencite{AndroidUnit}. The unit tests are run on an emulated android environment, or on actual android devices, if any are connected to the computer. We therefore decide to postpone any further investigation into unit testing frameworks. Instead, we focus on getting the existing unit tests to run, both locally and in Jenkins. The tests were immediately runnable through Android Studio 0.4.6\todo{check this version number}. However, Android Studio does something behind the scenes when it runs the tests, and therefore we could not run them from the command line, which means that we cannot run them in Jenkins. However, the new Android studio, version 1.0.2, uses Gradle exclusively to run the tests. This means that when the projects got migrated to the new version, we became able to run the tests with Jenkins. 
 The other projects did not have any tests, so we created test projects, with examples of tests to verify that Jenkins could run the tests, and to show the other groups how to create new tests.
+Currently Jenkins starts a new emulator, before each project is built, that adds a significant delay to the build. The build time for the entire app has increased from 20 minutes to 90 minutes. This is unfortunate, but for now we won't spend more time, to improve on this. We may return to this in a later sprint.
 \subsection{Integration Testing}
 \dummy~\dummy~\dummy
 
 \dummy~\dummy~\dummy~
 \subsection{UI Testing / Monkey Testing}
-\dummy~\dummy~\dummy~\dummy~\dummy~\dummy~
+Writing UI test can be labor intensive, and the maintenance of the test can get quite comprehensive. Instead monkey testing can be used. Monkey testing is when a machine randomly presses buttons, acting like a monkey. That way the UI and the entire app is exercised. There is no guarantees that the full app will be tested, but there is almost no setup. The official Android SDK has a monkey testing facilities build in. We have configured Jenkins to run monkey tests during the night, when the server otherwise is idle. The other groups will be able to subscribe to tests reports of the individual objects. That way they can get notified when issues are found during the monkey test.
 \subsection{Concolic Testing}
 At the sprint planning a desire to do automatic checking of null pointer exceptions was expressed. To this end we investigated the possibility of utilizing concolic testing. Concolic testing automatically tests all execution branches \parencite{concolic_testing_2015}. These tests can check for null pointer exceptions.
 
