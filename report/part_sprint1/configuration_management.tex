@@ -1,4 +1,6 @@
+%!TEX root = ../report.tex
 \chapter{Configuration Management}\label{chap:config_management}
+\kimnote{When you use the term configuration management then be aware that it have a special meaning. There are multiple standards that define how proper configuration management is done and measured. This is a great opportunity to talk about official methods and how you utilize these in this project. :)}
 Configuration management is an important if not crucial part of any large software project. Our group has taken the responsibility to setup and maintain this area. Configuration management can greatly ease the workflow of the developers and increase their productivity. This chapter describes how we plan and execute configuration management. We aim to make it as easy as possible for the developers, and therefore we will automate as much as possible.
 
 \begin{chapterorganization}
@@ -12,7 +14,7 @@ Configuration management is an important if not crucial part of any large softwa
 
 \section{Jenkins}\label{sec:jenkins}
 \todo{Rename evt. til continuous integration og forklar hvorfor vi vil have noget af det. Så kan vi skrive, at Jenkins er et værktøj til at udføre det. På den måde argumenterer vi hvorfor vi bruger Jenkins.}
-Jenkins had been installed and setup by previous years. Jenkins is an open source tool for continuous integration \parencite{JenkinsWebsite}. It supports source control management tools such as Git, as well as build automation tools such as Maven. It is extensible via numerous available plugins. Jenkins allows for a sophisticated continuous integration setup, however the setup by previous years is rather basic and we want to improve it in several ways.
+Jenkins had been installed and setup by previous years. Jenkins is an open source tool for continuous integration \parencite{JenkinsWebsite}. It supports source control management tools such as Git, as well as build automation tools such as Maven. It is extensible via numerous available plugins. Jenkins allows for a sophisticated continuous integration setup, however the setup by previous years is rather basic and we want to improve it in several ways. \kimnote{cite Maven and Git.}
 
 \subsection{Upgrading Jenkins and Plugins}
 We inherited the old installation which had not been updated in a long time. Jenkins itself and all the Jenkins plugins had updates available. We updated everything to the newest versions.
@@ -21,6 +23,7 @@ There are a number of unused plugins enabled in Jenkins. We tried to disable the
 
 \subsection{Setting up Roles in Jenkins}
 The inherited Jenkins installation was open to anybody. We modify the settings to sensible values. Our group has full configuration access, while everybody else has read access.
+\kimnote{why did you choose to set the system up this way? What are the pros and cons of this? What are the alternatives and why are they bad?}
 
 \section{Merging With Master}\label{sec:branching_strategy}
 % PendingHead: http://martinfowler.com/bliki/PendingHead.html
@@ -31,10 +34,12 @@ The inherited Jenkins installation was open to anybody. We modify the settings t
 \todo{Vi har fikset det (noget med APK-filer) + skeduleret det nightly (nighly builds) som det aller første, da det overhovedet ikke var automatiseret til at starte med. Efterfølgende har vi så sat det op til at build ved hvert push til master.}
 
 \section{Test Automation}\label{sec:test_automation}
-Test are only useful if they are run. Therefore we are interested in automating the running of tests to ensure that they are run frequently. We will set automatic testing in Jenkins.  
+Test are only useful if they are run. Therefore we are interested in automating the running of tests to ensure that they are run frequently. We will set automatic testing in Jenkins. 
+\kimnote{how is this setup? Cron?}
+\kimnote{how often are the test run? more detail please.} 
 % Skal være tosset hurtig
 \subsection{Unit Testing}
-During the initial investigation of the inherited code base we found some existing unit tests in the \gproject{Oasis-lib} project. These tests utilize the Android unit testing framework included in the Android framework \parencite{AndroidUnit}. The unit tests are run on an emulated android environment, or on actual android devices, if any are connected to the computer. We therefore decide to postpone any further investigation into unit testing frameworks. Instead, we focus on getting the existing unit tests to run, both locally and in Jenkins. The tests were immediately runnable through Android Studio 0.4.6\todo{check this version number}. However, Android Studio does something behind the scenes when it runs the tests, and therefore we could not run them from the command line, which means that we cannot run them in Jenkins. However, the new Android studio, version 1.0.2, uses Gradle exclusively to run the tests. This means that when the projects got migrated to the new version, we became able to run the tests with Jenkins.
+During the initial investigation of the inherited code base we found some existing unit tests in the \gproject{Oasis-lib}\kimnote{cite missing} project. These tests utilize the Android unit testing framework included in the Android framework \parencite{AndroidUnit}. The unit tests are run on an emulated android environment, or on actual android devices, if any are connected to the computer. We therefore decide to postpone any further investigation into unit testing frameworks. Instead, we focus on getting the existing unit tests to run, both locally and in Jenkins. The tests were immediately runnable through Android Studio 0.4.6\todo{check this version number}. However, Android Studio does something behind the scenes when it runs the tests, and therefore we could not run them from the command line, which means that we cannot run them in Jenkins. However, the new Android studio, version 1.0.2, uses Gradle exclusively to run the tests. This means that when the projects got migrated to the new version, we became able to run the tests with Jenkins.
 The other projects did not have any tests, so we created test projects, with examples of tests to verify that Jenkins could run the tests, and to show the other groups how to create new tests.
 Currently Jenkins starts a new emulator, before each project is built, that adds a significant delay to the build. The build time for the entire app has increased from 20 minutes to 90 minutes. This is unfortunate, but for now we won't spend more time, to improve on this. We may return to this in a later sprint.
 \subsection{Integration Testing}
@@ -69,7 +74,7 @@ Lint checking is static code analysis and scans the source code for potential bu
 
 A tool for linting Android project source files exists \todo{Hvad hedder det?}. It checks for potential bugs and optimization improvements for correctness, security, performance, usability, accessibility, and internationalization \parencite{AndroidLint}.
 
-There are some important considerations to consider before linting the source code automatically. The code base is inherited from earlier years and no lint checking to our knowledge was performed on this. Linting the code will produce a considerable amount of warnings. It is therefore not possible for us to let a build fail should it contain any warnings.
+There are some important considerations to consider before linting the source code automatically. The code base is inherited from earlier years and no lint checking to our knowledge was performed on this. Linting the code will produce a considerable amount of warnings. It is therefore not possible for us to let a build fail should it contain any warnings. \kimnote{I do not understand the last sentence}
 
 In this first sprint, we set up automating the lint check in Jenkins to be performed on all builds. The warnings are presented in the build overview screen, and we hope that having a low number of lint warnings will be incentive enough for each group to fix warnings. We consider creating an even stronger incentive if the number alone is not enough. An example of such a incentive is having weekly or per sprint ``competitions'' where the group lowering the number of serious lint warnings the most will receive a small prize and forever be on a hall of fame.
 
@@ -87,6 +92,7 @@ We investigate the Javadoc\parencite{javadoc} and Doxygen\parencite{doxygen} too
 Javadoc is the official documentation generator for Java and generates documentation based on special formatted comments embedded in the source code. This format is integrated in Android Studio, making the documentation easily accessible where needed. In addition, parts of the existing code already contain Javadoc comments. A problem with Javadoc, however, is that it follows the packages and classes referred in a Java file. A requirement for this is that the source code must be a correctly structure Java project in order for the tool to find the different classes. This makes it complicated to comply with the requirement of having documentation of all projects in one place, because a combination of all projects may not form a valid Java project. The source code of all projects cannot simply be copied into one directory and fed to the Javadoc tool.
 
 The Doxygen tool is a cross-language documentation generator that supports the same documentation syntax as Javadoc. Doxygen does not follow the class dependencies but simply parses the specified files. The HTML-documentation is very similar to that of Javadoc, and because it is more convenient to use, we have chosen to use this tool for documentation generation.
+\kimnote{Again, very nice argumentation, this is a good description of a choice.}
 
 \subsection{Documentation Generation in Jenkins}
-We have configured a Jenkins job to generate the documentation for all projects. This job pulls the most recent state of the master branch of each project and executes the Doxygen tool on all code. On the current code base, the doxygen tool uses 3--7 minutes to generate the documentation. Because we do not want to block more important jobs, such as building and testing new commits, we choose to run this job nightly.
+We have configured a Jenkins job to generate the documentation for all projects. This job pulls the most recent state of the master branch of each project and executes the Doxygen tool on all code. On the current code base, the doxygen tool uses 3--7\kimnote{I love that you use n-dash.} minutes to generate the documentation. Because we do not want to block more important jobs, such as building and testing new commits, we choose to run this job nightly.
