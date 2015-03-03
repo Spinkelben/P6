@@ -1,9 +1,13 @@
 %!TEX root = ../report.tex
-\chapter{Configuration Management}\label{chap:config_management}
+\chapter{SW Configuration Management}\label{chap:config_management}
+Software configuration management is an important if not crucial part of any large software project. The large size of the multi-project requires some form of software configuration management to handle and track the changes in the software.
+
+Configuration management can greatly ease the workflow of the developers and increase their productivity. This chapter describes how we plan and execute configuration management. We aim to make it as easy as possible for the developers, and therefore we will automate as much as possible.
+
 \kimnote{When you use the term configuration management then be aware that it have a special meaning. There are multiple standards that define how proper configuration management is done and measured. This is a great opportunity to talk about official methods and how you utilize these in this project. :)}
-Configuration management is an important if not crucial part of any large software project. Our group has taken the responsibility to setup and maintain this area. Configuration management can greatly ease the workflow of the developers and increase their productivity. This chapter describes how we plan and execute configuration management. We aim to make it as easy as possible for the developers, and therefore we will automate as much as possible.
 
 \begin{chapterorganization}
+  \item in \sectionref{sec:SCM_vision} we identify a plan for the software configuration management and identify specific areas we want to improve or implement in the software configuration management practice;
   \item in \sectionref{sec:jenkins} we describe the continuous integration tool, Jenkins, that we use in the project;
   \item in \sectionref{sec:branching_strategy} we discuss branching strategies and adopt one of them;
   \item in \sectionref{sec:build_automation} we explain how we set up automation of the builds;
@@ -11,6 +15,29 @@ Configuration management is an important if not crucial part of any large softwa
   \item in \sectionref{sec:automated_lint} we investigate and implement automated linting;
   \item in \sectionref{sec:automated_documentation_gen} we explain how we set up automated documentation generation.
 \end{chapterorganization}
+
+\section{Software Configuration Management Plan}\label{sec:SCM_vision}
+Software Engineering Body of Knowledge (SWEBOK \todo{insert citation}) identifies some key areas of software configuration management.
+
+\subsection{Organizational Context}
+The responsibility of software configuration management is assigned to this group. As such, we vision the process will as unintrusive for the developers as possible.
+\dummy~\dummy
+
+\subsection{Tool Selection}
+Previous years already had revision control, and we take over their revision setup with Git \parencite{gitwebsite}. And Jenkins (explained later). Discuss the ``legacy''-aspect (how will the new SCM be applied to the old projects). Scope (how will the new tools be deployed --- entire organization or only specific projects?). Ownership (who is responsible for the introduction of the new tools?). Future plans (will the tools evolve in the future? New uses in the future?). Integrations (how are the tools integrated into eachother?)
+
+\subsection{Vision for Software Configuration Management}
+\dummy
+\begin{description}
+  \item[Build Management] We want automatic builds, such that the developer does not have to worry about it.
+  \item[Process Management] \todo{Ensuring adherence to the organization's development process.}
+  \item[Environment Management] \todo{Managing the software and hardware that host the system.}
+  \item[Configuration Auditing] \todo{Ensuring that configurations contain all their intended parts and are sound with respect to their specifying documents, including requirements, architectural specifications and user manuals.}
+  \item[Release Management] easy installation to tablets?
+  \item[Development Environment] easy installing of developing environment on developer computers.
+\end{description}
+
+We do not want to set up a change control board (who can approve or reject change requests) --- not in agile mindset.
 
 \section{Jenkins}\label{sec:jenkins}
 \todo{Rename evt. til continuous integration og forklar hvorfor vi vil have noget af det. Så kan vi skrive, at Jenkins er et værktøj til at udføre det. På den måde argumenterer vi hvorfor vi bruger Jenkins.}
