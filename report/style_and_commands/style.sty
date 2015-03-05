@@ -68,7 +68,7 @@
   % Typographic tweaks.
   \usepackage[babel]{microtype} % Enables kerning. Load after fonts.
   \usepackage{textcomp} % Uses the glyphs present in the fonts, rather than LaTeX workarounds for old fonts.
-  
+
   % Parts style.
   \setkomafont{part}{\normalfont\Huge\fontseries{k}\sffamily\color{partcolor}}
 
@@ -119,7 +119,7 @@
 % Graphics and colors.
   \usepackage{graphicx}
   \graphicspath{{graphics/}}
-  
+
   \usepackage{xcolor}
     % Text colors.
     \definecolor{partcolor}{gray}{0.17}
@@ -156,6 +156,7 @@
     }
   \usetikzlibrary{calc}
   \usetikzlibrary{arrows.meta}
+  \usetikzlibrary{backgrounds}
   %\usepackage{tikz-qtree}
   \usetikzlibrary{decorations.pathmorphing}
   \usetikzlibrary{matrix,shapes,positioning}
@@ -167,7 +168,7 @@
   %\usepackage{algorithm}
   %\usepackage{algorithmic}
   \usepackage{listings}
-  
+
   \lstdefinestyle{javastyle}{%
     language=Java,
     keywordstyle=\color{javapurple}\bfseries,
@@ -175,11 +176,11 @@
     commentstyle=\color{javagreen},
     morecomment=[s][\color{javadocblue}]{/**}{*/}
   }
-  
+
   \lstnewenvironment{javacode}[1]{%
     \lstset{style=javastyle, #1}
   }{}
-    
+
   \lstset{
     columns=flexible,
     escapechar="
@@ -223,7 +224,7 @@
 
  % Appendix
   \usepackage[titletoc]{appendix}
-  
+
 % PDF
   \usepackage{hyperref}
   \hypersetup{
