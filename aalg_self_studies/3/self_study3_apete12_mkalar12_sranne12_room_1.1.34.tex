@@ -43,6 +43,18 @@ Figure \ref{fig:vertices_capacity} shows how to convert a vertex with capacity t
 \subsection{B}
 We make an algorithm that reduces the \emph{escape problem}  to the \emph{flow} problem, and then run an Edmond-Karp algorithm on the resulting graph.
 
+We have to give the vertices a capacity of 1 (as seen in exercise 1.a) and convert the undirected edges to two directed edges as seen in Figure \ref{fig:two_way1}. However, we have found that this is automatically handled when we convert a vertex into an input-vertex and an output vertex (to handle vertex capacity), as seen in Figure \ref{fig:two_way1}.
+\begin{figure}
+  \includegraphics{two_way_path}
+  \caption{Conversion of undirected graph to directed graph}
+  \label{fig:two_way1}
+\end{figure}
+\begin{figure}
+  \includegraphics{two_way_path2}
+  \caption{How direction is automatically handled}
+  \label{fig:two_way2}
+\end{figure}
+
 \begin{enumerate}
   \item Create a new graph $G' = (V', E')$. $V'$ and $E'$ are initially empty.
   \item For each $v \in V$ add vertices $v$ and $v_o$ to $V'$ and edge $(v, v_o)$ to $E'$
