@@ -62,11 +62,10 @@ We have to give the vertices a capacity of 1 (as seen in exercise 1.a) and conve
   \begin{enumerate}
     \item For each $(v, u) \in E$ add $(v_o, u)$ to $E'$
   \end{enumerate}
-  \item For each edge $(u, v) \in E$ add vertex $v'$ to $V'$ and edges $(u, v), (v, v'), (v', u)$ to $E'$
-  \item Add a source vertex, $s$, to $V'$ and for each vertex $x \in \mathit{startingPoints} \subseteq V$ add an edge $(s, x)$ to $E'$
+  \item Add a source vertex, $s$, to $V'$ and for each vertex $p \in \mathit{startingPoints} \subseteq V$ add an edge $(s, p)$ to $E'$
   \item Add a sink vertex, $t$, to $V'$ and for each vertex $b \in \mathit{boundaryVertices} \subseteq V$ add an edge $(b, t)$ to $E'$
   \item For each $(v, u) \in E'$ make it so that $c(v, u) = 1$
-  \item Run $G'$ on the Edmond-Karp algorithm and return the answer
+  \item Run $G'$ on the Edmond-Karp algorithm and if the answer equals the number of starting points, then return true. Otherwise false.
 \end{enumerate}
 
 \end{document}
