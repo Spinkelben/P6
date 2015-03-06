@@ -55,17 +55,23 @@ There are a number of unused plugins enabled in Jenkins. We tried to disable the
 The inherited Jenkins installation was open to anybody. We do not find this sensible as we need to control the build process. Allowing everybody access will likely end in someone modifying a setting without our knowledge. We modify the access settings allow us to have full configuration access while everybody else has read access.
 \kimnote{why did you choose to set the system up this way? What are the pros and cons of this? What are the alternatives and why are they bad?}\todo{Michael: Jeg tror jeg har fikset det --- men der kan sikkert skrives mere.}
 
-\section{Merging With Master}\label{sec:branching_strategy}
-As the name \emph{continuous integration} suggests, code should be integrated into the mainline (or \emph{master branch}) of the project frequently\parencite{fowlerCI}. According to Martin Fowler, frequent merges ensure that merges generally will be small and easy to perform \parencite{fowlerFeatureBranch}. The master branch must be stable and always in a release-ready state. If it breaks, it should be the team's first priority to fix it. A consequence of this is that the whole team is affected when a developer introduces an error, which has a negative influence on the overall productivity.
+\section{Build Automation}\label{sec:build_automation}
+As the inherited project had no build automation, we decided to set it up in two stages. In the first stage we schedule all jobs to run nightly. This gives us some level of build automation and gives us time to investigate merge strategies and set it up properly. 
+\todo{Vi har fikset det (noget med APK-filer) + skeduleret det nightly (nighly builds) som det aller første, da det overhovedet ikke var automatiseret til at starte med. Efterfølgende har vi så sat det op til at build ved hvert push til master.}
+\todo{Vi har gjort apk-naming bedre (så de ikke hedder workspace)}
 
-We assess two strategies to acommodate these consequences of continuous integration: the \emph{direct commit strategy}\todo{selfopfundet navn. Må vi gerne kalde det det?} and the \emph{pre-tested commit strategy}. In the direct commit strategy, every developer integrates its code directly to the master branch. It is the developer's own responsibility that the code works. This is the simplest, and one may say, the most agile way of integrating code with the master branch. An illustration of the direct commit strategy can be seen in \figureref{fig:commit_stratagy_a}. A developer creates a branch from the master branch and develops its code (commits \mono{B} and \mono{C}) on this before merging it directly into the master branch (commit \mono{D}).
+\subsection{Merging With Master}\label{sec:branching_strategy}
+As the name \emph{continuous integration} suggests, code should be integrated into the mainline (or \emph{master branch}) of the project frequently \parencite{fowlerCI}. According to Martin Fowler, frequent merges ensure that merges generally will be small and easy to perform \parencite{fowlerFeatureBranch}. The master branch must be stable and always in a release-ready state. If it breaks, it should be the team's first priority to fix it. A consequence of this is that the whole team is affected when a developer introduces an error, which has a negative influence on the overall productivity.
 
-An alternative to integrating code directly with the master branch is to use pre-tested commits\parencite{fowlerPendingHead}. A pre-tested commit uses a special branch which is an intermediate place for building and testing code before it is merged into the master branch. The code will only be merged into the master branch if it passes the tests. This ensures that the master branch will always work, but the merging workflow will be more complex as the developer must pull from one branch and push to another. The strategy is illustrated in \figureref{fig:commit_stratagy_b}. The developer creates a branch from the master branch and develops its code on here. When completed, the code is merged with the intermediate branch (commit \emph{\mono{I}}), which will build and test the code before eventually merging it with the master branch (commit \mono{D}).
+We assess two strategies to accommodate these consequences of continuous integration: the \emph{direct commit strategy}\todo{selfopfundet navn. Må vi gerne kalde det det?} and the \emph{pre-tested commit strategy}. In the direct commit strategy, every developer integrates its code directly to the master branch. It is the developer's own responsibility that the code works. This is the simplest, and one may say, the most agile way of integrating code with the master branch. An illustration of the direct commit strategy can be seen in \figureref{fig:commit_stratagy_a}. A developer creates a branch from the master branch and develops its code (commits \mono{B} and \mono{C}) on this before merging it directly into the master branch (commit \mono{D}).
 
-For the first sprint, we choose to implement the direct commit strategy, primarily because of its simplicity. It is important to get continuous integration up running so the developers can start to develop code, and it would be too costly to spend time implementing a pre-tested commit strategy as this will block the progress of all other developers. We are unsure about how the developers handle the increased responsibility, so in the preparation of the second sprint, we will evaluate this strategy and consider whether we should implement the pre-tested commit strategy instead.\todo{Husk at evaluér dette}
+An alternative to integrating code directly with the master branch is to use pre-tested commits \parencite{fowlerPendingHead}. A pre-tested commit uses a special branch which is an intermediate place for building and testing code before it is merged into the master branch. The code will only be merged into the master branch if it passes the tests. This ensures that the master branch will always work, but the merging workflow will be more complex as the developer must pull from one branch and push to another. The strategy is illustrated in \figureref{fig:commit_stratagy_b}. The developer creates a branch from the master branch and develops its code on here. When completed, the code is merged with the intermediate branch (commit \emph{\mono{I}}), which will build and test the code before eventually merging it with the master branch (commit \mono{D}).
+
+For the first sprint, we choose to implement the direct commit strategy, primarily because of its simplicity. It is important to get continuous integration up running so the developers can start to develop code, and it would be too costly to spend time implementing a pre-tested commit strategy as this will block the progress of all other developers. We are unsure about how the developers handle the increased responsibility, so in the preparation of the second sprint, we will evaluate this strategy and consider whether we should implement the pre-tested commit strategy instead.\todo{Husk at evaluére dette}
 
 \begin{figure}
 \begin{subfigure}[b]{\linewidth}
+\centering
 \begin{tikzpicture}
 % MASTER
 \node[text width=2cm] at (0,1) {\mono{master}};
@@ -91,6 +97,7 @@ For the first sprint, we choose to implement the direct commit strategy, primari
 \caption{The direct commit strategy}\label{fig:commit_stratagy_a}
 \end{subfigure}\\
 \begin{subfigure}[b]{\linewidth}
+\centering
 \begin{tikzpicture}
 % MASTER
 \node[text width=2cm] at (0,2) {\mono{master}};
@@ -125,8 +132,13 @@ For the first sprint, we choose to implement the direct commit strategy, primari
 \end{subfigure}
 \caption{Different branching strategies. A circles represents a commit and an arrow represents a reference to a commit.}\label{fig:commit_stratagy}
 \end{figure}
-\section{Build Automation}\label{sec:build_automation}
-\todo{Vi har fikset det (noget med APK-filer) + skeduleret det nightly (nighly builds) som det aller første, da det overhovedet ikke var automatiseret til at starte med. Efterfølgende har vi så sat det op til at build ved hvert push til master.}
+
+\todo{Write about how we implemented this. Collab with git group?}
+
+\subsection{Signing APK Files}
+The output of a build is an APK file, which is a package format used to distribute and install software onto Android. These files need to be signed before they can be installed. As such, we add a post-build task to Jenkins which signs and verifies the APK file as well as moves it into a common APK folder for all projects.
+
+After signing the APK file, we automatically upload it to the Android Play Store on the alpha\todo{or beta?} channel. \todo{Vi skal nok være opmærksomme på ``I found that you can upload about 14 apps per 24 hours''}
 
 \section{Test Automation}\label{sec:test_automation}
 Test are only useful if they are run. Therefore we are interested in automating the running of tests to ensure that they are run frequently. We will set automatic testing in Jenkins.
@@ -134,9 +146,9 @@ Test are only useful if they are run. Therefore we are interested in automating 
 \kimnote{how often are the test run? more detail please.}
 % Skal være tosset hurtig
 \subsection{Unit Testing}
-During the initial investigation of the inherited code base we found some existing unit tests in the \gproject{Oasis-lib}\kimnote{cite missing} project. These tests utilize the Android unit testing framework included in the Android framework \parencite{AndroidUnit}. The unit tests are run on an emulated android environment, or on actual android devices, if any are connected to the computer. We therefore decide to postpone any further investigation into unit testing frameworks. Instead, we focus on getting the existing unit tests to run, both locally and in Jenkins. The tests were immediately runnable through Android Studio 0.4.6\todo{check this version number}. However, Android Studio does something behind the scenes when it runs the tests, and therefore we could not run them from the command line, which means that we cannot run them in Jenkins. However, the new Android studio, version 1.0.2, uses Gradle exclusively to run the tests. This means that when the projects got migrated to the new version, we became able to run the tests with Jenkins.
-The other projects did not have any tests, so we created test projects, with examples of tests to verify that Jenkins could run the tests, and to show the other groups how to create new tests.
-Currently Jenkins starts a new emulator, before each project is built, that adds a significant delay to the build. The build time for the entire app has increased from 20 minutes to 90 minutes. This is unfortunate, but for now we won't spend more time, to improve on this. We may return to this in a later sprint.
+During the initial investigation of the inherited code base we found some existing unit tests in the \gproject{Oasis-lib}\kimnote{cite missing} project. These tests utilize the Android unit testing framework \todo{Caps?} included in the Android framework \parencite{AndroidUnit}. The unit tests runs in an emulated Android environment, or on actual Android devices if any are connected to the computer. We therefore decide to postpone any further investigation into unit testing frameworks. Instead, we focus on getting the existing unit tests to run, both locally and in Jenkins. The tests were immediately runnable through Android Studio 0.4.6 \todo{check this version number}. However, Android Studio does something behind the scenes when it runs the tests, and therefore we could not run them from the command line, which means that we cannot run them in Jenkins. However, the most recent Android studio, version 1.0.2, uses Gradle exclusively to run the tests. This means that when the projects are migrated to the new version, we are able to run the tests with Jenkins.
+The other projects did not have any tests, so we create test projects, with examples of tests to verify that Jenkins can run the tests, and to show the other groups how to create new tests.
+Currently, Jenkins starts a new emulator before each project is built. This adds a significant delay to the build. The build time for the entire app has increased from \SIrange[range-units = single]{20}{90}{\minute}. This is unfortunate, but for now we won't spend more time, to improve on this. We may return to this in a later sprint.
 \subsection{Integration Testing}
 \dummy~\dummy~\dummy
 
