@@ -54,7 +54,7 @@ We make an algorithm that reduces the \emph{escape problem}  to the \emph{flow} 
   \item Add a source vertex, $s$, to $V'$ and for each vertex $x \in \mathit{startingPoints} \subseteq V$ add an edge $(s, x)$ to $E'$
   \item Add a sink vertex, $t$, to $V'$ and for each vertex $b \in \mathit{boundaryVertices} \subseteq V$ add an edge $(b, t)$ to $E'$
   \item For each $(v, u) \in E'$ make it so that $c(v, u) = 1$
-  \item Run $G'$ on the Edmond-Karp algorithm and return the answer
+  \item Run $G'$ on the Edmond-Karp algorithm and if the answer equals the number of starting points, then return true. Otherwise false.
 \end{enumerate}
 
 \end{document}
