@@ -40,4 +40,20 @@ Figure \ref{fig:vertices_capacity} shows how to convert a vertex with capacity t
   \label{fig:vertices_capacity}
 \end{figure}
 
+\subsection{B}
+We make an algorithm that reduces the \emph{escape problem}  to the \emph{flow} problem, and then run an Edmond-Karp algorithm on the resulting graph.
+
+\begin{enumerate}
+  \item Create a new graph $G' = (V', E')$. $V'$ and $E'$ are initially empty.
+  \item For each edge $(u, v) \in E$ add vertex and $v'$ to $V'$ and edges $(u, v), (v, v'), (v', u)$ to $E'$
+  \item For each $v \in V$
+  \begin{enumerate}
+    \item For each $(v, u) \in E$ add $(v_o, u)$ to $E'$
+  \end{enumerate}
+  \item Add a source vertex, $s$, to $V'$ and for each vertex $x \in \mathit{StartingPoints} \subseteq V$ add an edge $(s, x)$ to $E'$
+  \item Add a sink vertex, $t$, to $V'$ and for each vertex $b \in \mathit{boundaryVertices} \subseteq V$ add an edge $(b, t)$ to $E'$
+  \item For each $v \in V$ add vertices $v$ and $v_o$ to $V'$ and edge $(v, v_o)$ to $E'$
+  \item Run $G'$ on the Edmond-Karp algorithm and return the answer
+\end{enumerate}
+
 \end{document}
