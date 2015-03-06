@@ -30,8 +30,11 @@ Room 1.1.34}
 \pagebreak
 
 \section{Exercise 1}
+The answer is c.
 
-\subsection{A}
+\section{Exercise 2}
+
+\subsection{a}
 Figure \ref{fig:vertices_capacity} shows how to convert a vertex with capacity to a regular flow network. The number of edges in a network with vertex capacities is $2|V|$ in a regular flow network, and the number of edges is $|V|+|E|$.
 
 \begin{figure}
@@ -40,10 +43,10 @@ Figure \ref{fig:vertices_capacity} shows how to convert a vertex with capacity t
   \label{fig:vertices_capacity}
 \end{figure}
 
-\subsection{B}
+\subsection{b}
 We make an algorithm that reduces the \emph{escape problem}  to the \emph{flow} problem, and then run an Edmond-Karp algorithm on the resulting graph. All edges have implicitly the capacity 1.
 
-We have to give the vertices a capacity of 1 (as seen in exercise 1.a) and convert the undirected edges to two directed edges as seen in Figure \ref{fig:two_way1}. However, we have found that this is automatically handled when we convert a vertex into an input-vertex and an output vertex (to handle vertex capacity), as seen in Figure \ref{fig:two_way1}.
+We have to give the vertices a capacity of 1 (as seen in exercise 2.a) and convert the undirected edges to two directed edges as seen in Figure \ref{fig:two_way1}. However, we have found that this is automatically handled when we convert a vertex into an input-vertex and an output vertex (to handle vertex capacity), as seen in Figure \ref{fig:two_way1}.
 \begin{figure}
   \includegraphics{two_way_path}
   \caption{Conversion of undirected graph to directed graph}
@@ -69,14 +72,14 @@ We have to give the vertices a capacity of 1 (as seen in exercise 1.a) and conve
 
 The complexity of the algorithm is a simply analysis of each point:
 
-\begin{itemize}
+\begin{enumerate}
   \item $\Theta(1)$
   \item $\Theta\left(|V|\right)$
   \item $\Theta\left(|V| + |E|\right)$
   \item $O(|V|)$
   \item $\Theta\left(\sqrt{|V|}\right)$
   \item $O\left(|V||E|\right)$. The maximum flow is equal to $|V|$ and since the worst-case running time of the Ford-Fulkerson method is $O\left(|E||f*|\right)$.
-\end{itemize}
+\end{enumerate}
 
 Thus the complete running time of the algorithm is $O\left(|V||E|\right)$.
 
