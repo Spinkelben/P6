@@ -41,7 +41,7 @@ Figure \ref{fig:vertices_capacity} shows how to convert a vertex with capacity t
 \end{figure}
 
 \subsection{B}
-We make an algorithm that reduces the \emph{escape problem}  to the \emph{flow} problem, and then run an Edmond-Karp algorithm on the resulting graph.
+We make an algorithm that reduces the \emph{escape problem}  to the \emph{flow} problem, and then run an Edmond-Karp algorithm on the resulting graph. All edges have implicitly the capacity 1.
 
 \begin{enumerate}
   \item Create a new graph $G' = (V', E')$. $V'$ and $E'$ are initially empty.
@@ -52,8 +52,20 @@ We make an algorithm that reduces the \emph{escape problem}  to the \emph{flow} 
   \end{enumerate}
   \item Add a source vertex, $s$, to $V'$ and for each vertex $p \in \mathit{startingPoints} \subseteq V$ add an edge $(s, p)$ to $E'$
   \item Add a sink vertex, $t$, to $V'$ and for each vertex $b \in \mathit{boundaryVertices} \subseteq V$ add an edge $(b, t)$ to $E'$
-  \item For each $(v, u) \in E'$ make it so that $c(v, u) = 1$
   \item Run $G'$ on the Edmond-Karp algorithm and if the answer equals the number of starting points, then return true. Otherwise false.
 \end{enumerate}
+
+The complexity of the algorithm is a simply analysis of each point:
+
+\begin{itemize}
+  \item $\Theta(1)$
+  \item $\Theta\left(|V|\right)$
+  \item $\Theta\left(|V| + |E|\right)$
+  \item $O(|V|)$
+  \item $\Theta\left(\sqrt{|V|}\right)$
+  \item $O\left(|V||E|\right)$. The maximum flow is equal to $|V|$ and since the worst-case running time of the Ford-Fulkerson method is $O\left(|E||f*|\right)$.
+\end{itemize}
+
+Thus the complete running time of the algorithm is $O\left(|V||E|\right)$.
 
 \end{document}
