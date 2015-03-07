@@ -1,6 +1,5 @@
 \documentclass[koma,a4paper]{article}
 \usepackage[T1]{fontenc}
-\usepackage[danish]{babel}
 \usepackage{fixltx2e}
 \usepackage{graphicx}
 \usepackage{float}
@@ -140,5 +139,40 @@ When constants are removed, we have the following number of operations in the se
 We divide this with $n$ operations and the amortized cost per operation is $\Theta\left(\log n\right)$.
 
 \subsection{c}
+% BinarySearch(x, A) returns element index or -1
+Idea: First find element $y$ in array $A_i$ on index $p$. Then remove the element from $A_i$ and move all elements before $y$ up, and then put $y$ at index 0. Then we call the auxillary function which takes a list of arrays $A_0$ to $A_m$ and removes the first element of $A_m$ and propagates the other elements into the arrays $A_0$ to $A_{m-1}$.
+\begin{align*}
+  &\text{Delete}(x)\\
+  &~~~~\text{for } i=0 \text{ to } k-1\\
+  &~~~~~~~~p \leftarrow \text{BinarySearch}(x, A_i)\\
+  &~~~~~~~~\text{if } p \neq -1 \text{ then}\\
+  &~~~~~~~~~~~~y \leftarrow A_i[p]\\
+  &~~~~~~~~~~~~\text{for } q=p-1 \text{ to } 0\\
+  &~~~~~~~~~~~~~~~~A_i[q+1] \leftarrow A_i[q]\\
+  &~~~~~~~~~~~~A_i[0] \leftarrow y\\
+  &~~~~~~~~~~~~\text{break}\\
+  &~~~~\text{DeleteAux}(A_0\ldots A_i)\\
+\end{align*}
+The insert($x, A$) function inserts element $x$ into an already sorted array $A$ with one free element in worst case $O(n)$ time.
+\begin{align*}
+  &\text{DeleteAux}(A_0\ldots A_m)\\
+  &~~~~i \leftarrow m-1\\
+  &~~~~\text{while } n_i = 0 \text{ and } i > 0\\
+  &~~~~~~~~i \leftarrow i - 1\\
+  &~~~~y \leftarrow A_i[0]\\
+  &~~~~\text{if } i = 0 \text{ then}\\
+  &~~~~~~~~p \leftarrow 1\\
+  &~~~~~~~~\text{for } j=m-1 \text{ to } 0\\
+  &~~~~~~~~~~~~A_j \leftarrow A_m[p:2^j]\\
+  &~~~~~~~~~~~~n_j \leftarrow 1\\
+  &~~~~~~~~~~~~p \leftarrow 2^j\\
+  &~~~~~~~~n_0 \leftarrow 0\\
+  &~~~~\text{else then}\\
+  &~~~~~~~~x \leftarrow \text{ DeleteAux}(A_0\ldots A_i)\\
+  &~~~~~~~~\text{insert}(x, A_i)\\
+  &~~~~\text{return } y\\
+\end{align*}
+
+Worst case running time: Search without the auxillary function takes $O(\log(n+1) \log n)$. The DeleteAux function calls itself max $\log(n)$ times so takes in worst case $O(\log(n+1)) + O(n \log(n+1)) + O(n)$ time, so in total $O(n \log n)$.
 
 \end{document}
