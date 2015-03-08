@@ -173,6 +173,8 @@ The insert($x, A$) function inserts element $x$ into an already sorted array $A$
   &~~~~\text{return } y\\
 \end{align*}
 
-Worst case running time: Search without the auxillary function takes $O(\log(n+1) \log n)$. The DeleteAux function calls itself max $\log(n)$ times so takes in worst case $O(\log(n+1)) + O(n \log(n+1)) + O(n)$ time, so in total $O(n \log n)$.
+Worst case running time: The worst case is when all arrays left to the one we delete from are full. Search without the auxillary function takes $O(\log(n+1) \log n)$. The DeleteAux function calls itself max $\log(n)$ times. In worst case, the first loop takes constant time ($n_{m-1} = 1$), and the else-part of the conditional statement is entered. This part takes in worst case $O(n \log n)$, so the total running time is $O(\log(n) \log(n)) + O(1) + O(n \log(n))$ time, so in total $O(n \log n)$.
+\\\\
+Amorized cost: The worst possible sequence is to first add $n = 2^i-1, i \geq 1$ elements, and then alternating between deleting an element from the largest array and inserting one element. The first insertions will have an amortized cost of $O(\log n)$. The deletion will take $O(n \log n)$ time, and the insertion will take constant time ($A_1$ will be empty). Because the insertion is constant, and deletion is not, we will not be able to fill the bank with enough money to make the amortized cost smaller than $O(n \log n)$. However, a replace function, which replaces an existing element with a new element, can be implemented to run in $O(n)$ time.
 
 \end{document}
