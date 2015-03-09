@@ -159,6 +159,8 @@ At the sprint planning a desire to do automatic checking of null pointer excepti
 
 \todo{Vi har kigget på:}
 
+
+
 \begin{itemize}
   \item LIME testbench \url{http://www.tcs.hut.fi/Software/lime/}.
   \item ACTEve \href{http://delivery.acm.org/10.1145/2400000/2393666/a59-anand.pdf?ip=130.225.198.195&id=2393666&acc=ACTIVE\%20SERVICE&key=36332CD97FA87885\%2E1DDFD8390336D738\%2E4D4702B0C3E38B35\%2E4D4702B0C3E38B35&CFID=627209490&CFTOKEN=76801213&__acm__=1424945812_ab641600a5058e5b199a617b521e4023}{LINK}
@@ -173,7 +175,7 @@ At the sprint planning a desire to do automatic checking of null pointer excepti
   \item CATG \url{https://github.com/ksen007/janala2}
 \end{itemize}
 
-\todo{Andreas: Write about why we don't want this.}
+We investigate several frameworks for concolic testing, includeing LIME and ACTEve. These frameworks are meant to be used with pure Java code, therefore we need to adapt our code to support the frameworks. We do not think this work is worth the payoff, so we will not spend more time investigating this.
 
 \section{Automated Lint Check}\label{sec:automated_lint}
 Lint checking is static code analysis that scans the source code for potential bugs and improvements. We investigate the possibility of automating lint checks on the source code, as we suspect this will uncover a wide range of improvements.
