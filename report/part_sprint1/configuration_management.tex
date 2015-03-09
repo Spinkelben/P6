@@ -55,9 +55,9 @@ The inherited Jenkins installation was open to anybody. We do not find this sens
 \kimnote{why did you choose to set the system up this way? What are the pros and cons of this? What are the alternatives and why are they bad?}\todo{Michael: Jeg tror jeg har fikset det --- men der kan sikkert skrives mere.}
 
 \section{Build Automation}\label{sec:build_automation}
-As the inherited project had no build automation, we decided to set it up in two stages. In the first stage we schedule all jobs to run nightly. This gives us some level of build automation and gives us time to investigate merge strategies and set it up properly. 
-\todo{Vi har fikset det (noget med APK-filer) + skeduleret det nightly (nighly builds) som det aller første, da det overhovedet ikke var automatiseret til at starte med. Efterfølgende har vi så sat det op til at build ved hvert push til master.}
-\todo{Vi har gjort apk-naming bedre (så de ikke hedder workspace)}
+The inherited project has no build automation, we decide to set it up in two stages. In the first stage we schedule all jobs to run nightly. This gives us some level of build automation and gives us time to investigate merge strategies and set it up properly. The nightly job is set to run every day at midnight.
+
+The output of a build is an APK file, which is a package format used to distribute and install software onto Android. These files need to be signed before they can be installed. As such, we add a post-build task to Jenkins which signs and verifies the APK files as well as moves it into a common APK folder for all projects.
 
 \subsection{Merging With Master}\label{sec:branching_strategy}
 As the name \emph{continuous integration} suggests, code should be integrated into the mainline (or \emph{master branch}) of the project frequently \parencite{fowlerCI}. According to Martin Fowler, frequent merges ensure that merges generally will be small and easy to perform \parencite{fowlerFeatureBranch}. The master branch must be stable and always in a release-ready state. If it breaks, it should be the team's first priority to fix it. A consequence of this is that the whole team is affected when a developer introduces an error, which has a negative influence on the overall productivity.
@@ -134,20 +134,16 @@ For the first sprint, we choose to implement the direct commit strategy, primari
 
 \todo{Write about how we implemented this. Collab with git group?}
 
-\subsection{Signing APK Files}
-The output of a build is an APK file, which is a package format used to distribute and install software onto Android. These files need to be signed before they can be installed. As such, we add a post-build task to Jenkins which signs and verifies the APK file as well as moves it into a common APK folder for all projects.
+\subsection{Continuous Test}
+After deciding upon the merge strategies, we improve the nightly build and test automation. Instead of building and testing nightly, we automatically build and test projects whenever new code is pushed to the master branch. This gives the developer fast feedback on the integration of the code, and we are likely to discover an error in the code faster than before. The automatic build is triggered by a git-hook on each repository the git server which is a way to execute a script when specific git events occur. The script is executed whenever something is pushed to the repository. It sends an HTTP request to the Jenkins server which triggers builds of all projects that depends on the repository. Now that the automatic test setup is created, we examine the different types of automatic tests we can use on Android.
+\todo{Noget om at det skal gå stærkt (find kilder) - senere kommer der noget om en langsom emulator og om at det er langsomt}
 
-After signing the APK file, we automatically upload it to the Android Play Store on the alpha\todo{or beta?} channel. \todo{Vi skal nok være opmærksomme på ``I found that you can upload about 14 apps per 24 hours''}
+\todo{Vi har gjort apk-naming bedre (så de ikke hedder workspace)}
 
-\section{Test Automation}\label{sec:test_automation}
-Test are only useful if they are run. Therefore we are interested in automating the running of tests to ensure that they are run frequently. We will set automatic testing in Jenkins.
-\kimnote{how is this setup? Cron?}
-\kimnote{how often are the test run? more detail please.}
-% Skal være tosset hurtig
 \subsection{Unit Testing}
 During the initial investigation of the inherited code base we found some existing unit tests in the \gproject{Oasis-lib}\kimnote{cite missing} project. These tests utilize the Android unit testing framework \todo{Caps?} included in the Android framework \parencite{AndroidUnit}. The unit tests runs in an emulated Android environment, or on actual Android devices if any are connected to the computer. We therefore decide to postpone any further investigation into unit testing frameworks. Instead, we focus on getting the existing unit tests to run, both locally and in Jenkins. The tests were immediately runnable through Android Studio 0.4.6 \todo{check this version number}. However, Android Studio does something behind the scenes when it runs the tests, and therefore we could not run them from the command line, which means that we cannot run them in Jenkins. However, the most recent Android studio, version 1.0.2, uses Gradle exclusively to run the tests. This means that when the projects are migrated to the new version, we are able to run the tests with Jenkins.
 The other projects did not have any tests, so we create test projects, with examples of tests to verify that Jenkins can run the tests, and to show the other groups how to create new tests.
-Currently, Jenkins starts a new emulator before each project is built. This adds a significant delay to the build. The build time for the entire app has increased from \SIrange[range-units = single]{20}{90}{\minute}. This is unfortunate, but for now we won't spend more time, to improve on this. We may return to this in a later sprint.
+Currently, Jenkins starts a new emulator before each project is built. This adds a significant delay to the build. The build time for the entire app has increased from \SIrange[range-units = single]{20}{90}{\minute}. This is unfortunate, but for now we won't spend more time improving on this. We may return to this in a later sprint.
 \subsection{Integration Testing}
 \dummy~\dummy~\dummy
 
