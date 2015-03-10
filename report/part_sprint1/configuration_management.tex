@@ -52,7 +52,7 @@ There are a number of unused plugins enabled in Jenkins. We tried to disable the
 
 \subsection{Setting up Roles in Jenkins}
 The inherited Jenkins installation was open to anybody. We do not find this sensible as we need to control the build process. Allowing everybody access will likely end in someone modifying a setting without our knowledge. We modify the access settings allow us to have full configuration access while everybody else has read access. We intend to set up a mechanism for automatic build, therefore other people do not need the option to start builds. It might even interfere with the automatic build, if other people have access to Jenkins' configuration and build. 
-\todo{http://www.martinfowler.com/articles/continuousIntegration.html#EveryoneCanSeeWhatsHappening}
+\todo{http://www.martinfowler.com/articles/continuousIntegration.html\#EveryoneCanSeeWhatsHappening}
 
 \section{Build Automation}\label{sec:build_automation}
 The inherited project has no build automation, we decide to set it up in two stages. In the first stage we schedule all jobs to run nightly. This gives us some level of build automation and gives us time to investigate merge strategies and set it up properly. The nightly job is set to run every day at midnight.
