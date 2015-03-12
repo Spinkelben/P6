@@ -203,3 +203,5 @@ The Doxygen tool is a cross-language documentation generator that supports the s
 
 \subsection{Documentation Generation in Jenkins}
 We have configured a Jenkins job to generate the documentation for all projects. This job pulls the most recent state of the master branch of each project and executes the Doxygen tool on all code. On the current code base, the doxygen tool uses 3--7 minutes to generate the documentation \todo{Why the large span?}. Because we do not want to block more important jobs, such as building and testing new commits, we choose to run this job nightly.
+
+\todo{Somthing about collaboration with regards to going live with android studio migration}
