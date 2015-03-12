@@ -55,10 +55,8 @@ The inherited Jenkins installation was open to anybody. We do not find this sens
 
 It is important that everyone can see the build process, however. According to Martin Fowler, it is important that everyone is able to see the state of builds and which parts of the overall system that are currently worked on \parencite{fowlerCI}. In addition to this, we find it important that developers can follow the testing process of their new code, and how stable different projects are. This way, we are able to transfer human resources between projects if needed, and it may work as a motivation for the developers to create stable builds. Because of this, we give developers read-only access to Jenkins, while we are the only people with write access.
 
-\section{Build Automation}\label{sec:build_automation}
+\section{Build and Test Automation}\label{sec:build_automation}
 The inherited project has no build automation, we decide to set it up in two stages. In the first stage we schedule all jobs to run nightly. This gives us some level of build automation and gives us time to investigate merge strategies and set it up properly. The nightly job is set to run every day at midnight.
-
-The output of a build is an APK file, which is a package format used to distribute and install software onto Android. These files need to be signed before they can be installed. As such, we add a post-build task to Jenkins which signs and verifies the APK files as well as moves it into a common APK folder for all projects.
 
 \subsection{Merging With Master}\label{sec:branching_strategy}
 As the name \emph{continuous integration} suggests, code should be integrated into the mainline (or \emph{master branch}) of the project frequently \parencite{fowlerCI}. According to Martin Fowler, frequent merges ensure that merges generally will be small and easy to perform \parencite{fowlerFeatureBranch}. The master branch must be stable and always in a release-ready state. If it breaks, it should be the team's first priority to fix it. A consequence of this is that the whole team is affected when a developer introduces an error, which has a negative influence on the overall productivity.
@@ -136,26 +134,37 @@ For the first sprint, we choose to implement the direct commit strategy, primari
 
 \todo{Write about how we implemented this. Collab with git group?}
 
+\subsection{Continuous Build}
+The output of a build is an APK file, which is a package format used to distribute and install software onto Android. These files need to be signed before they can be installed. As such, we add a post-build task to Jenkins which signs and verifies the APK files as well as moves it into a common APK folder for all projects.
+
+After deciding upon the merge strategies, we improve the nightly build and test automation. Instead of building and testing nightly, we automatically build and test projects whenever new code is pushed to the master branch. This gives the developer fast feedback on the integration of the code, and we are likely to discover an error in the code faster than before. The automatic build is triggered by a git-hook on each repository which is a way to execute a script when specific git events occur. The script is executed whenever something is pushed to the repository. It sends an HTTP request to the Jenkins server which triggers builds of all projects that depend on the repository.
+
+\todo{Vi har gjort apk-naming bedre (så de ikke hedder workspace)}
 \subsection{Continuous Test}
 \label{sec:test_automation}
-After deciding upon the merge strategies, we improve the nightly build and test automation. Instead of building and testing nightly, we automatically build and test projects whenever new code is pushed to the master branch. This gives the developer fast feedback on the integration of the code, and we are likely to discover an error in the code faster than before. The automatic build is triggered by a git-hook on each repository which is a way to execute a script when specific git events occur. The script is executed whenever something is pushed to the repository. It sends an HTTP request to the Jenkins server which triggers builds of all projects that depend on the repository. Now that the automatic test setup is created, we examine the different types of automatic tests we can use on Android.
+Now that the automatic test setup is created, we examine the different types of automatic tests we can use on Android.
 
 Because one of the ideas behind automated build is to give the developer fast feedback on the state of the code, the build and test process should be fast. The Extreme Programming (XP) development method states 10 minutes as a guideline for how long time a build should take \parencite{beck2004}. While we think this is a reasonable time, not all parts of the system can be thoroughly tested in that time. In such cases, Martin Fowler suggests that the fastest and general tests should be whenever a commit is pushed to the master branch, and slower tests can be triggered for later execution \parencite{fowlerCI}. We call these kinds of tests \emph{delayed tests}.\todo{Brug dette term fremover}
 
-\todo{Vi har gjort apk-naming bedre (så de ikke hedder workspace)}
-
-\subsection{Unit Testing}
+\subsubsection{Unit Testing}
 During the initial investigation of the inherited code base we found some existing unit tests in the \gproject{Oasis-lib} project. These tests utilize the Android unit testing framework \todo{Caps?} included in the Android framework \parencite{AndroidUnit}. The unit tests runs in an emulated Android environment, or on actual Android devices if any are connected to the computer. We therefore decide to postpone any further investigation into unit testing frameworks. Instead, we focus on getting the existing unit tests to run, both locally and in Jenkins. The tests were immediately runnable through Android Studio 0.4.6 \todo{check this version number}. However, Android Studio does something behind the scenes when it runs the tests, and therefore we could not run them from the command line, which means that we cannot run them in Jenkins. However, the most recent Android studio, version 1.0.2, uses Gradle exclusively to run the tests. This means that when the projects are migrated to the new version, we are able to run the tests with Jenkins.
 The other projects did not have any tests, so we create test projects, with examples of tests to verify that Jenkins can run the tests, and to show the other groups how to create new tests.
 Currently, Jenkins starts a new emulator before each project is built. This adds a significant delay to the build. The build time for the entire app has increased from \SIrange[range-units = single]{20}{90}{\minute}. This is unfortunate, but for now we won't spend more time improving on this. We may return to this in a later sprint. Unit tests are the simplest tests we have, and we do not want these to be handled as delayed tests.
 
-\subsection{Integration Testing}
+\subsubsection{Integration Testing}
 \dummy~\dummy~\dummy
 \todo{Måske noget om at komplicerede integration tests kan køres som delayed tests}
 \dummy~\dummy~\dummy~
-\subsection{UI Testing / Monkey Testing}
-Writing UI tests can be labor intensive and the maintenance of the tests can get quite comprehensive. As an alternative, monkey testing can be used. Monkey testing is when a machine randomly presses buttons, acting like a monkey. That way the UI and the entire app is exercised. There is no guarantees that the full app will be tested, but there is almost no setup. The official Android SDK has monkey testing facilities build in. We will configure Jenkins to run monkey tests during the night, as delayed tests, when the server otherwise is idle. The other groups will be able to subscribe to tests reports of the individual objects \todo{Hvad er objects?}. That way they can get notified when issues are found during the monkey test.
-\subsection{Concolic Testing}
+\subsubsection{UI Testing and Monkey Testing}
+Because Android applications contain a graphical user interface, it is not sufficient to only test the backend libraries. On the overall level, there are two ways of performing automatic testing of the user interface in Android: UI tests and monkey tests. UI tests is a way of declaring specific sequences of events and their expected behaviours.
+
+\todo{Describe UI tests in a bit more detail}
+
+Writing UI tests can be labor intensive and the maintenance of the tests can get quite comprehensive. As an alternative, monkey testing can be used. Monkey testing is a test performed by inputting a random sequence of events, such as buttons clicks and touches, into a device. That way, the user interface of an app is randomly tested. There are no guarantees that all parts of the app will be tested, but the setup of the test is very simple. The official Android SDK has monkey testing facilities built in, and there exists a Jenkins plugin for running these. We plan to run monkey tests on Jenkins during the night, as delayed tests, when the server otherwise is idle. The developers will get notified if issues are found.
+
+While the Android monkey tool can test multiple applications at once, the Jenkins plugin does not support that feature. The plugin is open source, so we add support for this feature which will be part of its next release. This additional work was unplanned, and we do not have time for completing the automated monkey testing in this sprint.
+
+\subsubsection{Concolic Testing}
 Concolic testing is a way to statically analyze potential null pointer exceptions. Concolic testing automatically tests all execution branches in code \parencite{concolic_testing_2015}.
 
 \todo{Vi har kigget på:}
@@ -178,7 +187,7 @@ Concolic testing is a way to statically analyze potential null pointer exception
 
 We investigate several frameworks for concolic testing, including LIME Testbench \parencite{conc-lime} and ACTEve \todo{Insert refs}. These frameworks are meant to be used with pure Java code \todo{also ACTEve??}, therefore we need to adapt our Android project code to support the frameworks. We do not think this work is worth the payoff, so we will not spend more time investigating this.
 
-\section{Automated Lint Check}\label{sec:automated_lint}
+\subsection{Automated Lint Check}\label{sec:automated_lint}
 Lint checking is static code analysis that scans the source code for potential bugs and improvements. We investigate the possibility of automating lint checks on the source code, as we suspect this will uncover a wide range of improvements.
 
 An official tool, Android Lint \parencite{AndroidLint}, for linting Android project source files exists. It checks for potential bugs and optimization improvements for correctness, security, performance, usability, accessibility, and internationalization.
