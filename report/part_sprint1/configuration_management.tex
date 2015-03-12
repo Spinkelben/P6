@@ -51,13 +51,13 @@ We inherited the old installation which had not been updated in a long time. Jen
 There are a number of unused plugins enabled in Jenkins. We tried to disable these, but this resulted in failure to start Jenkins. We undid the changes and have decided not to remove these unused plugins as it will not hinder further configuration of Jenkins.
 
 \subsection{Setting up Roles in Jenkins}
-The inherited Jenkins installation was open to anybody. We do not find this sensible as we need to control the build process. Allowing everybody access will likely end in someone modifying a setting without our knowledge. We modify the access settings allow us to have full configuration access while everybody else has read access.
-\kimnote{why did you choose to set the system up this way? What are the pros and cons of this? What are the alternatives and why are they bad?}\todo{Michael: Jeg tror jeg har fikset det --- men der kan sikkert skrives mere.}
+The inherited Jenkins installation was open to anybody. We do not find this sensible as we need to control the build process. Allowing everybody access will likely end in someone modifying a setting without our knowledge. We intend to set up a mechanism for automatic build, therefore other people do not need the option to start builds. It might even interfere with the automatic build, if other people have access to Jenkins' configuration and build. 
+\href{http://www.martinfowler.com/articles/continuousIntegration.html\#EveryoneCanSeeWhatsHappening}{Link to Martin Fowler}. We modify the access settings to allow us to have full configuration access while everybody else has read access. 
 
 \section{Build Automation}\label{sec:build_automation}
-As the inherited project had no build automation, we decided to set it up in two stages. In the first stage we schedule all jobs to run nightly. This gives us some level of build automation and gives us time to investigate merge strategies and set it up properly. 
-\todo{Vi har fikset det (noget med APK-filer) + skeduleret det nightly (nighly builds) som det aller første, da det overhovedet ikke var automatiseret til at starte med. Efterfølgende har vi så sat det op til at build ved hvert push til master.}
-\todo{Vi har gjort apk-naming bedre (så de ikke hedder workspace)}
+The inherited project has no build automation, we decide to set it up in two stages. In the first stage we schedule all jobs to run nightly. This gives us some level of build automation and gives us time to investigate merge strategies and set it up properly. The nightly job is set to run every day at midnight.
+
+The output of a build is an APK file, which is a package format used to distribute and install software onto Android. These files need to be signed before they can be installed. As such, we add a post-build task to Jenkins which signs and verifies the APK files as well as moves it into a common APK folder for all projects.
 
 \subsection{Merging With Master}\label{sec:branching_strategy}
 As the name \emph{continuous integration} suggests, code should be integrated into the mainline (or \emph{master branch}) of the project frequently \parencite{fowlerCI}. According to Martin Fowler, frequent merges ensure that merges generally will be small and easy to perform \parencite{fowlerFeatureBranch}. The master branch must be stable and always in a release-ready state. If it breaks, it should be the team's first priority to fix it. A consequence of this is that the whole team is affected when a developer introduces an error, which has a negative influence on the overall productivity.
@@ -67,6 +67,7 @@ We assess two strategies to accommodate these consequences of continuous integra
 An alternative to integrating code directly with the master branch is to use pre-tested commits \parencite{fowlerPendingHead}. A pre-tested commit uses a special branch which is an intermediate place for building and testing code before it is merged into the master branch. The code will only be merged into the master branch if it passes the tests. This ensures that the master branch will always work, but the merging workflow will be more complex as the developer must pull from one branch and push to another. The strategy is illustrated in \figureref{fig:commit_stratagy_b}. The developer creates a branch from the master branch and develops its code on here. When completed, the code is merged with the intermediate branch (commit \emph{\mono{I}}), which will build and test the code before eventually merging it with the master branch (commit \mono{D}).
 
 For the first sprint, we choose to implement the direct commit strategy, primarily because of its simplicity. It is important to get continuous integration up running so the developers can start to develop code, and it would be too costly to spend time implementing a pre-tested commit strategy as this will block the progress of all other developers. We are unsure about how the developers handle the increased responsibility, so in the preparation of the second sprint, we will evaluate this strategy and consider whether we should implement the pre-tested commit strategy instead.\todo{Husk at evaluére dette}
+\todo{Evt. noget om peer-reviews (gerrit, pull-requests)}
 
 \begin{figure}
 \begin{subfigure}[b]{\linewidth}
@@ -134,30 +135,31 @@ For the first sprint, we choose to implement the direct commit strategy, primari
 
 \todo{Write about how we implemented this. Collab with git group?}
 
-\subsection{Signing APK Files}
-The output of a build is an APK file, which is a package format used to distribute and install software onto Android. These files need to be signed before they can be installed. As such, we add a post-build task to Jenkins which signs and verifies the APK file as well as moves it into a common APK folder for all projects.
+\subsection{Continuous Test}
+\label{sec:test_automation}
+After deciding upon the merge strategies, we improve the nightly build and test automation. Instead of building and testing nightly, we automatically build and test projects whenever new code is pushed to the master branch. This gives the developer fast feedback on the integration of the code, and we are likely to discover an error in the code faster than before. The automatic build is triggered by a git-hook on each repository which is a way to execute a script when specific git events occur. The script is executed whenever something is pushed to the repository. It sends an HTTP request to the Jenkins server which triggers builds of all projects that depend on the repository. Now that the automatic test setup is created, we examine the different types of automatic tests we can use on Android.
 
-After signing the APK file, we automatically upload it to the Android Play Store on the alpha\todo{or beta?} channel. \todo{Vi skal nok være opmærksomme på ``I found that you can upload about 14 apps per 24 hours''}
+Because one of the ideas behind automated build is to give the developer fast feedback on the state of the code, the build and test process should be fast. The Extreme Programming (XP) development method states 10 minutes as a guideline for how long time a build should take \parencite{beck2004}. While we think this is a reasonable time, not all parts of the system can be thoroughly tested in that time. In such cases, Martin Fowler suggests that the fastest and general tests should be whenever a commit is pushed to the master branch, and slower tests can be triggered for later execution \parencite{fowlerCI}. We call these kinds of tests \emph{delayed tests}.\todo{Brug dette term fremover}
 
-\section{Test Automation}\label{sec:test_automation}
-Test are only useful if they are run. Therefore we are interested in automating the running of tests to ensure that they are run frequently. We will set automatic testing in Jenkins.
-\kimnote{how is this setup? Cron?}
-\kimnote{how often are the test run? more detail please.}
-% Skal være tosset hurtig
+\todo{Vi har gjort apk-naming bedre (så de ikke hedder workspace)}
+
 \subsection{Unit Testing}
-During the initial investigation of the inherited code base we found some existing unit tests in the \gproject{Oasis-lib}\kimnote{cite missing} project. These tests utilize the Android unit testing framework \todo{Caps?} included in the Android framework \parencite{AndroidUnit}. The unit tests runs in an emulated Android environment, or on actual Android devices if any are connected to the computer. We therefore decide to postpone any further investigation into unit testing frameworks. Instead, we focus on getting the existing unit tests to run, both locally and in Jenkins. The tests were immediately runnable through Android Studio 0.4.6 \todo{check this version number}. However, Android Studio does something behind the scenes when it runs the tests, and therefore we could not run them from the command line, which means that we cannot run them in Jenkins. However, the most recent Android studio, version 1.0.2, uses Gradle exclusively to run the tests. This means that when the projects are migrated to the new version, we are able to run the tests with Jenkins.
+During the initial investigation of the inherited code base we found some existing unit tests in the \gproject{Oasis-lib} project. These tests utilize the Android unit testing framework \todo{Caps?} included in the Android framework \parencite{AndroidUnit}. The unit tests runs in an emulated Android environment, or on actual Android devices if any are connected to the computer. We therefore decide to postpone any further investigation into unit testing frameworks. Instead, we focus on getting the existing unit tests to run, both locally and in Jenkins. The tests were immediately runnable through Android Studio 0.4.6 \todo{check this version number}. However, Android Studio does something behind the scenes when it runs the tests, and therefore we could not run them from the command line, which means that we cannot run them in Jenkins. However, the most recent Android studio, version 1.0.2, uses Gradle exclusively to run the tests. This means that when the projects are migrated to the new version, we are able to run the tests with Jenkins.
 The other projects did not have any tests, so we create test projects, with examples of tests to verify that Jenkins can run the tests, and to show the other groups how to create new tests.
-Currently, Jenkins starts a new emulator before each project is built. This adds a significant delay to the build. The build time for the entire app has increased from \SIrange[range-units = single]{20}{90}{\minute}. This is unfortunate, but for now we won't spend more time, to improve on this. We may return to this in a later sprint.
+Currently, Jenkins starts a new emulator before each project is built. This adds a significant delay to the build. The build time for the entire app has increased from \SIrange[range-units = single]{20}{90}{\minute}. This is unfortunate, but for now we won't spend more time improving on this. We may return to this in a later sprint. Unit tests are the simplest tests we have, and we do not want these to be handled as delayed tests.
+
 \subsection{Integration Testing}
 \dummy~\dummy~\dummy
-
+\todo{Måske noget om at komplicerede integration tests kan køres som delayed tests}
 \dummy~\dummy~\dummy~
 \subsection{UI Testing / Monkey Testing}
-Writing UI test can be labor intensive, and the maintenance of the test can get quite comprehensive. Instead monkey testing can be used. Monkey testing is when a machine randomly presses buttons, acting like a monkey. That way the UI and the entire app is exercised. There is no guarantees that the full app will be tested, but there is almost no setup. The official Android SDK has a monkey testing facilities build in. We have configured Jenkins to run monkey tests during the night, when the server otherwise is idle. The other groups will be able to subscribe to tests reports of the individual objects. That way they can get notified when issues are found during the monkey test.
+Writing UI tests can be labor intensive and the maintenance of the tests can get quite comprehensive. As an alternative, monkey testing can be used. Monkey testing is when a machine randomly presses buttons, acting like a monkey. That way the UI and the entire app is exercised. There is no guarantees that the full app will be tested, but there is almost no setup. The official Android SDK has monkey testing facilities build in. We will configure Jenkins to run monkey tests during the night, as delayed tests, when the server otherwise is idle. The other groups will be able to subscribe to tests reports of the individual objects \todo{Hvad er objects?}. That way they can get notified when issues are found during the monkey test.
 \subsection{Concolic Testing}
-At the sprint planning a desire to do automatic checking of null pointer exceptions was expressed. To this end we investigated the possibility of utilizing concolic testing. Concolic testing automatically tests all execution branches \parencite{concolic_testing_2015}. These tests can check for null pointer exceptions.
+Concolic testing is a way to statically analyze potential null pointer exceptions. Concolic testing automatically tests all execution branches in code \parencite{concolic_testing_2015}.
 
 \todo{Vi har kigget på:}
+
+
 
 \begin{itemize}
   \item LIME testbench \url{http://www.tcs.hut.fi/Software/lime/}.
@@ -173,7 +175,7 @@ At the sprint planning a desire to do automatic checking of null pointer excepti
   \item CATG \url{https://github.com/ksen007/janala2}
 \end{itemize}
 
-\todo{Andreas: Write about why we don't want this.}
+We investigate several frameworks for concolic testing, including LIME Testbench \parencite{conc-lime} and ACTEve \todo{Insert refs}. These frameworks are meant to be used with pure Java code \todo{also ACTEve??}, therefore we need to adapt our Android project code to support the frameworks. We do not think this work is worth the payoff, so we will not spend more time investigating this.
 
 \section{Automated Lint Check}\label{sec:automated_lint}
 Lint checking is static code analysis that scans the source code for potential bugs and improvements. We investigate the possibility of automating lint checks on the source code, as we suspect this will uncover a wide range of improvements.
