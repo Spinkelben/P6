@@ -159,27 +159,11 @@ Because Android applications contain a graphical user interface, it is not suffi
 While the Android monkey tool can test multiple applications at once, the Jenkins plugin does not support that feature. The plugin is open source, so we add support for this feature which will be part of its next release. This additional work was unplanned, and we do not have time for completing the automated monkey testing in this sprint.
 
 \subsubsection{Concolic Testing}
-Concolic testing is a way to statically analyze potential null pointer exceptions. Concolic testing automatically tests all execution branches in code \parencite{concolic_testing_2015}.
+Concolic testing is a way to statically analyze code in order to find bugs, e.g.\ potential null pointer exceptions. Concolic testing uses a combination of symbolic execution and testing of particular paths in order to maximize code coverage \parencite{concolic_testing_2015}.
 
-\todo{Vi har kigget på:}
+To our knowledge, the only framework for concolic testing that works with Android Projects is Acteve \parencite{AnandNHY12, AnandH11}. The documentation for this framework is non-existent, and we cannot find anything except for a unsuccessful attempt to build and run Acteve \parencite{chenxiong-acteve}.
 
-
-
-\begin{itemize}
-  \item LIME testbench \url{http://www.tcs.hut.fi/Software/lime/}.
-  \item ACTEve \href{http://delivery.acm.org/10.1145/2400000/2393666/a59-anand.pdf?ip=130.225.198.195&id=2393666&acc=ACTIVE\%20SERVICE&key=36332CD97FA87885\%2E1DDFD8390336D738\%2E4D4702B0C3E38B35\%2E4D4702B0C3E38B35&CFID=627209490&CFTOKEN=76801213&__acm__=1424945812_ab641600a5058e5b199a617b521e4023}{LINK}
-\end{itemize}
-
-\todo{Vi burde også kigge på:}
-
-\begin{itemize}
-  \item LCT \href{http://users.ics.aalto.fi/ktkahkon/KahLauSaaKauHelNie-BYTECODE2011.pdf}{LINK}
-  \item jCUTE \url{http://osl.cs.illinois.edu/software/jcute/}
-  \item jFuzz \url{http://people.csail.mit.edu/akiezun/jfuzz/documentation.html}
-  \item CATG \url{https://github.com/ksen007/janala2}
-\end{itemize}
-
-We investigate several frameworks for concolic testing, including LIME Testbench \parencite{conc-lime} and ACTEve \todo{Insert refs}. These frameworks are meant to be used with pure Java code \todo{also ACTEve??}, therefore we need to adapt our Android project code to support the frameworks. We do not think this work is worth the payoff, so we will not spend more time investigating this.
+We already have unit testing and many crash reports to occupy the time of many multi-project groups, and as such we do not think concolic testing is worth the payoff, so we will not spend more time investigating this.
 
 \subsection{Automated Lint Check}\label{sec:automated_lint}
 Lint checking is static code analysis that scans the source code for potential bugs and improvements. We investigate the possibility of automating lint checks on the source code, as we suspect this will uncover a wide range of improvements.
