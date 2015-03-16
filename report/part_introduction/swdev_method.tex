@@ -37,7 +37,7 @@ Two roles from Scrum are used in the multi-project:
 
 \begin{description}
   \item[Scrum Master] On the multi-project level our group is responsible for the development method. This means that our group acts as Scrum master on the multi-project level. On the subproject level, one person has been designated the meeting responsible --- they make sure that the Scrum meetings on this level are held. On the group level each group is free to do what they see fit, in extension with groups being free to choose their own development method.
-  \item[Product Owner] The product owner (PO) is responsible for maintaining contact with the customers and being their representatives. In the multi-project having a single PO that has the external customer as customer can be difficult. Many of the groups that work in the build \& deployment and database subprojects do not have the external customer as direct customers. Rather, they help the GUI groups achieve their goal by building solutions for them. In particular the external customer is often not interested in the implementation details of build and database interfaces. \cite{bird_davies_2007} describes several methods of organizing teams.
+  \item[Product Owner] The product owner (PO) is responsible for maintaining contact with the customers and being their representatives. In the multi-project having a single PO that has the external customer as customer can be difficult. Many of the groups that work in the build \& deployment and database subprojects do not have the external customer as direct customers. Rather, they help the GUI groups achieve their goal by building solutions for them. In particular the external customer is often not interested in the implementation details of build and database interfaces. \textcite{bird_davies_2007} describes several methods of organizing teams.
   \begin{enumerate}
     \item Teams can run separately with a PO of their own, but this can prove difficult in the multi-project, as groups from each subproject may be dependent on the other groups.
     \item Teams can share a single backlog with one PO. The difficulties of the method were described just before, and is not preferable.
@@ -50,12 +50,11 @@ Two roles from Scrum are used in the multi-project:
 \fig{po_illu}{Illustration of product owners}{Illustration of product owners. \todo{Temporary figure. Make a nicer in tikz and add some more description. In particular of the arrows.}}
 
 \subsection{Meetings}
-Each week there is a meeting at the multi-project level. At this meeting the status of the groups in the multi-project is presented, and the development method is evaluated. This ensures that all groups knows the current status of the project, and that the development method can be continuously \todo{Er det den rigtige cont?} improved.
+Each week there is a meeting at the multi-project level. At this meeting the status of the groups in the multi-project is presented, and the development method is evaluated. This ensures that all groups know the current status of the project, and that the development method can be continually improved.
 
-At the subproject level a Scrum meeting is held at least two times a week. It is up to each subproject to organize the meetings. In addition to the Scrum meeting at the subproject level, each group is advised to hold a Daily Scrum in connection with the advise that they follow Scrum internally, but the it is an advice only.
-\kimnote{Scrum of Scrum?}
+At the subproject level a Scrum meeting is held at least two times a week. It is up to each subproject to organize these meetings. In addition to the Scrum meeting at the subproject level, each group is advised to hold a Daily Scrum in connection with the advise that they follow Scrum internally.
 
-Since there are three product owners in the entire multi-project, three sprint end and sprint planning meetings are made.
+Since there are three product owners in the entire multi-project, three sprint end and sprint planning meetings are held. These meetings were proposed by us, in connection with having three POs as described by \textcite{bird_davies_2007}, and then approved by the remaining groups.
 
 \begin{description}
   \item[Sprint Planning (GUI)] At this sprint planning only one representative from each GUI group participate as pigs (people who are allowed to talk), as well as the GUI PO and one representative from the other POs (although they have a less important role at this meeting). All other people in the multi-project are chicken (people who are not allowed to talk). This meeting is held with the end customers. By making it so that mainly the GUI groups are pigs, the end customers are abstracted from internal development such as continuous integration and database management.
