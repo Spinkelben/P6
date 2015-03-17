@@ -1,21 +1,24 @@
-\chapter{SW Configuration Management}\label{chap:config_management}
+\chapter{Software Configuration Management}\label{chap:config_management}
 Software configuration management is an important if not crucial part of any large software project. The large size of the multi-project requires some form of software configuration management to handle and track the changes in the software.
 
 Configuration management can greatly ease the workflow of the developers and increase their productivity. This chapter describes how we plan and execute configuration management. We aim to make it as easy as possible for the developers, and therefore we will automate as much as possible.
 
-\kimnote{When you use the term configuration management then be aware that it have a special meaning. There are multiple standards that define how proper configuration management is done and measured. This is a great opportunity to talk about official methods and how you utilize these in this project. :)}
+\kimnote{When you use the term configuration management then be aware that it have a special meaning. There are multiple standards that define how proper configuration management is done and measured. This is a great opportunity to talk about official methods and how you utilize these in this project. :)} \todo{Er dette ikke hvad vi beskriver i 4.1?}
 
 \begin{chapterorganization}
   \item in \sectionref{sec:SCM_vision} we identify a plan for the software configuration management and identify specific areas we want to improve or implement in the software configuration management practice;
   \item in \sectionref{sec:jenkins} we describe the continuous integration tool, Jenkins, that we use in the project;
-  \item in \sectionref{sec:build_automation} we explain how we set up automation of the builds and discuss branching strategies;
-  \item in \sectionref{sec:test_automation} we investigate and implement automated testing;
-  \item in \sectionref{sec:automated_lint} we investigate and implement automated linting;
+  \item in \sectionref{sec:build_automation} we explain how we set up automation of the builds and discuss branching strategies as well as automated testing and lint checking;
   \item in \sectionref{sec:automated_documentation_gen} we explain how we set up automated documentation generation.
 \end{chapterorganization}
 
+\begin{abbreviations}
+  \item[test] TEST
+  \item[test2] More test
+\end{abbreviations}
+
 \section{Software Configuration Management Plan}\label{sec:SCM_vision}
-Software Engineering Body of Knowledge (SWEBOK \todo{insert citation}) identifies some key areas of software configuration management.
+Guide to the Software Engineering Body of Knowledge (SWEBOK) \parencite{swebok} identifies some key areas of software configuration management.
 
 \subsection{Organizational Context}
 The responsibility of software configuration management is assigned to this group. As such, we vision the process will as unintrusive for the developers as possible.
@@ -39,7 +42,7 @@ The responsibility of software configuration management is assigned to this grou
 We do not want to set up a change control board (who can approve or reject change requests) --- not in agile mindset.
 
 \subsection{Tool Selection}
-Previous years already had revision control, and we take over their revision setup with Git \parencite{gitwebsite}. And Jenkins (explained later). Discuss the ``legacy''-aspect (how will the new SCM be applied to the old projects). Scope (how will the new tools be deployed --- entire organization or only specific projects?). Ownership (who is responsible for the introduction of the new tools?). Future plans (will the tools evolve in the future? New uses in the future?). Integrations (how are the tools integrated into eachother?)
+Previous years already had revision control, and we take over their revision setup with Git \parencite{gitwebsite}. \todo{And Jenkins (explained later). Discuss the ``legacy''-aspect (how will the new SCM be applied to the old projects). Scope (how will the new tools be deployed --- entire organization or only specific projects?). Ownership (who is responsible for the introduction of the new tools?). Future plans (will the tools evolve in the future? New uses in the future?). Integrations (how are the tools integrated into eachother?)}
 
 \section{Jenkins}\label{sec:jenkins}
 \todo{Rename evt. til continuous integration og forklar hvorfor vi vil have noget af det. Så kan vi skrive, at Jenkins er et værktøj til at udføre det. På den måde argumenterer vi hvorfor vi bruger Jenkins.}
@@ -114,7 +117,7 @@ For the first sprint, we choose to implement the direct commit strategy, primari
 \draw[->, >=latex] (master_head) -- (ph_head);
 
 % LOCAL
-\node[text width=2cm] at (0,0) {\mono{dev\_Branch}};
+\node[text width=2cm] at (0,0) {\mono{dev\_branch}};
 \node(local_b) [draw, circle, minimum size=0.7cm] at (3,0) {\mono{B}};
 \node(local_c) [draw, circle, minimum size=0.7cm] at (4,0) {\mono{C}};
 \draw[->,>=latex] (local_b) -- (master_a);
@@ -149,9 +152,9 @@ Now that the automatic test setup is created, we examine the different types of 
 Because one of the ideas behind automated build is to give the developer fast feedback on the state of the code, the build and test process should be fast. The Extreme Programming (XP) development method states 10 minutes as a guideline for how long time a build should take \parencite{beck2004}. While we think this is a reasonable time, not all parts of the system can be thoroughly tested in that time. In such cases, Martin Fowler suggests that the fastest and general tests should be whenever a commit is pushed to the master branch, and slower tests can be triggered for later execution \parencite{fowlerCI}. We call these kinds of tests \emph{delayed tests}.\todo{Brug dette term fremover}
 
 \subsubsection{Unit Testing}
-During the initial investigation of the inherited code base we found some existing unit tests in the \gproject{Oasis-lib} project. These tests utilize the Android unit testing framework \todo{Caps?} included in the Android framework \parencite{AndroidUnit}. The unit tests runs in an emulated Android environment, or on actual Android devices if any are connected to the computer. We therefore decide to postpone any further investigation into unit testing frameworks. Instead, we focus on getting the existing unit tests to run, both locally and in Jenkins. The tests were immediately runnable through Android Studio 0.4.6 \todo{check this version number}. However, Android Studio does something behind the scenes when it runs the tests, and therefore we could not run them from the command line, which means that we cannot run them in Jenkins. However, the most recent Android studio, version 1.0.2, uses Gradle exclusively to run the tests. This means that when the projects are migrated to the new version, we are able to run the tests with Jenkins.
+During the initial investigation of the inherited code base we found some existing unit tests in the \gproject{Oasis-lib} project. These tests utilize the Android unit testing framework included in the Android framework \parencite{AndroidUnit}. The unit tests runs in an emulated Android environment, or on actual Android devices if any are connected to the computer. We therefore decide to postpone any further investigation into unit testing frameworks. Instead, we focus on getting the existing unit tests to run, both locally and in Jenkins. The tests were immediately runnable through Android Studio 0.4.6 \todo{check this version number}. However, Android Studio does something behind the scenes when it runs the tests, and therefore we could not run them from the command line, which means that we cannot run them in Jenkins. However, the most recent Android studio, version 1.0.2, uses Gradle exclusively to run the tests. This means that when the projects are migrated to the new version, we are able to run the tests with Jenkins.
 The other projects did not have any tests, so we create test projects, with examples of tests to verify that Jenkins can run the tests, and to show the other groups how to create new tests.
-Currently, Jenkins starts a new emulator before each project is built. This adds a significant delay to the build. The build time for the entire app has increased from \SIrange[range-units = single]{20}{90}{\minute}. This is unfortunate, but for now we won't spend more time improving on this. We may return to this in a later sprint. Unit tests are the simplest tests we have, and we do not want these to be handled as delayed tests.
+Currently, Jenkins starts a new emulator before each project is built. This adds a significant delay to the build. The build time for the entire app has increased from 20 to 90 minutes. This is unfortunate, but for now we won't spend more time improving on this. We may return to this in a later sprint. Unit tests are the simplest tests we have, and we do not want these to be handled as delayed tests.
 
 \subsubsection{UI Testing and Monkey Testing}
 Because Android applications contain a graphical user interface, it is not sufficient to only test the backend libraries. On the overall level, there are two ways of performing automatic testing of the user interface in Android: UI tests and monkey tests. UI tests is a way of declaring specific sequences of events and their expected behaviours. For example, a test may specify a click on a settings button and assert that this actually opens the settings activity. Writing UI tests can be labor intensive, though, and the maintenance of the tests can get quite comprehensive. As an alternative, monkey testing can be used. Monkey testing is a test performed by inputting a random sequence of events, such as buttons clicks and touches, into a device. That way, the user interface of an app is randomly tested. There are no guarantees that all parts of the app will be tested, but the setup of the test is very simple. The official Android SDK has monkey testing facilities built in, and there exists a Jenkins plugin for running these. Because of the simplicity of monkey testing, and because the GUI application developers have requested this as a tool for discovering bugs in the code, this is the way we automatically test the user interface. We plan to run monkey tests on Jenkins during the night, as delayed tests, when the server otherwise is idle. The developers will get notified if issues are found.
@@ -159,27 +162,11 @@ Because Android applications contain a graphical user interface, it is not suffi
 While the Android monkey tool can test multiple applications at once, the Jenkins plugin does not support that feature. The plugin is open source, so we add support for this feature which will be part of its next release. This additional work was unplanned, and we do not have time for completing the automated monkey testing in this sprint.
 
 \subsubsection{Concolic Testing}
-Concolic testing is a way to statically analyze potential null pointer exceptions. Concolic testing automatically tests all execution branches in code \parencite{concolic_testing_2015}.
+Concolic testing is a way to statically analyze code in order to find bugs, e.g.\ potential null pointer exceptions. Concolic testing uses a combination of symbolic execution and testing of particular paths in order to maximize code coverage \parencite{concolic_testing_2015}.
 
-\todo{Vi har kigget på:}
+To our knowledge, the only framework for concolic testing that works with Android Projects is Acteve \parencite{AnandNHY12, AnandH11}. The documentation for this framework is non-existent, and we cannot find anything except for an unsuccessful attempt to build and run Acteve \parencite{chenxiong-acteve}.
 
-
-
-\begin{itemize}
-  \item LIME testbench \url{http://www.tcs.hut.fi/Software/lime/}.
-  \item ACTEve \href{http://delivery.acm.org/10.1145/2400000/2393666/a59-anand.pdf?ip=130.225.198.195&id=2393666&acc=ACTIVE\%20SERVICE&key=36332CD97FA87885\%2E1DDFD8390336D738\%2E4D4702B0C3E38B35\%2E4D4702B0C3E38B35&CFID=627209490&CFTOKEN=76801213&__acm__=1424945812_ab641600a5058e5b199a617b521e4023}{LINK}
-\end{itemize}
-
-\todo{Vi burde også kigge på:}
-
-\begin{itemize}
-  \item LCT \href{http://users.ics.aalto.fi/ktkahkon/KahLauSaaKauHelNie-BYTECODE2011.pdf}{LINK}
-  \item jCUTE \url{http://osl.cs.illinois.edu/software/jcute/}
-  \item jFuzz \url{http://people.csail.mit.edu/akiezun/jfuzz/documentation.html}
-  \item CATG \url{https://github.com/ksen007/janala2}
-\end{itemize}
-
-We investigate several frameworks for concolic testing, including LIME Testbench \parencite{conc-lime} and ACTEve \todo{Insert refs}. These frameworks are meant to be used with pure Java code \todo{also ACTEve??}, therefore we need to adapt our Android project code to support the frameworks. We do not think this work is worth the payoff, so we will not spend more time investigating this.
+We already have unit testing and many crash reports to occupy the time of many multi-project groups, and as such we do not think concolic testing is worth the payoff, so we will not spend more time investigating this.
 
 \subsection{Automated Lint Check}\label{sec:automated_lint}
 Lint checking is static code analysis that scans the source code for potential bugs and improvements. We investigate the possibility of automating lint checks on the source code, as we suspect this will uncover a wide range of improvements.

@@ -1,16 +1,23 @@
-%!TEX root = ../report.tex
 \chapter{Software Development Method}\label{chap:sw_dev_method}
 One of the great challenges this semester is to coordinate the development process across all 14 groups. 
 
 \begin{chapterorganization}
   \item in \sectionref{sec:project_overview} we describe how the multi-project is organized and introduce the hierarchy in the project;
-  \item in \sectionref{sec:redmine} we describe how our responsibility for development process influenced the work of other groups and the project organization tool we use;
-  \item \todo{Hvordan vi er organiseret i vores gruppe specifikt}
-  \item in \sectionref{sec:multi_project_group_roles} we detail the responsibilities delegated to most groups
+  \item in \sectionref{sec:swmethod_ourgroup} we describe the software development method in our group;
+  \item in \sectionref{sec:multi_project_group_roles} we detail the responsibilities delegated to most groups.
 \end{chapterorganization}
 
-\section{Project Organization Method}\label{sec:project_overview}
-The multi-project consists of 14 groups of approximately four people each. All groups collaborate on building the Giraf applications. The groups are organized into three subprojects: \emph{GUI}, \emph{databases}, and \emph{build and deployment} by recommendation of the semester coordinator.
+\begin{abbreviations}
+  \item[\gui] Graphical User Interface
+  \item[\db] Database
+  \item[\bd] Build \& Deployment
+  \item[PO] Product Owner
+\end{abbreviations}
+
+\section{Multi-Project Organization Method}\label{sec:project_overview}
+The multi-project consists of 14 groups of approximately four people each. All groups collaborate on building the Giraf applications. The groups are organized into three subprojects: \emph{Graphical User Interface} (\gui), \emph{databases} (\db), and \emph{build and deployment} (\bd) by recommendation of the semester coordinator.
+
+The \gui groups deal with bugs and implementing new features in the front-end apps. The \db groups manages and maintains the database. The \bd groups controls the tools supporting the building and testing environment as well as the deployment of the apps.
 
 The multi-project groups are organized as in Scrum of Scrums, since the semester is divided into four sprints (iterations). Thus the multi-project works as an agile team. This fits well with the fact that no groups had any prior experience with the code base at the start of the project. Suppose the multi-project was organized in a more traditional method. Then the multi-project groups could have spent much time initially analysing the current code base and future requirements, rather than actually working on making the code base work (a prime wish for the external customer).
 
@@ -22,8 +29,12 @@ Due to the subprojects there are three levels of Scrum: The multi-project level,
   \item[Group Level] While Scrum of Scrums dictates that Scrum is followed at all levels, this is not the case for the multi-project organization. This is of course a major deviation from Scrum of Scrums. When initially deciding the software development method, some groups expressed an interest in not running Scrum. Thus each group is given the freedom to organize how they see fit. However, all groups are expected to fill in the work products and attend the meetings described later.
 \end{description}
 
+An illustration of the multi-project organization can be seen in \figureref{fig:multi_project_organization}.
+
+\fig{multi_project_organization}{Illustration of multi-project organization}{Illustration of multi-project organization. \todo{Temporary figure. Make a nicer in tikz and add some more description.}}
+
 \subsection{Scrum Work Products}
-From Scrum two work products are used: Product backlog, release backlog:
+From Scrum two work products are used: Product backlog and release backlog:
 
 \begin{description}
   \item[Product Backlog] The backlog contains the user stories that the customers specify. These user stories are the requirements for the product from a user perspective \parencite{larman2003}. On the multi-project level a product backlog that contains all the user stories for the entire multi-project is used. The purpose of the multi-project level is to maintain the product backlog. The user stories in the product backlog are categorized according to each subproject. This enables each subproject to manage their user stories themselves, removing unnecessary management from the multi-project level.
@@ -33,79 +44,89 @@ From Scrum two work products are used: Product backlog, release backlog:
 Since it is not required for each group to use Scrum at the group level, there is no sprint backlog (collection of tasks).
 
 \subsection{Scrum Roles}
-In Scrum there are two roles besides the Scrum team:
+Two roles from Scrum are used in the multi-project:
 
 \begin{description}
-  \item[Scrum Master] On the multi-project level our group is responsible for the development method. This means that our group acts as Scrum master on the multi-project level. On the subproject level, one person has been designated the meeting responsible --- they make sure that the Scrum meetings on this level are held. On the group level each group is free to do what they see fit, so there is no guarantee that there is a Scrum master on this level.
-  \kimnote{Hvad med jer, hvad gør i?}
-  \item[Product Owner] The product owner (PO) is responsible for maintaining contact with the customers and being their representatives. In the multi-project there are three POs, one for each subproject. The customer for the GUI PO is the end customer, whereas the customers for the database and build and deployment POs are the groups from the other subprojects, as illustrated in \figureref{fig:po_illu}. These roles have been designated to a group in each subproject.
-  \kimnote{dette er første gang i nævner "end customers". Beskriv "customers" og "end customer" inden i bruger disse koncepter.}
+  \item[Scrum Master] On the multi-project level our group is responsible for the development method. This means that our group acts as Scrum master on the multi-project level. On the subproject level, one person has been designated the meeting responsible --- they make sure that the Scrum meetings on this level are held. On the group level each group is free to do what they see fit, in extension with groups being free to choose their own development method.
+  \item[Product Owner] The product owner (PO) is responsible for maintaining contact with the customers and being their representatives. In the multi-project having a single PO that has the external customer as customer can be difficult. Many of the groups that work in the \bd and \db subprojects do not have the external customer as direct customers. Rather, they help the GUI groups achieve their goal by building solutions for them. In particular the external customer is often not interested in the implementation details of build and database interfaces. \textcite{bird_davies_2007} describes four methods of organizing teams in Scrum of Scrums.
+  \begin{enumerate}
+    \item Teams can run separately with a PO of their own, but this can prove difficult in the multi-project, as groups from each subproject may be dependent on the other groups.
+    \item Teams can share a single backlog with one PO. The difficulties of the method were described just before, and is not preferable.
+    \item A group of teams (subprojects) can have a backlog with their own PO that takes items from a large common backlog. This method adds an extra layer on top of the previous described method, but it still has the issue that the primary customer is the external customer.
+    \item In the final method described, teams have other teams as customers. This method allows the GUI groups to be customer of the \bd groups. Thus the external customer can be abstracted from internal needs and technicalities.
+  We have chosen to present the fourth method to the groups of the multi-project who then approved the method. Specifically there are three POs in the multi-project, one for each subproject. The customer for the GUI PO is the external customer, whereas the customers for the \db and \bd POs are the groups from the other subprojects, as illustrated in \figureref{fig:po_illu}. These roles have been designated to a group in each subproject.
+  \end{enumerate}
 \end{description}
 
 \fig{po_illu}{Illustration of product owners}{Illustration of product owners. \todo{Temporary figure. Make a nicer in tikz and add some more description. In particular of the arrows.}}
 
-\subsection{Meetings}
-Each week there is a meeting at the multi-project level. At this meeting the status of the groups in the multi-project is presented, and the development method is evaluated. This ensures that all groups knows the current status of the project, and that the development method can be continuously \todo{Er det den rigtige cont?} improved.
+\subsection{Meetings}\label{sec:scrum_meetings}
+Each week there is a meeting at the multi-project level. At this meeting the status of the groups in the multi-project is presented, and the development method is evaluated. This ensures that all groups know the current status of the project, and that the development method can be continually improved.
 
-At the subproject level a Scrum meeting is held at least two times a week. It is up to each subproject to organize the meetings. In addition to the Scrum meeting at the subproject level, each group is advised to hold a Daily Scrum in connection with the advise that they follow Scrum internally, but the it is an advice only.
-\kimnote{Scrum of Scrum?}
+At the subproject level a Scrum meeting is held at least two times a week. It is up to each subproject to organize these meetings. In addition to the Scrum meeting at the subproject level, each group is advised to hold a Daily Scrum in connection with the advise that they follow Scrum internally.
 
-Since there are three product owners in the entire multi-project, three sprint end and sprint planning meetings are made.
+Since there are three product owners in the entire multi-project, three sprint end and sprint planning meetings are held. These meetings were proposed by us, in connection with having three POs as described by \textcite{bird_davies_2007}, and then approved by the remaining groups.
 
 \begin{description}
-  \item[Sprint Planning (GUI)] At this sprint planning only one representative from each GUI group participate as pigs (people who are allowed to talk), as well as the GUI PO and one representative from the other POs (although they have a less important role at this meeting). All other people in the multi-project are chicken (people who are not allowed to talk). This meeting is held with the end customers. By making it so that mainly the GUI groups are pigs, the end customers are abstracted from internal development such as continuous integration and database management.
-  \kimnote{Dette punkt er godt skrevet fordi i given en forklaring på hvorfor i gør som i gør. Dette er ikke den første gang i skriver godt, dette er bare en godt eksemple :D}
-  \item[Sprint Planning (DB and B\&D)] There is a sprint planning for DB and B\&D each, where each subproject establishes the needs of the other subprojects. This meeting is internal, and the end customers do not participate at this meeting, since the DB and B\&D do not have these as customers. DB and B\&D will mainly \kimnote{What do you mean by mainly?} have the GUI groups as their customers, who need various services from the DB and B\&D subprojects, in order for them to fulfil their own user stories directly related to the end customers. Again this abstracts the end customers from internal development.
-  \item[Sprint End (GUI)] At this meeting the end customers are presented with the work of the GUI groups. Only the GUI groups participate as pigs at this meeting.
-  \item[Sprint End (DB and B\&D)] There are internal meetings in the subprojects and a common meeting. At the common meeting DB and B\&D present the work they have done to the other subprojects. This way the end customers do not have to be bored with databases, build configurations, and such. The reason for having these three POs is that it enables the multi-project to abstract internal development from the end customers, so that they are only concerned with things that have an immediate interest to them.
+  \item[Sprint Planning Meetings]
+  The purpose of the sprint planning meetings is to ensure that the product backlog is up date date and select user stories for the release backlog.
+  \begin{description}
+    \item[GUI] At this sprint planning only one representative from each GUI group participate as pigs (people who are allowed to talk), as well as the GUI PO and one representative from the other POs (although they have a less important role at this meeting). All other people in the multi-project are chicken (people who are not allowed to talk). This meeting is held with the external customers. By making it so that primarily the GUI groups are pigs, the external customers are abstracted from internal development such as continuous integration and database management.
+    \item[\db and \bd] There is a separate sprint planning for \db and \bd each, where each subproject establishes the needs of the other subprojects. This meeting is internal, and the external customers do not participate at this meeting, since the \db and \bd do not have these as customers. \db and \bd will primarily have the GUI groups as their customers, who need various services from the \db and \bd subprojects, in order for them to fulfil their own user stories directly related to the external customers. However, it might be that \db needs something from \bd and that \bd needs something from \db. Again this abstracts the external customers from internal development.
+  \end{description}
+  \item[Sprint End Meetings]
+  At the sprint end meetings the work done in the sprint is presented to the customers.
+  \begin{description}
+    \item[GUI] At this meeting the external customers are presented with the work of the GUI groups. Only the GUI groups participate as pigs at this meeting.
+    \item[\db and \bd] \db and \bd hold each a separate sprint end meeting where they show the groups in the other subprojects what they have done in a sprint. The external customers are not present at these meetings, so that they are not bored with internal details.
+  \end{description}
 \end{description}
 
-\subsection{Meeting Times}
-A vital part of working agile involves being able to easily communicate with all members of the team. To ensure this it was decided that all groups should be present in their group rooms all weekdays from at least 09:00--15:00. However, it cannot be enforced that each group follows Scrum, because we have no power to control them (or fire them) like an employer can. Thus, there is no guarantee that groups will follow the decision regarding meeting times. In fact, two groups specifically said that they cannot. They would, however, be available on e-mail at the same times.
+\subsection{Office Hours}
+A vital part of working agile involves being able to easily communicate with all members of the team. To ensure this all groups must be reachable on mail all weekdays 09:00--15:00, and preferably be in the group rooms. An exception for this is when there are courses.
 
-\section{Tools}\label{sec:redmine}
-\todo{Skriv lidt mere om tools vi bruger til at understøtte vores udviklingsmetode end bare redmine}
-The multi-project uses an open source project management tool called Redmine. The main features used are the wiki, forum, and issue tracker. The issue tracker is not used as a traditional issue tracker, but instead customized to incorporate some Scrum practices. The issue tracker is now able to hold product, release, and sprint backlog. We collaborated with \group{3} (Redmine general) and \group{10} (issue tracker) to set this up. 
+\subsection{Tools}\label{sec:tools}
+To support the development method of the multi-project, an online project management tool, Redmine, is used. This tool was in use from the previous year, and so this year continues to use it. The main features are:  
+
+\begin{description}
+  \item[Wiki] A wiki is used for various information, such as guides, how the development method is structured, meeting summaries, etc. Previous years had several separate wikis for each subproject. This year there is a single wiki providing central information.
+  \item[Forum] The forum is used for non-crucial communication. It is mostly used for non-work related discussions such as social events. Groups are encouraged to communicate to each other directly by going to each other's group rooms, rather than using the forum.
+  \item[Issue Tracker] The issue tracker is not used as a traditional issue tracker, but instead customized to so that it contains the product backlog and release backlog. The user stories are mixed in with tasks, support issues, meetings, and other items. Filters can be used to isolate specific items, such as user stories in the product backlog. This setup is not ideal as it can be hard to manage at times, but it is what the multi-project has available without much more needed effort. We collaborated with \group{3} (Redmine general) and \group{10} (user story and task trackers) to set this up.
+\end{description}
+
+Redmine also contains other features such as a roadmap, burndown charts, and news.While these features are present on the main page, they are not used. The burndown chart in particularly is not used since no sprint backlog is used, and as such the burndown chart cannot be used on the multi-project level.
+
+They have not been removed, since it was deemed unnecessary to spent time on doing so.
 
 Also, a Gantt chart feature had been installed by previous years. The Scrum method does not advocate Gantt charts or other dependency charts. As such, we collaborated with \group{3} to remove this from Redmine.
 
-\section{Software Development Method in Our Group}
-As all groups are recommended to follow the Scrum development method, our group also follows it. \todo{Write that agile/scrum is suited for this product, changing requirements and such.}
-\kimnote{Bare ignorer tidligere kommentarer omkring manglende beskrivelse af jeres process. I skal dog forklare i højre grad hvordan jeres process er. Det undre mig atRedmine omtalt før det bliver forklaret. }
+\section{Software Development Method in Our Group}\label{sec:swmethod_ourgroup}
+As all groups are recommended to follow the Scrum development method, our group follows it. With it we hold a Daily Scrum each morning where we summarize our work since last time and what we intent to do until the next Daily Scrum.
 
-In our group we use a \emph{burndown chart} to measure our progress. We would have liked to have this for the entire multi-project as well, but since not every group follows Scrum and makes estimated tasks, it is impossible to measure the performance of the multi-project, and as such it does not make sense to do a burn down chart for the entire multi-project.
+In addition to the previously described work products, we use a sprint backlog. After a sprint planning where user stories have been assigned to each group, we then split the user stories assigned to us into tasks and estimate those tasks using planning poker. Our sprint backlog is physically placed on a wall, so that we can easily manage our tasks. In addition to the sprint backlog we use a \emph{burndown chart} to measure our progress.
 
-We also initially used Redmine as our Scrum board, but due to Redmine being very slow and tedious to update, we replaced it with a physical Scrum board. As not all groups do Scrum and thus estimate tasks, this decision has no impact on the performance of the multi-project.
+We would have liked to have this for the entire multi-project as well, but since not every group follows Scrum and makes estimated tasks, it is impossible to measure the performance of the multi-project, and as such it does not make sense to do a burn down chart for the entire multi-project. \todo{Should we delete this paragraph?}
 
-\todo{Flyttet følgende afsnit fra work products. Skal rewrites så det passer til hvordan vi gør}
-\begin{description}
-  \item[Sprint Backlog] When user stories are selected from the product backlog into the release backlog, those user stories are divided into tasks. These tasks constitute the sprint backlog \parencite{larman2003}. It is up to each subproject to decide how these tasks are made. They can do it at the subproject sprint planning meeting or they can decide to delegate the task creation to each group based on their selected user stories. \kimnote{Det er vigtigt at i forklarer hvordan i gør og hvorfor det giver mening.}\todo{Det gør vi nu her nede}
-\end{description}
-
-
-This is where there are difficulties from the fact that not every group use Scrum at the group level. If a group does not use Scrum, there is no guarantee that they will make tasks, or even update tasks should they have been created at the subproject level. If not every group follows Scrum and makes tasks, then it is not possible to measure the progress and productivity of the entire team. In addition if there are no estimated tasks, it is impossible to know at a sprint planning whether or not the multi-project will be able to deliver the release backlog.
-\kimnote{Er i sikre på at det er umuligt at vide hvornår man er færdige med sin udvikling hvis man ikke bruger scrum? :P}
-\kimnote{Her begynder i på en diskution som er lidt mærkeligt placeret. I har ikke diskuteret produkt eller release backlog, kun sprint backlog. Envidere så nævner i kun problemerne, hvordan løser i disse problemer?}
+We also initially used Redmine as our Scrum board, but due to Redmine being very slow and tedious to update, we replaced it with a physical Scrum board. As not all groups do Scrum and thus estimate tasks, this decision has no impact on the performance of the multi-project. \todo{Should we delete this paragraph?}
 
 \section{Group Roles in Multi-Project}\label{sec:multi_project_group_roles}
-% Fra ulrik:
 \todo{Ulrik recommends: A chapter describing the role of this project in the setting of the multi-project. This includes ``an analysis of an organizational context''.}
 
 The multi-project contains responsibilities that have been assigned to the groups within the multi-project. These roles include management of Redmine, server, Git, Jenkins and other various tasks. Following they are shortly described:
 
 \begin{description}
-  \item[Redmine --- General] \dummy \dummy
-  \item[Redmine --- Wiki] \dummy \dummy
-  \item[Redmine --- Forum] \dummy
-  \item[Redmine --- Issue Tracker] \dummy \dummy
-  \item[Server] \dummy \dummy
-  \item[Git] \dummy \dummy
-  \item[Jenkins] Our group
-  \item[Process] Our group
-  \item[Code Style] \dummy \dummy
-  \item[Customer Relations] \todo{Har vi disbanded/merged med GUI product owner. Skal vi skrive om denne process?}
-  \item[Web Administrator] \dummy \dummy
-  \item[Android Guru] \dummy \dummy
-  \item[Google Analytics and Google Play] \dummy \dummy
-  \item[Graphics] \dummy \dummy
+  \item[Redmine --- General] Maintaining users, roles, and plugins on Redmine.
+  \item[Redmine --- Wiki] Structuring and maintaining the wiki. They also read the content and make sure it is adequate.
+  \item[Redmine --- Forum] Structuring and moderating the forum.
+  \item[Redmine --- User Story and Task Tracking] Structuring and maintaining the user story and task tracker as well as helping people creating the items in the tracker. They also maintain guidelines for task creation.
+  \item[Server] Maintaining the server software and controlling access to the server.
+  \item[Git] Maintaining the Git repositories and controlling access to these. Furthermore, they issued guidelines for Git usage.
+  \item[Jenkins] Maintaining the Jenkins setup. This is the responsibility of our group, and as such will be detailed in this report.
+  \item[Process] Supervising, developing, and refining the process method. This is also the responsibility of our group, and will as such also be detailed in this report.
+  \item[Code Style] Developing and encouraging a code style across all code.
+  \item[Customer Relations] Maintains customer relations. They review and send any email sent to the customers.\todo{Dette ændrer sig måske i et senere sprint}
+  \item[Web Administrator] Maintains the public project website \url{http://giraf.cs.aau.dk}.
+  \item[Android Guru] Persons who have experience with developing Android apps, who can be asked for help.
+  \item[Google Analytics and Google Play] Maintaining the Google Play listing of the software and generating guidelines for how to get crash reports from Google Analystics. Furthermore, they published the builds during the first sprints. \todo{Specify this later}.
+  \item[Graphics] Developing a graphical style and enforcing this as well as creating the graphics upon request.
 \end{description}

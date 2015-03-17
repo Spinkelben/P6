@@ -28,6 +28,11 @@
   
   % Project names
   \newcommand{\gproject}[1]{#1}
+  
+  % Subproject names
+  \newcommand{\gui}{GUI\@\xspace}
+  \newcommand{\db}{DB\@\xspace}
+  \newcommand{\bd}{B\&D\@\xspace}
 
   % CD paths with icon.
   \newcommand{\cdpath}[1]{%
@@ -71,6 +76,11 @@
   \newenvironment{chapterorganization}
     {\vspace{.5cm}\noindent\textbf{Chapter Organization}\quad The remainder of this chapter is organized in the following fashion:\begin{itemize}}
     {\end{itemize}}
+    
+   % Abbreviation.
+  \newenvironment{abbreviations}
+    {\vspace{.5cm}\noindent\textbf{Chapter Abbreviations}\quad This chapter uses the following abbreviations:\begin{addmargin}[\leftmargin]{0em}\begin{multicols}{2}\begin{description}[noitemsep, style=sameline]}
+    {\end{description}\end{multicols}\end{addmargin}}
 
 % Figures.
   % Normal figure.
