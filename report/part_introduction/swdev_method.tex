@@ -70,17 +70,18 @@ At the subproject level a Scrum meeting is held at least two times a week. It is
 Since there are three product owners in the entire multi-project, three sprint end and sprint planning meetings are held. These meetings were proposed by us, in connection with having three POs as described by \textcite{bird_davies_2007}, and then approved by the remaining groups.
 
 \begin{description}
-\item[Sprint Planning Meetings]\hfill\\
-\todo{Make the structure of this more clear.}
-\begin{description}
-  \item[GUI] At this sprint planning only one representative from each GUI group participate as pigs (people who are allowed to talk), as well as the GUI PO and one representative from the other POs (although they have a less important role at this meeting). All other people in the multi-project are chicken (people who are not allowed to talk). This meeting is held with the external customers. By making it so that primarily the GUI groups are pigs, the external customers are abstracted from internal development such as continuous integration and database management.
-  \item[\db and \bd] There is a sprint planning for \db and \bd each, where each subproject establishes the needs of the other subprojects. This meeting is internal, and the external customers do not participate at this meeting, since the \db and \bd do not have these as customers. \db and \bd will primarily have the GUI groups as their customers, who need various services from the \db and \bd subprojects, in order for them to fulfil their own user stories directly related to the external customers. However, it might be that \db needs something from \bd and that \bd needs something from \db. Again this abstracts the external customers from internal development.
-\end{description}
-\item[Sprint End Meetings]\hfill\\
-\begin{description}
-  \item[GUI] At this meeting the external customers are presented with the work of the GUI groups. Only the GUI groups participate as pigs at this meeting.
-  \item[\db and \bd] \db and \bd hold each a sprint end meeting where they show the groups in the other subprojects what they have done in a sprint. The external customers are not present at these meetings, so that they are not bored with internal details.
-\end{description}
+  \item[Sprint Planning Meetings]
+  The purpose of the sprint planning meetings is to ensure that the product backlog is up date date and select user stories for the release backlog.
+  \begin{description}
+    \item[GUI] At this sprint planning only one representative from each GUI group participate as pigs (people who are allowed to talk), as well as the GUI PO and one representative from the other POs (although they have a less important role at this meeting). All other people in the multi-project are chicken (people who are not allowed to talk). This meeting is held with the external customers. By making it so that primarily the GUI groups are pigs, the external customers are abstracted from internal development such as continuous integration and database management.
+    \item[\db and \bd] There is a separate sprint planning for \db and \bd each, where each subproject establishes the needs of the other subprojects. This meeting is internal, and the external customers do not participate at this meeting, since the \db and \bd do not have these as customers. \db and \bd will primarily have the GUI groups as their customers, who need various services from the \db and \bd subprojects, in order for them to fulfil their own user stories directly related to the external customers. However, it might be that \db needs something from \bd and that \bd needs something from \db. Again this abstracts the external customers from internal development.
+  \end{description}
+  \item[Sprint End Meetings]
+  At the sprint end meetings the work done in the sprint is presented to the customers.
+  \begin{description}
+    \item[GUI] At this meeting the external customers are presented with the work of the GUI groups. Only the GUI groups participate as pigs at this meeting.
+    \item[\db and \bd] \db and \bd hold each a separate sprint end meeting where they show the groups in the other subprojects what they have done in a sprint. The external customers are not present at these meetings, so that they are not bored with internal details.
+  \end{description}
 \end{description}
 
 \subsection{Office Hours}
