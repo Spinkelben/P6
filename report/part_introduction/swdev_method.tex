@@ -36,7 +36,7 @@ An illustration of the multi-project organization can be seen in \figureref{fig:
 \fig{multi_project_organization}{Illustration of multi-project organization}{Illustration of multi-project organization. \todo{Temporary figure. Make a nicer in tikz and add some more description.}}
 
 \subsection{Scrum Work Products}
-From Scrum two work products are used: Product backlog, release backlog:
+From Scrum two work products are used: Product backlog and release backlog:
 
 \begin{description}
   \item[Product Backlog] The backlog contains the user stories that the customers specify. These user stories are the requirements for the product from a user perspective \parencite{larman2003}. On the multi-project level a product backlog that contains all the user stories for the entire multi-project is used. The purpose of the multi-project level is to maintain the product backlog. The user stories in the product backlog are categorized according to each subproject. This enables each subproject to manage their user stories themselves, removing unnecessary management from the multi-project level.
@@ -56,8 +56,8 @@ Two roles from Scrum are used in the multi-project:
     \item Teams can share a single backlog with one PO. The difficulties of the method were described just before, and is not preferable.
     \item A group of teams (subprojects) can have a backlog with their own PO that takes items from a large common backlog. This method adds an extra layer on top of the previous described method, but it still has the issue that the primary customer is the external customer.
     \item In the final method described, teams have other teams as customers. This method allows the GUI groups to be customer of the \bd groups. Thus the external customer can be abstracted from internal needs and technicalities.
+  We have chosen to present the fourth method to the groups of the multi-project who then approved the method. Specifically there are three POs in the multi-project, one for each subproject. The customer for the GUI PO is the external customer, whereas the customers for the \db and \bd POs are the groups from the other subprojects, as illustrated in \figureref{fig:po_illu}. These roles have been designated to a group in each subproject.
   \end{enumerate}
-  We have chosen to present the fourth described method to the multi-project that then approved the method. Specifically there are three POs in the multi-project, one for each subproject. The customer for the GUI PO is the external customer, whereas the customers for the \db and \bd POs are the groups from the other subprojects, as illustrated in \figureref{fig:po_illu}. These roles have been designated to a group in each subproject.
 \end{description}
 
 \fig{po_illu}{Illustration of product owners}{Illustration of product owners. \todo{Temporary figure. Make a nicer in tikz and add some more description. In particular of the arrows.}}
@@ -81,8 +81,7 @@ Since there are three product owners in the entire multi-project, three sprint e
   \item[\db and \bd] \db and \bd hold each a sprint end meeting where they show the groups in the other subprojects what they have done in a sprint. The external customers are not present at these meetings, so that they are not bored with internal details.
 \end{description}
 
-\subsection{Meeting Times}
-\todo{Rename this section. It sounds like the time of the official meetings, and not the ``show up''-time.}
+\subsection{Office Hours}
 A vital part of working agile involves being able to easily communicate with all members of the team. To ensure this all groups must be reachable on mail all weekdays 09:00--15:00, and preferably be in the group rooms. An exception for this is when there are courses.
 
 \section{Tools}\label{sec:redmine}
