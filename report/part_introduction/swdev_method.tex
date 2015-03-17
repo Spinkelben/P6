@@ -9,8 +9,16 @@ One of the great challenges this semester is to coordinate the development proce
   \item in \sectionref{sec:multi_project_group_roles} we detail the responsibilities delegated to most groups
 \end{chapterorganization}
 
+\begin{abbreviations}
+  \item[\gui] test
+  \item[\db] test
+  \item[\bd] test
+\end{abbreviations}
+
 \section{Multi-Project Organization Method}\label{sec:project_overview}
-The multi-project consists of 14 groups of approximately four people each. All groups collaborate on building the Giraf applications. The groups are organized into three subprojects: \emph{GUI}, \emph{databases} (DB), and \emph{build and deployment} (B\&D) by recommendation of the semester coordinator.
+The multi-project consists of 14 groups of approximately four people each. All groups collaborate on building the Giraf applications. The groups are organized into three subprojects: \emph{Graphical User Interface} (\gui), \emph{databases} (\db), and \emph{build and deployment} (\bd) by recommendation of the semester coordinator.
+
+The \gui groups deal with bugs and implementing new features in the front-end apps. The \db groups manages and maintains the database. The \bd groups controls the tools supporting the building and testing environment as well as the deployment of the apps.
 
 The multi-project groups are organized as in Scrum of Scrums, since the semester is divided into four sprints (iterations). Thus the multi-project works as an agile team. This fits well with the fact that no groups had any prior experience with the code base at the start of the project. Suppose the multi-project was organized in a more traditional method. Then the multi-project groups could have spent much time initially analysing the current code base and future requirements, rather than actually working on making the code base work (a prime wish for the external customer).
 
@@ -41,33 +49,39 @@ Two roles from Scrum are used in the multi-project:
 
 \begin{description}
   \item[Scrum Master] On the multi-project level our group is responsible for the development method. This means that our group acts as Scrum master on the multi-project level. On the subproject level, one person has been designated the meeting responsible --- they make sure that the Scrum meetings on this level are held. On the group level each group is free to do what they see fit, in extension with groups being free to choose their own development method.
-  \item[Product Owner] The product owner (PO) is responsible for maintaining contact with the customers and being their representatives. In the multi-project having a single PO that has the external customer as customer can be difficult. Many of the groups that work in the B\&D and DB subprojects do not have the external customer as direct customers. Rather, they help the GUI groups achieve their goal by building solutions for them. In particular the external customer is often not interested in the implementation details of build and database interfaces. \textcite{bird_davies_2007} describes four methods of organizing teams in Scrum of Scrums.
+  \item[Product Owner] The product owner (PO) is responsible for maintaining contact with the customers and being their representatives. In the multi-project having a single PO that has the external customer as customer can be difficult. Many of the groups that work in the \bd and \db subprojects do not have the external customer as direct customers. Rather, they help the GUI groups achieve their goal by building solutions for them. In particular the external customer is often not interested in the implementation details of build and database interfaces. \textcite{bird_davies_2007} describes four methods of organizing teams in Scrum of Scrums.
   \begin{enumerate}
     \item Teams can run separately with a PO of their own, but this can prove difficult in the multi-project, as groups from each subproject may be dependent on the other groups.
     \item Teams can share a single backlog with one PO. The difficulties of the method were described just before, and is not preferable.
     \item A group of teams (subprojects) can have a backlog with their own PO that takes items from a large common backlog. This method adds an extra layer on top of the previous described method, but it still has the issue that the primary customer is the external customer.
-    \item In the final method described, teams have other teams as customers. This method allows the GUI groups to be customer of the B\&D groups. Thus the external customer can be abstracted from internal needs and technicalities.
+    \item In the final method described, teams have other teams as customers. This method allows the GUI groups to be customer of the \bd groups. Thus the external customer can be abstracted from internal needs and technicalities.
   \end{enumerate}
-  We have chosen to present the fourth described method to the multi-project that then approved the method. Specifically there are three POs in the multi-project, one for each subproject. The customer for the GUI PO is the external customer, whereas the customers for the DB and B\&D POs are the groups from the other subprojects, as illustrated in \figureref{fig:po_illu}. These roles have been designated to a group in each subproject.
+  We have chosen to present the fourth described method to the multi-project that then approved the method. Specifically there are three POs in the multi-project, one for each subproject. The customer for the GUI PO is the external customer, whereas the customers for the \db and \bd POs are the groups from the other subprojects, as illustrated in \figureref{fig:po_illu}. These roles have been designated to a group in each subproject.
 \end{description}
 
 \fig{po_illu}{Illustration of product owners}{Illustration of product owners. \todo{Temporary figure. Make a nicer in tikz and add some more description. In particular of the arrows.}}
 
-\subsection{Meetings}
+\subsection{Meetings}\label{sec:scrum_meetings}
 Each week there is a meeting at the multi-project level. At this meeting the status of the groups in the multi-project is presented, and the development method is evaluated. This ensures that all groups know the current status of the project, and that the development method can be continually improved.
 
 At the subproject level a Scrum meeting is held at least two times a week. It is up to each subproject to organize these meetings. In addition to the Scrum meeting at the subproject level, each group is advised to hold a Daily Scrum in connection with the advise that they follow Scrum internally.
 
 Since there are three product owners in the entire multi-project, three sprint end and sprint planning meetings are held. These meetings were proposed by us, in connection with having three POs as described by \textcite{bird_davies_2007}, and then approved by the remaining groups.
 
+\subsubsection{Sprint Planning Meetings}
+\todo{Make the structure of this more clear.}
 \begin{description}
-  \item[Sprint Planning (GUI)] At this sprint planning only one representative from each GUI group participate as pigs (people who are allowed to talk), as well as the GUI PO and one representative from the other POs (although they have a less important role at this meeting). All other people in the multi-project are chicken (people who are not allowed to talk). This meeting is held with the external customers. By making it so that primarily the GUI groups are pigs, the external customers are abstracted from internal development such as continuous integration and database management.
-  \item[Sprint Planning (DB and B\&D)] There is a sprint planning for DB and B\&D each, where each subproject establishes the needs of the other subprojects. This meeting is internal, and the external customers do not participate at this meeting, since the DB and B\&D do not have these as customers. DB and B\&D will primarily have the GUI groups as their customers, who need various services from the DB and B\&D subprojects, in order for them to fulfil their own user stories directly related to the external customers. However, it might be that DB needs something from B\&D and that B\&D needs something from DB. Again this abstracts the external customers from internal development.
-  \item[Sprint End (GUI)] At this meeting the external customers are presented with the work of the GUI groups. Only the GUI groups participate as pigs at this meeting.
-  \item[Sprint End (DB and B\&D)] DB and B\&D hold each a sprint end meeting where they show the groups in the other subprojects what they have done in a sprint. The external customers are not present at these meetings, so that they are not bored with internal details.
+  \item[GUI] At this sprint planning only one representative from each GUI group participate as pigs (people who are allowed to talk), as well as the GUI PO and one representative from the other POs (although they have a less important role at this meeting). All other people in the multi-project are chicken (people who are not allowed to talk). This meeting is held with the external customers. By making it so that primarily the GUI groups are pigs, the external customers are abstracted from internal development such as continuous integration and database management.
+  \item[\db and \bd] There is a sprint planning for \db and \bd each, where each subproject establishes the needs of the other subprojects. This meeting is internal, and the external customers do not participate at this meeting, since the \db and \bd do not have these as customers. \db and \bd will primarily have the GUI groups as their customers, who need various services from the \db and \bd subprojects, in order for them to fulfil their own user stories directly related to the external customers. However, it might be that \db needs something from \bd and that \bd needs something from \db. Again this abstracts the external customers from internal development.
+\end{description}
+\subsubsection{Sprint End Meetings}
+\begin{description}
+  \item[GUI] At this meeting the external customers are presented with the work of the GUI groups. Only the GUI groups participate as pigs at this meeting.
+  \item[\db and \bd] \db and \bd hold each a sprint end meeting where they show the groups in the other subprojects what they have done in a sprint. The external customers are not present at these meetings, so that they are not bored with internal details.
 \end{description}
 
 \subsection{Meeting Times}
+\todo{Rename this section. It sounds like the time of the official meetings, and not the ``show up''-time.}
 A vital part of working agile involves being able to easily communicate with all members of the team. To ensure this all groups must be reachable on mail all weekdays 09:00--15:00, and preferably be in the group rooms. An exception for this is when there are courses.
 
 \section{Tools}\label{sec:redmine}
