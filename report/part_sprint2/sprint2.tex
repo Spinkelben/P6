@@ -9,6 +9,7 @@ Chapter description
 
 To identify in which parts of the build process to make faster, we measure the time different parts of the Launcher project take. The Launcher project is the main application which depends on many other subprojects. The timings are measured on the Jenkins server and shown in \figureref{fig:launcher_build_times}. The shows the build timings of the Launcher application and the different subprojects (\emph{Oasis-lib, Giraf-Component, Local-db, Barcode-scanner, and Metadata}), as well as the startup time for the emulator.\todo{Kan vi regne med, at submoduler bliver binære filer?}
 
+\begin{figure}
 \begin{tikzpicture}
   \begin{axis}[xbar stacked,
 axis y line*= none, axis x line*= bottom,
