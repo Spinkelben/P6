@@ -7,7 +7,7 @@ Configuration management can greatly ease the workflow of the developers and inc
 
 \begin{chapterorganization}
   \item in \sectionref{sec:SCM_vision} we identify a plan for the software configuration management and identify specific areas we want to improve or implement in the software configuration management practice;
-  \item in \sectionref{sec:jenkins} we describe the continuous integration tool, Jenkins, that we use in the project;
+  \item in \sectionref{sec:jenkins} we describe the continuous integration tool, Jenkins, that we use in the project;s
   \item in \sectionref{sec:build_automation} we explain how we set up automation of the builds and discuss branching strategies as well as automated testing and lint checking;
   \item in \sectionref{sec:automated_documentation_gen} we explain how we set up automated documentation generation.
 \end{chapterorganization}
@@ -18,17 +18,21 @@ Configuration management can greatly ease the workflow of the developers and inc
 \end{abbreviations}
 
 \section{Software Configuration Management Plan}\label{sec:SCM_vision}
-Guide to the Software Engineering Body of Knowledge (SWEBOK) \parencite{swebok} identifies some key areas of software configuration management.
+We have chosen the process role, therefore the responsibility of creating a Software Configuration Management Plan falls upon our shoulders. The Guide to the Software Engineering Body of Knowledge (SWEBOK) \parencite{swebok} identifies some key areas of software configuration management. In this section we will discus the Software Configuration Management planning.
 
 \subsection{Organizational Context}
-The responsibility of software configuration management is assigned to this group. As such, we vision the process will as unintrusive for the developers as possible.
-\dummy~\dummy
+To plan the software configuration management it is very important to understand the organizational structure\parencite{swebok}. The multi-project has a quite unique structure. The development is performed, and managed by, students who work in small groups. Each group acts as a independent entity. While the product is being developed for the clients, the groups have other priorities than customer satisfaction. The work is being done for free, the motivation of the groups is to work on something interesting such that they can write a good report detailing the work and get a good grade. While we can suggest a process with specific procedures, we have no authority over the other groups. This means that the groups preferences weigh heavily when we select which software configuration management procedures to follow. In general the feeling in the groups are that the less formal communication and bureaucracy the better. This is reflected in the choice of scrum as the basis for the project management, and will influence all of the decision regarding the software configuration management process planning and execution. 
 
 \subsection{Configuration Item Identification}
-\dummy
+A configuration item is a piece of software or a combination of hardware and software which is managed as a single entity\parencite{swebok}. Due to the desire of the groups to minimize overhead, there is no formal process which explicitly identifies the items that are to be controlled. The configuration items are identified by the groups of previous years, and by the groups during the project startup. New items might be discovered in the future, and they will be discussed at the status meetings. The currently identified items are:
+\begin{itemize}
+    \item Every application, and the source code, resources and requirements. 
+    \item The supported versions of the Android OS.
+    \item The supporting tools, Gradle, and Android studio in particular.
+\end{itemize} 
+In the following section we will discuss how we aim to manage changes to these items.  
 
 \subsection{Vision for Software Configuration Management}
-\fxfatal{Mon ikke det skal placeres i introduction i stedet, da det ikke kun er vision for sprint 1?}
 \dummy
 \begin{description}
   \item[Build Management] We want automatic builds, such that the developer does not have to worry about it.
