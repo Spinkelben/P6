@@ -161,6 +161,8 @@ Because Android applications contain a graphical user interface, it is not suffi
 
 While the Android monkey tool can test multiple applications at once, the Jenkins plugin does not support that feature. The plugin is open source, so we add support for this feature which will be part of its next release. This additional work was unplanned, and we do not have time for completing the automated monkey testing in this sprint.
 
+\todo{Vi skal gøre det mere klart, at det krævede at vi skulle have fat i apk'er for at installere dem, og det var ikke helt trivielt, og derfor kunne vi ikke nå at lave det. Lige nu står der at vi laver noget til det plugin til næste release (af det plugin). Vi skal gøre det klart at vi lavede det arbejde i dette sprint, men at det ikke blev released i dette sprint.}
+
 \subsubsection{Concolic Testing}
 Concolic testing is a way to statically analyze code in order to find bugs, e.g.\ potential null pointer exceptions. Concolic testing uses a combination of symbolic execution and testing of particular paths in order to maximize code coverage \parencite{concolic_testing_2015}.
 
