@@ -1,0 +1,99 @@
+\documentclass[koma,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[hidelinks]{hyperref}
+\usepackage{amsthm}
+\usepackage{tikz}
+\usepackage{todonotes}
+\usepackage{booktabs}
+\usepackage{subcaption}
+\usepackage{color}
+\usepackage{lmodern}
+\usepackage{mathtools}
+\graphicspath{{graphics/}}
+\usetikzlibrary{trees}
+\usepackage[utf8]{inputenc}
+
+\newcommand*\circled[1]{\tikz[baseline=(char.base)]{\node[shape=circle,draw,inner sep=2pt] (char) {#1};}} % circles around numbers
+
+\title{AALG Self Study 4}
+\author{Andreas Petersen\\
+Mads E. Kalør\\
+Søren B. Ranneries\\
+Room 1.1.34}
+\begin{document}
+\maketitle
+
+\pagebreak
+
+\section{Exercise 1}
+
+\subsection{1}
+
+
+\subsection{2}
+Five internal nodes are visited.
+
+\subsection{3}
+Three leaf nodes are accessed: d, c, e
+
+\section{Exercise 2}
+\subsection{a}
+We run Jarvis's March to compute the convex layer.
+
+\begin{align*}
+  &\text{ConvexLayers}(Q)\\
+  &~~~~\text{while } Q \neq \emptyset \text{ do }\\
+  &~~~~~~~~r \leftarrow \text{JarvisMarch}(Q)\\
+  &~~~~~~~~\text{print } r\\
+  &~~~~~~~~Q \leftarrow Q \setminus r
+\end{align*}
+
+Jarvis's March has a complexity Of $O(nh)$ where h is the number of points in the convex hull. So we do $\frac{n}{h}$ iterations and each iteration takes $O(nh)$ time. Therefore the complexity is $O\left(\frac{n}{h}nh\right)$ which is $O\left(n^2\right)$.
+
+\subsection{b}
+For each number $k \in \mathbb{K} \subseteq \mathbb{R}$ and make points $\{(k, k), (-k, k), (-k, -k), (k, -k)\} \subseteq Q$. Then compute the convex layers for $Q$. Then $\text{CH}(Q_1)$ will contain the points $\{(k_1, k_1), (-k_1, k_1), (-k_1, -k_1), (k_1, -k_1)\}$ where $k_1$ is the largest number in $\mathbb{K}$. Thus there will be an ordering of the layers corresponding to numbers. If the convex layers can be computed faster than $O(n\log n)$ then sorting of real numbers can be done faster than $O(n\log n)$ which is impossible. Contradiction.
+
+\hfill\ensuremath{\blacksquare}
+
+\section{Exercise 3}
+
+\subsection{a}\label{sec:3a}
+Suppose that $p_1 = (x_1, y_1)$ is the leftmost point in $L_1$ and that $p_2 = (x_2, y_2)$ is the leftmost point in $L_2$ and $y_1 \leq y_2$. Therefore $x_1 < x_2$. Then $p_1$ would be dominated by $p_2$ and $p_1$ would not be in $L_1$. Contradiction.
+
+\hfill\ensuremath{\blacksquare}
+
+\subsection{b}
+\begin{enumerate}
+  \item Suppose that $p = (x, y)$ is a new leftmost point of $Q$. $p$ cannot dominate any other points as it is the leftmost point. At the $j$th layer the point $p$ will not be dominated by any other remaining points (see proof in Section \ref{sec:3a}).
+  \item Still $p$ does not dominate any other point due to having the lowest x value. In turn it will be dominated by all the left most points in each layer in $Q$. It will therefore be the sole point in a new $k+1$th layer.
+\end{enumerate}
+
+\subsection{c}
+\begin{align*}
+  &\text{MaximalLayers}(Q)\\
+  &~~~~\mathcal{X} \leftarrow \text{sort } Q \text{ on } x \text{ descendingly}\\
+  &~~~~l \leftarrow \text{new list \# contains left most y values}\\
+  &~~~~L \leftarrow \text{new list \# maximal layers}\\
+  &~~~~\text{for each point } p \in \mathcal{X} \\
+  &~~~~~~~~j \leftarrow \text{findJ}(l, p.y)\\
+  &~~~~~~~~\text{if } j > |l| \text{ then}\\
+  &~~~~~~~~~~~~L_j \leftarrow \{p\}\\
+  &~~~~~~~~\text{else then}\\
+  &~~~~~~~~~~~~L_j \leftarrow L_j \cup \{p\}\\
+  &~~~~~~~~\text{end if}\\
+  &~~~~~~~~l_j \leftarrow p_y\\
+  &~~~~\text{return } L
+\end{align*}
+
+findJ performs a binary search in $l$ for $p.y$ and returns the smallest index where $p.y > l_j$ if no such $j$ exists it returns $|l| + 1$. The running time of findJ is thus $\Theta(\log n)$.
+
+The running time is $\Theta(n \log n + n \log l)$. $l$ is the number of layers and can be at most $n$.
+
+\subsection{d}
+
+\end{document}

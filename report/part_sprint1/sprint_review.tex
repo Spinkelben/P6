@@ -6,7 +6,16 @@ At the end of sprint 0 a several meetings were held, as described in \sectionref
 Finally a review of the sprint was made together with all the groups of the multi-project.
 
 \section{Sprint Goals}
-\todo{What did we manage to make. Compare with our release backlog as mentioned in the sprint planning chapter}
+For this sprint we wanted to setup continuous integration. The following described what we wanted specifically, as described in \sectionref{sec:group_sprint_planning}, and if we achieved those goals.
+
+\begin{description}
+  \item[Build] We setup such that Jenkins automatically builds a project whenever a push is made to the Git repository of that project. The build times, however, are very slow. It can take up to 30 minutes or more to build some projects, which is significantly more than the 10 minutes \textcite{beck2004} recommends.
+  \item[Documentation] Documentation is automatically generated each night from the entire code base and uploaded to a publicly available website.
+  \item[Concolic Testing] We chose not to implement concolic testing due to it being too complex to implement compared to the benefit it would give us.
+  \item[Lint] Lint errors do not produce a build failure on Jenkins. We made this decision so as to not punish groups for link errors made from previous years. By displaying the lint errors on the Jenkins page we hope that the groups will find this motivation enough to fix the errors. Some groups have indeed done this.
+  \item[Unit Test] We setup unit testing such that they run as part of a build on Jenkins. When a test fails the build fails. As with the build times, testing takes a long time as they are done on an emulator.
+  \item[UI Test] We wanted to implement monkey testing, but because the plugin on Jenkins did not support multiple app monkey testing and an unclear structure of APKs on the server, we did not many to implement monkey testing on Jenkins.
+\end{description}
 
 \section{Process Evaluation During Sprint}
 During sprint 0 two changes to the development method of the multi-project were made:
