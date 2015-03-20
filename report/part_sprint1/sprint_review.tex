@@ -1,12 +1,17 @@
 \chapter{Sprint Review}\label{chap:sprint1_end}
-This sprint had a number of goals we wanted to achieve. During the sprint there were some development method changes that we investigated.
-
-At the end of sprint 0 a several meetings were held, as described in \sectionref{sec:meetings}. This chapter described the meetings where we had a significant role.
-
-Finally a review of the sprint was made together with all the groups of the multi-project.
+This sprint had a number of tasks we wanted to solve and in addition introduced some changes to the development method. This chapter evaluates the tasks we planned and the process we followed during this sprint.
 
 \section{Sprint Goals}
-\todo{What did we manage to make. Compare with our release backlog as mentioned in the sprint planning chapter}
+For this sprint, our main task was to setup continuous integration. The following evaluates the tasks described in \sectionref{sec:group_sprint_planning}.
+
+\begin{description}
+  \item[Build] We setup such that Jenkins automatically builds a project whenever a push is made to the Git repository of that project. The build times, however, are very slow. It can take up to 30 minutes or more to build some projects, which is significantly more than the 10 minutes \textcite{beck2004} recommends.
+  \item[Documentation] Documentation is automatically generated each night from the entire code base and uploaded to a publicly available website.
+  \item[Concolic Testing] We chose not to implement concolic testing due to it being too complex to implement compared to the benefit it would give us.
+  \item[Lint] Lint errors do not produce a build failure on Jenkins. We made this decision so as to not punish groups for link errors made from previous years. By displaying the lint errors on the Jenkins page we hope that the groups will find this motivation enough to fix the errors. Some groups have indeed done this.
+  \item[Unit Test] We setup unit testing such that they run as part of a build on Jenkins. When a test fails the build fails. As with the build times, testing takes a long time as they are done on an emulator.
+  \item[UI Test] We wanted to implement monkey testing, but because the plugin on Jenkins did not support multiple app monkey testing and an unclear structure of APKs on the server, we did not many to implement monkey testing on Jenkins.
+\end{description}
 
 \section{Process Evaluation During Sprint}
 During sprint 0 two changes to the development method of the multi-project were made:
@@ -17,6 +22,7 @@ During sprint 0 two changes to the development method of the multi-project were 
 \end{description}
 
 \section{Sprint End Meetings}
+\todo{Slet eventuelt dette afsnit}
 At the end of sprint 0 there were three sprint end meetings, one for each subproject. We attended as pigs the \gui sprint end, where the external customers were present. At the \db sprint end we attended as customers for the \db subproject. Finally we presented our work to the other groups in the multi-project at the \bd sprint end meeting.
 
 Here we describe the \gui and \bd sprint end meetings. We do not describe the \db sprint planning meeting, as nothing of interest for us occurred at this meeting --- it was mostly relevant for the \gui groups.
@@ -36,12 +42,12 @@ The \bd groups presented their work at the \bd sprint end. Our group presented t
 \section{Multi-Project Sprint Review}
 In the end of this sprint, a final common meeting among all groups was held. The purpose of this meeting was to evaluate and reflect upon the decisions in this sprint and to evaluate the process.
 
-It was suggested to add one or two days between the \gui sprint planning and the \db and \bd sprint plannings. Since the \gui groups have to process user story prioritization done by the external customers as well as incorporate new requirements into the product backlog, they need time to do so, before they can elicit derived requirements to the \db and \bd groups. 
+It was suggested to add one or two days between the \gui sprint planning and the \db and \bd sprint plannings. Since the \gui groups have to process user story prioritization done by the external customers as well as incorporate new requirements into the product backlog, they need time to do so, before they can elicit derived requirements to the \db and \bd groups.
 
 A grace period after the sprint planning meetings was also suggested, to allow user stories to be incorporated a few days into the sprint. We understand this is not strictly Scrum, however it is necessary because, for example, a \db user story might require a new user story in \gui or \bd to be selected. If sprints were shorter, the grace period may not have been as necessary as it is now, since the user story could be selected shortly after. But when having one month sprints much time will be wasted just because the user story could not be selected.
 
 Furthermore, it was suggested that the three product backlogs could be merged into one document. This makes it easier to access the product backlog and also hopefully decreases overlap.
 
-At last, the server was rebooted the day before the \gui sprint end meeting. Unfortunately, the server did not boot correctly, and the server was not working. This posed a problem, since it made it difficult to show the external customers the product. It was suggested that the server was not interfered with in the time before sprint ends.
+At last, the server was rebooted the day before the \gui sprint end meeting. Unfortunately, the server did not boot correctly, and the server was not working. This posed a problem, since it made it difficult to show the external customers the product. It was suggested that the server should not reboot just up to a sprint end.
 
 We will take the appropriate actions to incorporate these suggestions into the next sprint.
