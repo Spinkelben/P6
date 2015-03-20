@@ -1,5 +1,5 @@
 \chapter{Software Development Method}\label{chap:sw_dev_method}
-One of the great challenges this semester is to coordinate the development process across all 14 groups.
+One of the great challenges this semester is to coordinate the development process across all 14 groups. \todo{More introduction}
 
 \begin{chapterorganization}
   \item in \sectionref{sec:project_overview} we describe how the multi-project is organized and introduce the hierarchy in the project;
@@ -46,14 +46,15 @@ Two roles from Scrum are used in the multi-project:
 
 \begin{description}
   \item[Scrum Master] On the multi-project level, we are responsible for the development method. This means that we act as Scrum masters on the multi-project level. On the subproject level, one person has been designated the meeting responsible --- they make sure that the Scrum meetings on this level are held. On the group level, each group is free to do what they see fit.
-  \item[Product Owner] The product owner (PO) is responsible for maintaining contact with the customers and being their representatives. In the multi-project having a single PO who has the external customer\todo{Hvem er the external customer? Har vi defineret det?} as customer can be difficult. Many of the groups that work in the \bd and \db subprojects do not have the external customer as direct customers. Rather, they help the \gui groups achieve their goal by building solutions for them. The external customer is often not interested in the implementation details of build and database interfaces. \textcite{bird_davies_2007} describes four methods of organizing teams in Scrum of Scrums\todo{Hvorfor kommer det her? Hvad er motivationen for at nævne disse?}:
+  \item[Product Owner] The product owner (PO) is responsible for maintaining contact with the customers and being their representatives. In the multi-project having a single PO who has the external customer\todo{Hvem er the external customer? Har vi defineret det?} as customer can be difficult. Many of the groups that work in the \bd and \db subprojects do not have the external customer as direct customers. Rather, they help the \gui groups achieve their goal by building solutions for them. The external customer is often not interested in the implementation details of build and database interfaces. We seek a way of organizing the different teams in a structure that allow them to work with user stories relevant to their subprojects.  \textcite{bird_davies_2007} describes four methods of organizing teams in Scrum of Scrums:
   \begin{enumerate}
-    \item Teams can run separately with a PO of their own, but this can prove difficult in the multi-project, as groups from each subproject may be dependent on the other groups.
-    \item Teams can share a single backlog with one PO. The difficulties of the method were described just before, and is not preferable.
-    \item A group of teams (subprojects) can have a backlog with their own PO that takes items from a large common backlog. This method adds an extra layer on top of the previous described method, but it still has the issue that the primary customer is the external customer.
-    \item In the final method described, teams have other teams as customers. This method allows the GUI groups to be customer of the \bd groups. Thus the external customer can be abstracted from internal needs and technicalities.
-  We have chosen to present the fourth method to the groups of the multi-project who then approved the method. Specifically there are three POs in the multi-project, one for each subproject. The customer for the GUI PO is the external customer, whereas the customers for the \db and \bd POs are the groups from the other subprojects, as illustrated in \figureref{fig:po_illu}. These roles have been designated to a group in each subproject.
+    \item Independent teams with a customer and PO of their own. They also have their own backlog.
+    \item Teams have a single common backlog and share the customer and PO
+    \item Teams have their own customer and PO, and a backlog that takes items from a large common backlog
+    \item Each team has their own PO, customer, and backlog, and teams can serve as customers for other teams.
   \end{enumerate}
+The first and second options are the simplest, but they can prove difficult in the multi-project, as groups from each subproject may be dependent on the other groups. For example, the \gui{} team may require changes in the database structure, which should be resolved by the \db team. The third option adds an extra layer on top of the previous described methods, which allows user stories from the external customer to be distributed among the individual teams. However, it still has the issue that the primary customer is the external customer. The final option, on the other hand, allows for example the \gui groups to be customers of the \bd groups. Thus, the external customer can be abstracted from internal needs and technicalities. This structure fits the needs for the multi project well. Specifically, there are three POs in the multi-project, one for each subproject. The customer for the GUI PO is the external customer, whereas the customers for the \db and \bd POs are the groups from the other subprojects, as illustrated in \figureref{fig:po_illu}. We chose to present this method to the groups of the multi-project who approved the it. The PO roles have been designated to a group in each subproject.
+
 \end{description}
 
 \fig{po_illu}{Illustration of product owners}{Illustration of product owners. \todo{Temporary figure. Make a nicer in tikz and add some more description. In particular of the arrows.}}
@@ -61,9 +62,9 @@ Two roles from Scrum are used in the multi-project:
 \subsection{Meetings}\label{sec:meetings}
 Each week there is a meeting at the multi-project level. At this meeting the status of the groups in the multi-project is presented and the development method is evaluated. This ensures that all groups know the current status of the project, and that the development method can be continually improved.
 
-At the subproject level a Scrum meeting is held at least two times a week. It is up to each subproject to organize these meetings. In addition to the Scrum meeting at the subproject level, each group is advised to hold a Daily Scrum in connection with the advise that they follow Scrum internally.
+At the subproject level, a Scrum meeting is held at least two times a week. It is up to each subproject to organize these meetings. In addition to the Scrum meeting at the subproject level, each group is advised to hold a Daily Scrum in connection with the advise that they follow Scrum internally.
 
-Since there are three product owners in the entire multi-project, three sprint end and sprint planning meetings are held. These meetings were proposed by us, in connection with having three POs as described by \textcite{bird_davies_2007}, and then approved by the remaining groups.
+Since there are three product owners in the entire multi-project, three sprint end and sprint planning meetings are held after and before each sprint. These meetings were proposed by us, following the recommendation from \textcite{bird_davies_2007}, and afterwards approved by the other groups.
 
 \begin{description}
   \item[Sprint Planning Meetings]
