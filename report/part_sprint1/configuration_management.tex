@@ -3,8 +3,6 @@ Software configuration management is an important if not crucial part of any lar
 
 Configuration management can greatly ease the workflow of the developers and increase their productivity. This chapter describes how we plan and execute configuration management. We aim to make it as easy as possible for the developers, and therefore we will automate as much as possible.
 
-\kimnote{When you use the term configuration management then be aware that it have a special meaning. There are multiple standards that define how proper configuration management is done and measured. This is a great opportunity to talk about official methods and how you utilize these in this project. :)} \todo{Er dette ikke hvad vi beskriver i 4.1?}
-
 \begin{chapterorganization}
   \item in \sectionref{sec:SCM_vision} we identify a plan for the software configuration management and identify specific areas we want to improve or implement in the software configuration management practice;
   \item in \sectionref{sec:jenkins} we describe the continuous integration tool, Jenkins, that we use in the project;s
@@ -33,9 +31,10 @@ A configuration item is a piece of software or a combination of hardware and sof
 In the following section we will discuss how we aim to manage changes to these items.  
 
 \subsection{Vision for Software Configuration Management}
-\dummy
+In this section we describe how we hope to manage the software configurations. 
+
 \begin{description}
-  \item[Build Management] We want automatic builds, such that the developer does not have to worry about it.
+  \item[Build Management] The multi-project consist of many applications with inter-dependencies. The source code for the applications are controlled with git\parencite{gitwebsite}. Each application has it own repository. The external dependencies are managed with Gradle which gets the correct version of each external library from Maven repositories. That way, we can decide if we want to update when new versions of our dependencies are released. 
   \item[Process Management] \todo{Ensuring adherence to the organization's development process.}
   \item[Environment Management] \todo{Managing the software and hardware that host the system.}
   \item[Configuration Auditing] \todo{Ensuring that configurations contain all their intended parts and are sound with respect to their specifying documents, including requirements, architectural specifications and user manuals.}
