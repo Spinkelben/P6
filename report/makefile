@@ -30,7 +30,7 @@ all: report.pdf
 # missing file reference and interactively asking you for an alternative.
 
 report.pdf: report.tex
-	-latexmk -shell-escape -silent -pdf -pdflatex="pdflatex -interactive=nonstopmode -synctex=1" -use-make report.tex
+	-latexmk -shell-escape -silent -bibtex -pdf -pdflatex="pdflatex -interactive=nonstopmode -synctex=1" -use-make report.tex
 	rubber-info --warnings report.tex # Show warnings
 	rubber-info report.tex # Show errors
 
