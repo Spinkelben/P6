@@ -65,6 +65,8 @@ An alternative to integrating code directly with the master branch is to use pre
 
 For the first sprint, we choose to implement the direct commit strategy, primarily because of its simplicity. It is important to get continuous integration up running so the developers can start to develop code, and it would be too costly to spend time implementing a pre-tested commit strategy as this will block the progress of all other developers. We are unsure about how the developers handle the increased responsibility, so in the preparation of the second sprint, we will evaluate this strategy and consider whether we should implement the pre-tested commit strategy instead.
 
+We implement this by setting up a post-receive hook that invokes Jenkins to automatically build any project that pulls from the repository that receives a push.
+
 \begin{figure}
 \begin{subfigure}[b]{\linewidth}
 \centering
@@ -128,8 +130,6 @@ For the first sprint, we choose to implement the direct commit strategy, primari
 \end{subfigure}
 \caption{Different branching strategies. A circles represents a commit and an arrow represents a reference to a commit.}\label{fig:commit_stratagy}
 \end{figure}
-
-\todo{Write about how we implemented this. Collab with git group?}
 
 \subsection{Continuous Build}
 The output of a build is an APK file, which is a package format used to distribute and install software onto Android. These files need to be signed before they can be installed. As such, we add a post-build task to Jenkins which signs and verifies the APK files as well as moves it into a common APK folder for all projects.
