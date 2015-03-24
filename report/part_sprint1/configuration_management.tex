@@ -48,8 +48,6 @@ Jenkins had been installed and setup by previous years. Jenkins is an open sourc
 \subsection{Upgrading Jenkins and Plugins}
 We inherited the old installation which had not been updated in a long time. Jenkins itself and all the Jenkins plugins had updates available. We updated everything to the newest versions.
 
-There are a number of unused plugins enabled in Jenkins. We tried to disable these, but this resulted in failure to start Jenkins. We undid the changes and have decided not to remove these unused plugins as it will not hinder further configuration of Jenkins.
-
 \subsection{Setting up Roles in Jenkins}
 The inherited Jenkins installation was open to anybody. We do not find this sensible as we need to control the build process. Allowing everybody access will likely end in someone modifying a setting without our knowledge. Because we set up a mechanism for automatic build, other people do not need the option to start builds manually. It might even interfere with the automatic build, if other people have access to the Jenkins configuration.
 
