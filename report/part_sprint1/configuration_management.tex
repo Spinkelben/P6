@@ -1,8 +1,8 @@
 %!TEX root = ../report.tex
 \chapter{Software Configuration Management}\label{chap:config_management}
+\todo{Chapter 5 introduction}
 
 \begin{chapterorganization}
-
   \item in \sectionref{sec:jenkins} we describe the platform for continuous integration, Jenkins, that we use in the project;
   \item in \sectionref{sec:build_automation} we explain how we set up automation of the builds and discuss version control branching strategies as well as automated testing and lint checking;
   \item in \sectionref{sec:automated_documentation_gen} we explain how we set up automated documentation generation.
@@ -10,13 +10,11 @@
 
 \begin{abbreviations}
   \item[SCMP] Software Configuration Management Plan
-  \item[test2] More test
+  \item[test2] \dummy
 \end{abbreviations}
 
-
-
 \section{Jenkins: Continuous Integration Platform}\label{sec:jenkins}
-Jenkins had been installed and setup\kimnote{installed and setup is that not the same?} by previous years\kimnote{rephrase}. Jenkins is an open source tool for continuous integration \parencite{JenkinsWebsite}. We will use this as our continuous integration platform. It supports source control management tools such as Git \parencite{gitwebsite}, as well as build automation tools such as Maven \parencite{mavenwebsite}. It is extensible via numerous available plugins. Jenkins allows for a sophisticated continuous integration setup, however the setup by previous years is rather basic and we want to improve it in several ways.
+An open source tool for continuous integration, Jenkins \parencite{JenkinsWebsite}, was used by previous years. We will use this as our continuous integration platform. It supports source control management tools such as Git \parencite{gitwebsite}, as well as build automation tools such as Maven \parencite{mavenwebsite}. It is extensible via numerous available plugins. Jenkins allows for a sophisticated continuous integration setup, however the setup by previous years is rather basic and we want to improve it in several ways.
 
 \subsection{Upgrading Jenkins and Plugins}
 We inherited the old installation which had not been updated in a long time. Jenkins itself and all the Jenkins plugins had updates available. We updated everything to the newest versions.\kimnote{I do not understand why you update Jenkins etc. According to the tasks in your sprint backlog (Section \ref{sec:group_sprint_planning}) then you should not do any updating. ;)} \kimnote{What I am trying to say is that I think that your tasks should correspond to the sections in this chapter. Lets discuss this at our meeting. :) }
