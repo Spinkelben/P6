@@ -1,13 +1,55 @@
 \chapter{Sprint Planning}
 This sprint is the first where each subproject holds a separate sprint planning meeting. We describe only detail the \bd sprint planning. For the \db sprint planning we helped with the process since this was requested --- this is described too. The \gui sprint planning we only attended.
 
-\section{\db Sprint Planning}
+\section{\dbtitle Sprint Planning}
 While we attended the first part of the \db sprint planning meeting as customers, we were asked to attend the second part as well, which is normally reserved for only the \db groups. We were asked since the initial part of the sprint planning meeting did no go so well --- too much time was spent discussing irrelevant things, since the product backlog was ``too close'' to external user needs, rather than internal user needs. In addition the \db POs were not entirely confident in running the later part of the meeting.
 
 At the beginning of the second part of the meeting, we clarified how the remaining part was going to go. During the meeting we provided a few suggestions as to how to proceed. We did not influence the user stories they picked for their release backlog. Finally we gave them some feedback on the overall meeting. We concluded that it was mostly the backlog and the fact that the \db groups had not had such a meeting before that the meeting did not go smoothly.
 
-\section{\bd Sprint Planning}
-\dummy
+\section{\bdtitle Sprint Planning}
+At the \bd sprint planning we chose to work on the following user stories in this sprint:
+
+\begin{description}
+  \item[Auto Upload Alpha and Beta Releases of Apps] Apps should automatically be uploaded to Google Play when they build successfully to an alpha channel. They should be able to be uploaded to a beta channel when the decision is made.
+  \item[Set up Monkey Testing] Monkey testing for each application should be run automatically.
+  \item[Test Case Installation] A test that automatically installs all apps on a single device. There were some problems in the previous sprint that some apps would not install on a device when other apps were already installed.
+  \item[Faster Build] Builds are slow. Builds should they should be sped up --- by how much is not specified.
+  \item[Code Coverage] Jobs on Jenkins should provide code coverage metrics for the tested code.
+\end{description}
 
 \section{Group Sprint Planning}
-\dummy
+Total work available: 58
+
+\begin{table}[htp]%
+  \centering
+  \begin{tabular}{lr}
+    \toprule
+    \textbf{Task} & \textbf{Estimation} \\
+    \midrule
+    CoCo code coverage & 8 \\
+    Move APKs to ftp server & 1 \\
+    Upload newest APKs to Google Play & 1 \\
+    Remove versionCode incrementation from debug Gradle task & 2 \\
+    Make monkey test job on Jenkins for each app & 2 \\
+    Make monkey test that installs all available APKs and runs on them & 1 \\
+    Make Gradle file for project download from Artifactory & 2 \\
+    Publish AAR files to Artifactory automatically from Jenkins & 6 \\
+    Make Jenkins job for beta releases & 2 \\
+    Investigate non-emulator testing & 6 (1) \\
+    Investigate tablet slaves for testing & 7 (1) \\
+    \textcolor{red}{Set up Artifactory} & 2 \\
+    \midrule
+    \textbf{Total} & 40 (29) \\
+    \bottomrule
+  \end{tabular}
+\caption{Sprint backlog for sprint 1, excluding report tasks. The tasks are listed in no particular order.}
+\label{tab:sprint1_tasks}
+\end{table}
+
+\todo{Estimering i parenteser er fordi vi satte tiden ned på de tasks, fordi vi nedprioriterede dem}
+
+\todo{Tasken Set up artifactory har vi egentlig ikke skrevet på vores sprint backlog men vi har lavet den. Det skulle egentlig også have været server gruppen der skulle lave det, men de var der ikke.}
+
+\todo{Hængende rapportopgaver fra sidste sprint blev samlet estimeret til: 30}
+
+\todo{Vi havde egentlig ikke lavet tasks/estimering til rapport i dette sprint. Det bliver også taget op i sprint review.}
