@@ -1,64 +1,19 @@
 % Chapters
 \input{part_sprint2/sprint_planning}
 
-\chapter{Some Chapter}
-\section{Improving Build Times}
+\input{part_sprint2/google_play_upload}
 
-To identify in which parts of the build process to make faster, we measure the time different parts of the Launcher project take. The Launcher project is the main application which depends on many other subprojects. The timings are measured on the Jenkins server and shown in \figureref{fig:launcher_build_times}. The shows the build timings of the Launcher application and the different subprojects (\emph{Oasis-lib, Giraf-Component, Local-db, Barcode-scanner, and Metadata}), as well as the startup time for the emulator.\todo{Kan vi regne med, at submoduler bliver binære filer?}
+\chapter{Restructuring of Jenkins}
+The setup of Jenkins used in sprint 0 was tedious to work with since all jobs were configured independently. If a change had to be made to several jobs, we would have to manually configure the change in each job. Not only did this take a considerable amount of time, but it was also prone to human errors during the process. We install a Jenkins plugin which allows jobs to have inheritable properties. As such, when we decide to make a change to e.g.\ the build system, it will not be necessary to change this in each job. Instead, the change can be made one place, and since all relevant jobs inherit they will inherit this change. This also ensures that jobs follow a consistent pipeline and thus do not differ in from job to job.
 
-\begin{figure}
-\centering
-\begin{tikzpicture}[trim axis left, trim axis right]
-  \begin{axis}[
-    xbar stacked,
-    scale only axis,
-    width=\textwidth,
-    axis y line*= none, axis x line*= bottom,
-    %xmajorgrids = true,
-    ytick = data,
-    yticklabels = {},
-    tick align = outside,
-    %xtick pos = left,
-    bar width=6mm,
-    y=8mm,
-    %nodes near coords,
-    legend style={
-      legend columns=4,
-      anchor=north,
-      yshift=0ex,
-      xshift=0ex,
-      draw=none
-      %legend cell align=left
-    },
-    area legend,
-    xlabel = {Time in WHAT UNIT?},
-    xmin = 0
-  ]
-    \addplot coordinates
-    {(209,0)}; 
-    \addlegendentry{Metadata}
-    \addplot coordinates
-    {(6625,0)};
-    \addlegendentry{Barcode-scanner}
-    \addplot coordinates
-    {(8393,0)};
-    \addlegendentry{Launcher}
-    \addplot coordinates
-    {(17223,0)};
-    \addlegendentry{Local-db}
-    \addplot coordinates
-    {(18000,0)};
-    \addlegendentry{Emulator}
-    \addplot coordinates
-    {(104696,0)};
-    \addlegendentry{Giraf-component}
-    \addplot coordinates
-    {(159497,0)};
-    \addlegendentry{Oasis-lib}
-    %\legend{Test, test, test, test, test, test}
-  \end{axis}
-\end{tikzpicture}
-\caption{Timings during build of the Launcher project.}\label{fig:launcher_build_times}
-\end{figure}
+We find that almost all jobs on Jenkins will benefit from this, and we see two general categories that are sufficiently distinct: Android apps and Android libraries. We create an abstract job for each of these. They do overlap somewhat in functionality, which means we have to create an abstract job for each job task. As such we create abstract jobs for e.g.\ \emph{run Gradle}, \emph{run unit tests}, \emph{find and move APKs}, and \emph{publish lint report}. The abstract jobs \emph{Android app} and \emph{Android library} inherit from the small abstract tasks that are relevant.
 
+Doing this also means we have to recreate all jobs, and a result of this is that the build history of each job is lost. We do not consider this a major problem, since most of the projects at this point do not build anyway.
+
+We have modelled this as an OOP class diagram in \todo{Pæn graf over Jenkins jobs og inheritance?}
+
+\todo{Nævn at vi ikke har en specifik user story for this. Det er refaktorering}
+
+
+\input{part_sprint2/faster_build}
 \input{part_sprint2/sprint_review}
