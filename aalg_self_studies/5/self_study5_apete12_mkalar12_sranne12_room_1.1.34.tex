@@ -1,0 +1,82 @@
+\documentclass[koma,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[hidelinks]{hyperref}
+\usepackage{amsthm}
+\usepackage{tikz}
+\usepackage{todonotes}
+\usepackage{booktabs}
+\usepackage{subcaption}
+\usepackage{color}
+\usepackage{lmodern}
+\usepackage{mathtools}
+\graphicspath{{graphics/}}
+\usetikzlibrary{trees}
+\usepackage[utf8]{inputenc}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+
+\newcommand*\circled[1]{\tikz[baseline=(char.base)]{\node[shape=circle,draw,inner sep=2pt] (char) {#1};}} % circles around numbers
+
+\title{AALG Self Study 5}
+\author{Andreas Petersen\\
+Mads E. Kalør\\
+Søren B. Ranneries\\
+Room 1.1.34}
+\begin{document}
+\maketitle
+
+\pagebreak
+
+\section{Exercise 1}
+
+\subsection{1}
+There are $\ceil[\Big]{\frac{N}{M}}$ runs, which is larger than $m - 1$. Thus the multiway merge cannot be performed in one run. Multiple runs are required. In the first merge there is space for 3 runs. The second merge there are two runs remaining. Therefore there are two merge phases.
+
+\subsection{2}
+Phase one does $4 \cdot 5 \cdot 2 = 40$ I/O operations. Phase two does $$(((m - 1)4 \cdot 2) + (2 \cdot 4 + (m - 1) 4)) \cdot 2 = 64$$ I/O operations. In total there are $104$ I/O operations.
+
+\subsection{3}
+$A[1..48], A[49..64], A[65..80]$
+
+\section{Exercise 2}
+\begin{itemize}
+  \item There is room for $1000-1 = 999$ runs. There are a total of $\frac{900000}{1000} = 900$ runs. Thus only one iteration is required.
+  \item We increase the number of output pages.
+  \begin{enumerate}
+    \item insert new 
+  \end{enumerate}
+\end{itemize}
+
+\begin{itemize}
+  \item One iteration using 900 input buffers. To use the remaining memory, we use an additional 99 pages for output. \begin{align*}
+      &\frac{900000}{100}x + \left(900000 - \frac{900000}{100}\right) \frac{x}{10} + 900000 x =\\
+      &998100x
+    \end{align*} time.
+  \item Two iterations using 30 input buffers: \begin{align*}
+    &\left(30000 \cdot \frac{29}{30} \cdot \frac{x}{10} + 30000 \cdot \frac{1}{30} \cdot x + 30000 \cdot \frac{99}{100} \cdot \frac{x}{10} + 30000 \cdot \frac{1}{100} \cdot x\right) \cdot 30~+\\
+    &\left(900000 \cdot \frac{29}{30} \cdot \frac{x}{10} + 900000 \cdot \frac{1}{30} \cdot x + 900000 \cdot \frac{99}{100} \cdot \frac{x}{10} + 900000 \cdot \frac{1}{100} \cdot x\right) =\\ &430000x
+  \end{align*}
+  \item Three iterations using 10 input buffers: \begin{align*}
+    &\left(10000 \cdot \frac{89}{90} \cdot \frac{x}{90} + 10000 \cdot \frac{1}{90} \cdot x + 10000 \cdot \frac{99}{100} \cdot \frac{x}{90} + 10000 \cdot \frac{1}{100} \cdot x\right) \cdot 90~+\\
+    &\left(10000 \cdot \frac{9}{10} \cdot \frac{x}{10} + 10000 \cdot \frac{1}{10} \cdot x + 10000 \cdot \frac{99}{100} \cdot \frac{x}{10} + 10000 \cdot \frac{1}{100} \cdot x\right) \cdot 90~+
+  \end{align*}
+\end{itemize}
+
+\section{Exercise 3}
+
+\section{a}
+\begin{align*}
+  &\text{Sum-Arrays-Rec}(A, B, C, l, r)\\
+  &~~~~\text{if } l = r \text{ then}\\
+  &~~~~~~~~C[l] \leftarrow A[l] + B[l]
+\end{align*}
+
+\section{b}
+
+\section{c}
+
+\end{document}
