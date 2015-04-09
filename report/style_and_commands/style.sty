@@ -184,9 +184,22 @@
     \lstset{style=javastyle, #1}
   }{}
 
+  \lstdefinelanguage{Groovy}[]{Java}{%
+    keywordstyle=\color{javapurple}\bfseries,
+    stringstyle=\color{javared}\ttfamily,
+    keywords=[3]{each, findAll, groupBy, collect, inject, eachWithIndex},
+    morekeywords={def, as, in, use},
+    moredelim=[is][\textcolor{darkgray}]{\%\%}{\%\%},
+    moredelim=[il][\textcolor{darkgray}]{§§}
+  }
+
+  \lstnewenvironment{gradlecode}[1][]{%
+    \lstset{language=Groovy, #1}
+  }{}
+
   \lstset{
     columns=flexible,
-    escapechar="
+    escapechar=",
     escapeinside={(*@}{@*)},
     basicstyle=\ttfamily\footnotesize,
     frame=single, backgroundcolor=\color{clshade}, rulecolor=\color{clframe},
