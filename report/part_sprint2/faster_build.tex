@@ -1,5 +1,5 @@
 \chapter{Improving Build Times}
-The project groups want the build times on Jenkins to be faster. When multiple changes are pushed to the master branch within a short space of time, they will create congestion the build queue. This means that even though the build itself may take only a few minutes, the time it takes from push to finished build may be much longer.
+The project groups want the build times on Jenkins to be faster. When multiple changes are pushed to the master branch within a short space of time, they will create congestion the build queue. This means that even though the build itself may take only a few minutes, the time it takes from push to finished build may be much longer (and exceed than the 10 minutes advocated by Kent Beck \parencite{beck2004}).
 
 To identify in which parts of the build process to make faster, we measure the time different parts of the Launcher project take. The Launcher project is the main application which depends on many other subprojects. The timings are measured on the Jenkins server and shown in \figureref{fig:launcher_build_times_1}. The shows the build timings of the Launcher application and the different subprojects (\emph{Oasis-lib, Giraf-Component, Local-db, Barcode-scanner, and Metadata}), as well as the startup time for the emulator. As can be seen, the emulator and the Giraf-component and Oasis-lib projects have the most significant influence on build times. These three parts use about \SI{90}{\percent} of the total build time.
 
@@ -60,7 +60,7 @@ To understand which parts of the subprojects that take time, we measure the indi
 \caption{Timings during build of the Launcher project before updating emulator plugin.}\label{fig:launcher_build_times_1}
 \end{figure}
 
-To improve the overall build times, we look at how to speed up the emulator and to avoid running tests on the dependencies every time a project is build. We first update the Android Emulator Jenkins plugin to a new version with improved emulator stability. We do this to ensure that we do not work on improving parts which are already improved in the most recent version of the plugin. After updating, we measure the build times again. As shown in \figureref{fig:launcher_build_times_2}, the emulator startup time is significantly increased. Because of this, the emulator startup time is no longer a concern, and we focus solely on decreasing the subproject build times.
+To improve the overall build times, we look at how to speed up the emulator and to avoid running tests on the dependencies every time a project is build. We first update the Android Emulator Jenkins plugin to a new version with improved emulator stability. We do this to ensure that we do not work on improving parts which are already improved in the most recent version of the plugin. After updating, we measure the build times again. As shown in \figureref{fig:launcher_build_times_2}, the emulator startup time is significantly increased. Because of this, the emulator startup time is no longer the primary concern, and we focus on decreasing the subproject build times. \todo{Vi kan måske beskrive test uden emulator her, og konkludere at det ikke er arbejdet værd}
 \begin{figure}
 \centering
 \begin{tikzpicture}[trim axis left, trim axis right]
@@ -116,6 +116,13 @@ To improve the overall build times, we look at how to speed up the emulator and 
 \caption{Timings during build of the Launcher project.}\label{fig:launcher_build_times_2}
 \end{figure}
 
-
+\section{Dependency Management}
 
 % TODO: Undgå at teste dependencies: Vi har brug for at styre vores binære filer
+
+% - Binære
+% - Test ikke
+% - Hurtigere server
+% - Test uden emulator
+% http://www.oracle.com/technetwork/articles/java/enterprise-binaries-2227134.html
+% http://blogs.collab.net/subversion/why-you-should-be-using-an-artifact-repository-part-1#.VSEWcpOsUkM
