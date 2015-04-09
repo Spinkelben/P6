@@ -128,12 +128,14 @@ Instead of building and testing dependencies each time a dependend project is bu
   \item[Quality Control] Libraries are built and released only if the tests pass, so there will never be dependencies which cannot compile or do not work\footnote{Of course, there may be bugs even if all tests pass, but the risk is decreased}.
   \item[Cleaner Structure] Nested dependencies (dependency A depends on dependency B which depends on dependency C) is well defined and nicely handled. The individual libraries do not include their dependencies, so it is always the dependend library that has to include all dependencies. Currently, the same dependency may be included multiple times in the same project.
 \end{description}
-The Android counterpart of Java \mono{.\@jar}-files are \mono{.\@aar}-files. These files are similar to \mono{.\@jar}-files, except that they can contain Android-specific dependencies such as icon resources as well \parencite{android-aar}.
+The Android counterpart of Java \mono{.\@jar}-files is \mono{.\@aar}-files. These files are similar to \mono{.\@jar}-files, except that they can contain Android-specific dependencies such as icon resources as well \parencite{android-aar}.
 
 With this solution, it is clear that we no longer want to use submodules for managing dependencies. Coincidentally, the Git-responsible group in the multi-project work on a user story which states ``Remove Git submodules''. The reason for this user story is that the developers generally find the submodules difficult to work with. Because this overlap with our solution to making build times faster, we decide to solve this in collaboration.
 
-\subsection{Agreement Upon Submodule Replacement}
-The Git-responsible group initially propose to remove submodules by merging all repositories into one, each project having its own directory located in the root directory of the repository, as shown in \figureref{fig:single_repo_structure}. Dependencies are then handled by referring to the relative path of the dependency. For example, if \mono{ProjectA} depends on \mono{ProjectB}, \mono{ProjectA} will contain a reference to \mono{../ProjectB}.
+An important requirement for the solution, beside removing Git submodules and improving build times, is that every build should be reproducible. This means that we must be able to reproduce any previously released version. According to Martin Fowler, this is a very important part of continuous integration as it makes it possible to reproduce bugs from previous versions \parencite{fowlerReproducibleBuild}. In the current way of managing dependencies, this requirement is fulfilled.
+
+\subsection{Agreement Upon Submodule Replacement Strategy}
+The Git-responsible group initially propose to remove submodules by merging all repositories into one, each project having its own directory located in the root directory of the repository, as shown in \figureref{fig:single_repo_structure}. Dependencies are then handled by referring to the relative path of the dependency. For example, if \mono{ProjectA} depends on \mono{ProjectB}, \mono{ProjectA} will contain a reference to \mono{../ProjectB}. This solution makes all releases reproducible, which is one of the requirements to the solution.
 \begin{figure}
   \dirtree{%
 .1 /.
@@ -148,11 +150,12 @@ The Git-responsible group initially propose to remove submodules by merging all 
 }
 \caption{Single repository file structure} \label{fig:single_repo_structure}
 \end{figure}
+A problem with this, however, is that the structure does not use pre-compiled libraries and as such it does not decrease build times as much as we want. Each dependency is built every time the dependent project is built.
 
-\todo{Beskriv ulemperne ved denne løsning}
-% Husk at skrive om trace-back
-% Se \parencite{fowlerReproducibleBuild}
-% http://martinfowler.com/bliki/ReproducibleBuild.html
+An additional problem is that all projects are forced to use the most recent versions of its dependencies. As soon as a dependency is updated, it is automatically applied in all dependent projects. If the interface to a library changes without keeping backward compatibility, all dependent projects will stop working.
+
+\todo{Skriv vores forslag}
+% Lever vores forslag op til krav?
 
 \subsection{Dependency Repository}
 \todo{Skriv hvorfor versionskontrol er vigtigt}
