@@ -128,7 +128,7 @@ Instead of building and testing dependencies each time a dependend project is bu
   \item[Quality Control] Libraries are built and released only if the tests pass, so there will never be dependencies which cannot compile or do not work\footnote{Of course, there may be bugs even if all tests pass, but the risk is decreased}.
   \item[Cleaner Structure] Nested dependencies (dependency A depends on dependency B which depends on dependency C) is well defined and nicely handled. The individual libraries do not include their dependencies, so it is always the dependend library that has to include all dependencies. Currently, the same dependency may be included multiple times in the same project.
 \end{description}
-The Android counterpart of Java \mono{.\@jar}-files are \mono{.\@aar}-files. These files are similar to \mono{.\@jar}-files, except that they can contain Android-specific dependencies such as icon resources as well \parencite{android-aar}.
+The Android counterpart of Java \mono{.\@jar}-files is \mono{.\@aar}-files. These files are similar to \mono{.\@jar}-files, except that they can contain Android-specific dependencies such as icon resources as well \parencite{android-aar}.
 
 With this solution, it is clear that we no longer want to use submodules for managing dependencies. Coincidentally, the Git-responsible group in the multi-project work on a user story which states ``Remove Git submodules''. The reason for this user story is that the developers generally find the submodules difficult to work with. Because this overlap with our solution to making build times faster, we decide to solve this in collaboration.
 
