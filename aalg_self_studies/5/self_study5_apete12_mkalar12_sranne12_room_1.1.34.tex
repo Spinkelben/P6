@@ -47,7 +47,7 @@ $A[1..48], A[49..64], A[65..80]$
   \item There is room for $1000-1 = 999$ runs. There are a total of $\frac{900000}{1000} = 900$ runs. Thus only one iteration is required.
   \item We increase the number of output pages.
   \begin{enumerate}
-    \item insert new 
+    \item insert new
   \end{enumerate}
 \end{itemize}
 
@@ -71,12 +71,18 @@ $A[1..48], A[49..64], A[65..80]$
 \section{a}
 \begin{align*}
   &\text{Sum-Arrays-Rec}(A, B, C, l, r)\\
-  &~~~~\text{if } l = r \text{ then}\\
-  &~~~~~~~~C[l] \leftarrow A[l] + B[l]
+  &~~~~\text{if } l = r \text{then}\\
+  &~~~~~~~~C[i] \leftarrow A[l] + B[l]\\
+  &~~~~\text{else then}\\
+  &~~~~~~~~\text{mid} \leftarrow l+\lfloor (r - l)/2 \rfloor\\
+  &~~~~~~~~\text{spawn Sum-Arrays-Rec}(A, B, C, l, mid)\\
+  &~~~~~~~~\text{Sum-Arrays-Rec}(A, B, C, mid+1, r)\\
+  &~~~~~~~~\text{sync}\\
 \end{align*}
-
+Work: $\Theta(n)$. Span: $\Theta(\log n) + \Theta(1)$ The parallelism is $\Theta(\frac{n}{\log n})$, $n$ is the length of the arrays.
 \section{b}
-
+Work: $\Theta(n)$. Span: $\Theta(\log n) + \Theta(n)$ --- we spawn $n$ threads in primary thread. Parallelism: $\Theta(1)$
 \section{c}
-
+Span: $\Theta(\text{grain-size}\log n) + \Theta(\frac{n}{\text{grain-size}})$. Optimal grain-size: $$\sqrt{\frac{n}{\log n}}$$
+The best way to parallelize loops is to use a single parallelized loop.
 \end{document}
