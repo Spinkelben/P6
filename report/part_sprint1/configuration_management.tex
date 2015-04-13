@@ -36,8 +36,14 @@ An alternative to integrating code directly with the master branch is to use pre
 
 For the first sprint, we choose to implement the direct commit strategy, primarily because of its simplicity. It is important to get continuous integration up running so the developers can start to develop code, and it would be too costly to spend time implementing a pre-tested commit strategy as this will block the progress of all other developers. We are unsure about how the developers handle the increased responsibility, so in the preparation of the second sprint, we will evaluate this strategy and consider whether we should implement the pre-tested commit strategy instead.
 
-We implement this by setting up a post-receive hook that invokes Jenkins to automatically build any project that pulls from the repository that receives a push.
-\kimnote{This is a very nice section, if it makes sense then please include some scripts or hooks. (Only if it is not trivial)}
+We implement this by setting up a post-receive hook that invokes Jenkins to automatically build any project that pulls from the repository that receives a push. The hook can be seen in \listingref{lst:hook_script_first}. \mono{curl} sends to Jenkins the needed information for starting a build on a job associated with a particular repository. \mono{http://cs-cust06-int.cs.aau.dk/git-ro/\$(basename \$(pwd))} is the link for the repository to update. Since the script is stored in only one place, and there are several repositories, the name of the repository that invokes the hook is found by \mono{\$(basename \$(pwd))}. Finally a message is displayed to the user that pushed to tell them that Jenkins will start building.\todo{Nyt: LÆS}
+
+\begin{lstlisting}[language=bash,showstringspaces=false,caption=Git hook script,label=lst:hook_script_first]
+curl -s http://localhost/jenkins/git/notifyCommit?url= http://cs-cust06-int.cs.aau.dk/git-ro/$(basename $(pwd)) > /dev/null
+
+echo "Thank you for your push. Jenkins will be serving you in a moment."
+\end{lstlisting}
+
 
 \begin{figure}
 \begin{subfigure}[b]{\linewidth}
