@@ -28,22 +28,6 @@ It is important that everyone can see the build process, however. According to M
 The inherited project has no build automation, we decide to set it up in two stages. In the first stage we schedule all jobs to run nightly. This gives us some level of build automation and gives us time to investigate merge strategies and set it up properly. The nightly job is set to run every day at midnight\kimnote{I can guess why you want build and test automation, but you should state why you do something. Idealy it should be motivated by a story. Please make this connection more apprent.}.
 
 \subsection{Merge Strategy}\label{sec:branching_strategy}
-As the name \emph{continuous integration} suggests, code should be integrated into the mainline (or \emph{master branch}) of the project frequently \parencite{fowlerCI}. According to Martin Fowler, frequent merges ensure that merges generally will be small and easy to perform \parencite{fowlerFeatureBranch}. The master branch must be stable and always in a release-ready state. If it breaks, it should be the team's first priority to fix it. A consequence of this is that the whole team is affected when a developer introduces an error, which has a negative influence on the overall productivity.
-
-We assess two strategies to accommodate these consequences of continuous integration\kimnote{sounds awesome, insert citations! :)}: a \emph{direct commit strategy} and the \emph{pre-tested commit strategy}. In the direct commit strategy, every developer integrates its code directly to the master branch. It is the developer's own responsibility that the code works. This is the simplest, and one may say, the most agile way of integrating code with the master branch. An illustration of the direct commit strategy can be seen in \figureref{fig:commit_stratagy_a}. A developer creates a branch from the master branch and develops their code (commits \mono{B} and \mono{C}) on this before merging it directly into the master branch (commit \mono{D}).
-
-An alternative to integrating code directly with the master branch is to use pre-tested commits \parencite{fowlerPendingHead}. A pre-tested commit uses a special branch which is an intermediate place for building and testing code before it is merged into the master branch. The code will only be merged into the master branch if it passes the tests. This ensures that the master branch will always work, but the merging workflow will be more complex as the developer must pull from one branch and push to another. The strategy is illustrated in \figureref{fig:commit_stratagy_b}. The developer creates a branch from the master branch and develops its code on here. When completed, the code is merged with the intermediate branch (commit \emph{\mono{I}}), which will build and test the code before eventually merging it with the master branch (commit \mono{D}).
-
-For the first sprint, we choose to implement the direct commit strategy, primarily because of its simplicity. It is important to get continuous integration up running so the developers can start to develop code, and it would be too costly to spend time implementing a pre-tested commit strategy as this will block the progress of all other developers. We are unsure about how the developers handle the increased responsibility, so in the preparation of the second sprint, we will evaluate this strategy and consider whether we should implement the pre-tested commit strategy instead.
-
-We implement this by setting up a post-receive hook that invokes Jenkins to automatically build any project that pulls from the repository that receives a push. The hook can be seen in \listingref{lst:hook_script_first}. \mono{curl} sends to Jenkins the needed information for starting a build on a job associated with a particular repository. \mono{http://cs-cust06-int.cs.aau.dk/git-ro/\$(basename \$(pwd))} is the link for the repository to update. Since the script is stored in only one place, and there are several repositories, the name of the repository that invokes the hook is found by \mono{\$(basename \$(pwd))}. Finally a message is displayed to the user that pushed to tell them that Jenkins will start building.\todo{Nyt: LÆS}
-
-\begin{lstlisting}[language=bash,showstringspaces=false,caption=Git hook script,label=lst:hook_script_first]
-curl -s http://localhost/jenkins/git/notifyCommit?url= http://cs-cust06-int.cs.aau.dk/git-ro/$(basename $(pwd)) > /dev/null
-
-echo "Thank you for your push. Jenkins will be serving you in a moment."
-\end{lstlisting}
-
 
 \begin{figure}
 \begin{subfigure}[b]{\linewidth}
@@ -108,6 +92,22 @@ echo "Thank you for your push. Jenkins will be serving you in a moment."
 \end{subfigure}
 \caption{Different branching strategies. A circles represents a commit and an arrow represents a reference to a commit.}\label{fig:commit_stratagy}
 \end{figure}
+
+As the name \emph{continuous integration} suggests, code should be integrated into the mainline (or \emph{master branch}) of the project frequently \parencite{fowlerCI}. According to Martin Fowler, frequent merges ensure that merges generally will be small and easy to perform \parencite{fowlerFeatureBranch}. The master branch must be stable and always in a release-ready state. If it breaks, it should be the team's first priority to fix it. A consequence of this is that the whole team is affected when a developer introduces an error, which has a negative influence on the overall productivity.
+
+We assess two strategies to accommodate these consequences of continuous integration\kimnote{sounds awesome, insert citations! :)}: a \emph{direct commit strategy} and the \emph{pre-tested commit strategy}. In the direct commit strategy, every developer integrates its code directly to the master branch. It is the developer's own responsibility that the code works. This is the simplest, and one may say, the most agile way of integrating code with the master branch. An illustration of the direct commit strategy can be seen in \figureref{fig:commit_stratagy_a}. A developer creates a branch from the master branch and develops their code (commits \mono{B} and \mono{C}) on this before merging it directly into the master branch (commit \mono{D}).
+
+An alternative to integrating code directly with the master branch is to use pre-tested commits \parencite{fowlerPendingHead}. A pre-tested commit uses a special branch which is an intermediate place for building and testing code before it is merged into the master branch. The code will only be merged into the master branch if it passes the tests. This ensures that the master branch will always work, but the merging workflow will be more complex as the developer must pull from one branch and push to another. The strategy is illustrated in \figureref{fig:commit_stratagy_b}. The developer creates a branch from the master branch and develops its code on here. When completed, the code is merged with the intermediate branch (commit \emph{\mono{I}}), which will build and test the code before eventually merging it with the master branch (commit \mono{D}).
+
+For the first sprint, we choose to implement the direct commit strategy, primarily because of its simplicity. It is important to get continuous integration up running so the developers can start to develop code, and it would be too costly to spend time implementing a pre-tested commit strategy as this will block the progress of all other developers. We are unsure about how the developers handle the increased responsibility, so in the preparation of the second sprint, we will evaluate this strategy and consider whether we should implement the pre-tested commit strategy instead.
+
+We implement this by setting up a post-receive hook that invokes Jenkins to automatically build any project that pulls from the repository that receives a push. The hook can be seen in \listingref{lst:hook_script_first}. \mono{curl} sends to Jenkins the needed information for starting a build on a job associated with a particular repository. \mono{http://cs-cust06-int.cs.aau.dk/git-ro/\$(basename \$(pwd))} is the link for the repository to update. Since the script is stored in only one place, and there are several repositories, the name of the repository that invokes the hook is found by \mono{\$(basename \$(pwd))}. Finally a message is displayed to the user that pushed to tell them that Jenkins will start building.\todo{Nyt: LÆS}
+
+\begin{lstlisting}[language=bash,showstringspaces=false,caption=Git hook script,label=lst:hook_script_first]
+curl -s http://localhost/jenkins/git/notifyCommit?url= http://cs-cust06-int.cs.aau.dk/git-ro/$(basename $(pwd)) > /dev/null
+
+echo "Thank you for your push. Jenkins will be serving you in a moment."
+\end{lstlisting}
 
 \subsection{Continuous Build}
 The output of a build is an APK file, which is a package format used to distribute and install software onto Android. These files need to be signed before they can be installed. As such, we add a post-build task to Jenkins which signs and verifies the APK files as well as moves it into a common APK folder for all projects.
