@@ -6,7 +6,8 @@ We measure the time different parts of the Launcher project take to identify in 
 To understand which parts of the dependencies that take time, we measure the individual build steps (tasks) performed during a build. These can be seen in \appendixref{app:build_times}. The reason that the Oasis-lib dependency takes a long time to build is that it contains a great number of tests which run on the emulator. These tests are run every time a project depending on Oasis-lib builds --- even though the library itself has not been updated. The most significant task when building the Giraf-Component library is the test task as well. However, the Giraf-Component library only contains one simple test, so we do not expect the actual test execution time to use much of this time. Instead, we expect it to be caused by the order in which projects are tested. When preparing the tests, the tests from all projects are combined into a single Android application package (APK-file). The first test task run is responsible for installing this application on the emulator, while the subsequent test tasks can skip this step. Because the Giraf-components project is the first in the sequence of libraries to be tested, this task also installs the tests on the emulator which is likely to take some time.
 \todo{Overvej flere målinger og tag gennemsnit}
 \begin{figure}
-  \centering
+\centering
+\tikzsetnextfilename{timings_beforeemulatorupdate}
 \begin{tikzpicture}[trim axis left, trim axis right]
   \begin{axis}[
     xbar stacked,
@@ -65,6 +66,7 @@ To improve the overall build times, we look at how to speed up the emulator and 
 
 \begin{figure}
 \centering
+\tikzsetnextfilename{timings_afteremulatorupdate}
 \begin{tikzpicture}[trim axis left, trim axis right]
   \begin{axis}[
     xbar stacked,
