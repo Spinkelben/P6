@@ -48,18 +48,33 @@ Two roles from Scrum are used in the multi-project:
 
 \begin{description}
   \item[Scrum Master] On the multi-project level, we are responsible for the development method. This means that we act as Scrum masters on the multi-project level. On the subproject level, one person is charge of the meetings --- they make sure that the Scrum meetings on this level are held. On the group level, each group is free to do what they see fit.
-  \item[Product Owner] The product owner (PO) is responsible for maintaining contact with the customers and being their representatives. It can be difficult to have a single PO with an external customer as customer in the multi-project. Therefore, many of the \bd and \db groups do not have the external customer as their direct customers. Rather, these groups help the \gui groups achieve their goal by building solutions for them. The external customer is often not interested in the implementation details of build and database interfaces. We seek a way of organizing the different teams in a structure that allows them to work with user stories relevant to their subprojects. \textcite{bird_davies_2007} describes four methods of organizing teams in Scrum of Scrums:
-  \begin{enumerate}
-    \item Independent groups with a customer and PO of their own. They also have their own backlog.
-    \item Groups have a single common backlog and share the customer and PO
-    \item Groups have their own customer and PO, and a backlog that takes items from a large common backlog
-    \item Subproject has their own PO, customer, and backlog, and groups can serve as customers for other groups
-  \end{enumerate}
-The first and second options are the simplest, but they can prove difficult in the multi-project, as groups from each subproject may be dependent on the other groups. For example, the \gui subproject may require changes to the database structure, which should be resolved by the \db subproject. The third option adds an extra layer on top of the previous described methods, which allows user stories from the external customer to be distributed among the individual groups. However, it still has the issue that the primary customer is the external customer. The final option, on the other hand, allows for example the \gui groups to be customers of the \bd groups. Thus, the external customer can be abstracted from internal needs and technicalities. This structure fits the needs for the multi project well. Specifically, there are three POs in the multi-project, one for each subproject. The customer for the GUI PO is the external customer, whereas the customers for the \db and \bd POs are the groups from the other subprojects, as illustrated in \figureref{fig:po_illu}. We chose to present this method to the groups of the multi-project who approved it. The PO roles have been designated to a group (and not a single person) in each subproject. This differ from the regular Scrum method, where a product owner is a single person. \kimnote{I do not agree in the placement of this discussion, I think this should be in scrum 1. I'll elaborate on this at our meeting. :D}
+  \item[Product Owner] The product owner (PO) is responsible for maintaining contact with the customers and being their representatives. It can be difficult to have a single PO with an external customer as customer in the multi-project. Therefore, the \bd and \db groups often do not have the external customer as their direct customer. Rather, these groups help the \gui groups achieve their goal by building solutions for them. The external customer is often not interested in the implementation details of build and database interfaces.
+
+As such, we decided during sprint 1 that there are three POs in the multi-project, one for each subproject. The customer for the \gui PO is the external customer, whereas the customers for the \db and \bd POs are the groups of the other subprojects, as illustrated in \figureref{fig:po_illu}.
 
 \end{description}
 
-\fig{po_illu}{Illustration of product owners}{Illustration of product owners. \todo{Temporary figure. Make a nicer in tikz and add some more description. In particular of the arrows.}}
+\begin{figure}%
+\centering
+\tikzsetnextfilename{po_illustration}
+\begin{tikzpicture}[
+  simple/.style={draw, rounded corners, minimum height=1.7em}]
+  \node[simple] (extcust) at (0,1.2) {External Customer};
+  \node[simple] (guipo) at (0,0) {GUI PO};
+  \node[simple] (dbpo) at (-1.3,-1.2) {DB PO};
+  \node[simple] (bdpo) at (1.3,-1.2) {B\&D PO};
+  
+  \draw[->] (guipo) to (dbpo);
+  \draw[->] (guipo) to (bdpo);
+  \draw[<->] (dbpo) to (bdpo);
+  \draw[->] (extcust) to (guipo);
+  
+\end{tikzpicture}
+\caption{Illustration of product owners}%
+\label{po_illu}%
+\end{figure}
+
+%\fig{po_illu}{Illustration of product owners}{Illustration of product owners. \todo{Temporary figure. Make a nicer in tikz and add some more description. In particular of the arrows.}}
 
 \subsection{Meetings}\label{sec:meetings}
 Each week there is a meeting at the multi-project level. At this meeting the status of the groups in the multi-project is presented and the development method is evaluated. This ensures that all groups know the current status of the project, and that the development method can be continually improved.
