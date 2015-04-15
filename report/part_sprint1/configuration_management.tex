@@ -3,6 +3,7 @@
 \todo{Chapter 5 introduction}
 
 \begin{chapterorganization}
+  \item in \sectionref{sec:redmine-conf} we describe how we customize Redmine to suit our needs.
   \item in \sectionref{sec:jenkins} we describe the platform for continuous integration, Jenkins, that we use in the project;
   \item in \sectionref{sec:build_automation} we explain how we set up automation of the builds and discuss version control branching strategies as well as automated testing and lint checking;
   \item in \sectionref{sec:automated_documentation_gen} we explain how we set up automated documentation generation.
@@ -12,6 +13,15 @@
   \item[SCMP] Software Configuration Management Plan
   \item[test2] \dummy
 \end{abbreviations}
+
+\section{Configuring Redmine}\label{sec:redmine-conf}
+The developers of last year used Redmine for various project management functions. We need to evaluate which functions to keep. 
+One of these functions is an issue tracker. We choose to keep it, but not as a traditional issue tracker.  Instead we customize it so that it contains the product backlog and release backlog.  This setup is not ideal as it can be hard to manage at times, but it is what the multi-project has available without much more needed effort. We collaborated with \group{3} (Redmine general) and \group{10} (user story and task trackers) to set this up\kimnote{who designed this setup? if you did then say it! What was your role in this collaboration?}
+ 
+Also, a Gantt chart feature had been installed by previous years. The Scrum method does not advocate Gantt charts or other dependency charts \parencite{larman2003}. As such, we collaborated with \group{3} to remove this from Redmine. The other unused features have not been removed, since it was deemed unnecessary to spend time on doing so.
+ 
+Redmine also contains other features such as a roadmap, burndown charts, and news. While these features are present on the main page, they are not used. The burndown chart in particularly is not used since no common sprint backlog is used, and as such the burndown chart cannot be used at the multi-project level.
+
 
 \section{Jenkins: Continuous Integration Platform}\label{sec:jenkins}
 An open source tool for continuous integration, Jenkins \parencite{JenkinsWebsite}, was used by previous years. We will use this as our continuous integration platform. It supports source control management tools such as Git \parencite{gitwebsite}, as well as build automation tools such as Maven \parencite{mavenwebsite}. It is extensible via numerous available plugins. Jenkins allows for a sophisticated continuous integration setup, however the setup by previous years is rather basic and we want to improve it in several ways.
