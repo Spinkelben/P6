@@ -137,7 +137,7 @@ With this solution, it is clear that we no longer want to use submodules for man
 An important requirement for the solution, beside removing Git submodules and improving build times, is that every build should be reproducible. This means that we must be able to reproduce any previously released version. According to Martin Fowler, this is a very important part of continuous integration as it makes it possible to reproduce bugs from previous versions \parencite{fowlerReproducibleBuild}. In the current way of managing dependencies, this requirement is fulfilled.
 
 \subsection{Agreement Upon Submodule Replacement Strategy}
-The Git-responsible group initially propose to remove submodules by merging all repositories into one, each project having its own directory located in the root directory of the repository, as shown in \figureref{fig:single_repo_structure}. Dependencies are then handled by referring to the relative path of the dependency. For example, if \mono{ProjectA} depends on \mono{ProjectB}, \mono{ProjectA} will contain a reference to \mono{../ProjectB}. This solution makes all releases reproducible, which is one of the requirements to the solution.
+The Git-responsible group initially propose to remove submodules by merging all repositories into one, each project having its own directory located in the root directory of the repository, as shown in \figureref{fig:single_repo_structure}. Dependencies are then handled by referring to the relative path of the dependency. For example, if \mono{ProjectA} depends on \mono{ProjectB}, \mono{ProjectA} will contain a reference to \mono{../ProjectB}. This solution makes all releases reproducible, which is one of the requirements to the solution. The repository can simply be checked out to a specific commit corresponding to a specific release.
 \begin{figure}
   \dirtree{%
 .1 /.
@@ -156,11 +156,24 @@ A problem with this, however, is that the structure does not use pre-compiled li
 
 An additional problem is that all projects are forced to use the most recent versions of its dependencies. As soon as a dependency is updated, it is automatically applied in all dependent projects. If the interface to a library changes without keeping backward compatibility, all dependent projects will stop working.
 
-\todo{Skriv vores forslag}
-% Lever vores forslag op til krav?
+Instead, we need a structure which allows projects to reference their dependencies as pre-built libraries while being able to reproduce any build in history. For inspiration, we look at how dependency management is done in the five most starred Android projects on Github\footnote{As of April \nth{15}, these are \emph{ioshed, ViewPagerIndicator, retrofit, EventBus}, and \emph{PhotoView}.}. In all of these projects, dependencies are handled as \emph{Maven dependencies}. Maven is a build tool similar to Gradle, but its dependencies management mechanisms are supported in many build tools, including Gradle. Dependencies are declared in the build configuration file, for example in a Gradle file, each of which uniquely identified with a group (package), name, and version number. \listingref{lst:dependency_declaration} shows how a dependency (the \emph{gson} library) is declared in a Gradle file. When the project is built, the build system automatically searches for the dependencies on the declared repositories and downloads them. Because the version code is used to identify dependencies, and the build file is under version control, it is possible reproduce builds.
+
+\begin{gradlecode}[caption={Dependency declaration in Gradle},label={lst:dependency_declaration}]
+repositories {
+  mavenCentral()
+}
+dependencies {
+  compile 'com.google.code.gson:gson:2.0'
+}
+\end{gradlecode}
 
 \subsection{Dependency Repository}
+By hosting our own internal artifact repository for our libraries, we are able to declare the dependencies in the build-file, and at the same time remove Git submodules and make builds happen faster. Different pieces of software for hosting repositories exist, which we will present in this section.
+
+
 \todo{Skriv hvorfor versionskontrol er vigtigt}
 \todo{Skriv hvorfor vi skal have et repository}
 % http://www.oracle.com/technetwork/articles/java/enterprise-binaries-2227134.html
 % http://blogs.collab.net/subversion/why-you-should-be-using-an-artifact-repository-part-1#.VSEWcpOsUkM
+
+% Beskriv evt workflow
