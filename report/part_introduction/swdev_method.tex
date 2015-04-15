@@ -31,6 +31,59 @@ The agile method used for the project is Scrum, and the groups are organized as 
   \item[Group Level] Each group solve some of the user stories of their subprojects. While Scrum of Scrums dictates that Scrum is followed at all levels, this is not the case for this multi-project organization. This is of course a major deviation from Scrum of Scrums. When initially deciding the software development method, some groups expressed an interest in not running Scrum. Thus, each group is given the freedom to organize how they see fit. However, all groups are expected to fill in the work products and attend the meetings described later.
 \end{description}
 
+\begin{figure}%
+\centering
+\tikzsetnextfilename{multiproject_illustration}
+\begin{tikzpicture}[
+  simple/.style={draw, rounded corners, minimum height=2em, minimum width=7em},
+  simplefixed/.style={draw, rounded corners, minimum height=1.7em, minimum width=3em},
+  square/.style={draw, rounded corners, minimum height=1.4em, minimum width=1.4em}]
+  
+  \node[simple] (mp) at (0,0) {Multi-project};
+  
+  \node[simplefixed] (gui) at (0,-1.2) {DB}; % NOTICE OTHER NAME THAN LABEL.
+  \node[simplefixed] (db) at (-3,-1.2) {GUI};
+  \node[simplefixed] (bd) at (3,-1.2) {B\&D};
+  
+  \node[square] (g1) at (-3.9, -2.4) {};
+  \node[square] (g2) at (-3.3, -2.4) {};
+  \node[] (g3) at (-2.7, -2.4) {...};
+  \node[square] (g4) at (-2.1, -2.4) {};
+  
+  \node[square] (g5) at (-0.9, -2.4) {};
+  \node[square] (g6) at (-0.3, -2.4) {};
+  \node[] (g7) at (0.3, -2.4) {...};
+  \node[square] (g8) at (0.9, -2.4) {};
+  
+  \node[square] (g9) at (2.1, -2.4) {};
+  \node[square] (g10) at (2.7, -2.4) {};
+  \node[] (g11) at (3.3, -2.4) {...};
+  \node[square] (g12) at (3.9, -2.4) {};
+  
+  \draw[->] (mp) to (gui);
+  \draw[->] (mp) to (db);
+  \draw[->] (mp) to (bd);
+  
+  \draw[->] (db) to (g1);
+  \draw[->] (db) to (g2);
+  \draw[->] (db) to (g4);
+  
+  \draw[->] (gui) to (g5);
+  \draw[->] (gui) to (g6);
+  \draw[->] (gui) to (g8);
+  
+  \draw[->] (bd) to (g9);
+  \draw[->] (bd) to (g10);
+  \draw[->] (bd) to (g12);
+  
+  \draw[decorate, line width=1pt, decoration={brace, mirror}] ([xshift=1.5em]g12.south east) -- ([xshift=1.5em]g12.north east) node [midway, yshift=-0.1em, xshift=2.2em] {Groups};
+  
+  \draw[decorate, line width=1pt, decoration={brace, mirror}] ([xshift=1.5em]bd.south east) -- ([xshift=1.5em]bd.north east) node [midway, yshift=-0.1em, xshift=3.2em] {Subprojects};
+  
+\end{tikzpicture}
+\caption{Illustration of multi-project organization}%
+\label{fig:multiproject_illu}%
+\end{figure}
 \fig{multi_project_organization}{Illustration of multi-project organization}{Illustration of multi-project organization. \todo{Temporary figure. Make a nicer in tikz and add some more description.}\kimnote{jeg kan gode lide at i markere "groups" det kunne i også gøre med "teams/subprojects"}}
 
 \subsection{Work Products}
