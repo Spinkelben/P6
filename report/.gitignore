@@ -24,3 +24,5 @@ cleanup.ps1
 *.lof
 *.lot
 *.tmp
+report/.dir-locals.el
+TAGS

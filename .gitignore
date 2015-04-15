@@ -110,3 +110,7 @@ sympy-plots-for-*.tex/
 
 # pdf
 *.pdf
+
+# Emacs stuff
+report/.dir-locals.el
+TAGS
