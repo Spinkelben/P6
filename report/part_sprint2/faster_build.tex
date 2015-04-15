@@ -128,6 +128,7 @@ Instead of building and testing dependencies each time a dependend project is bu
 \begin{description}
   \item [Pre-Compiled and Pre-Tested] Libraries are binary pre-compiled and pre-tested files. This means that dependend projects do not have to build ant test all depencencies, which decreases the build time significantly.
   \item[Quality Control] Libraries are built and released only if the tests pass, so there will never be dependencies which cannot compile or do not work\footnote{Of course, there may be bugs even if all tests pass, but the risk is decreased}.
+  \item[Integrity] All libraries are built on the same machine and build environment, which means that no machine-specific configurations will influence the released libraries \parencite{huttermann2014}.
   \item[Cleaner Structure] Nested dependencies (dependency A depends on dependency B which depends on dependency C) is well defined and nicely handled. The individual libraries do not include their dependencies, so it is always the dependend library that has to include all dependencies. Currently, the same dependency may be included multiple times in the same project.
 \end{description}
 The Android counterpart of Java \mono{.\@jar}-files is \mono{.\@aar}-files. These files are similar to \mono{.\@jar}-files, except that they can contain Android-specific dependencies such as icon resources as well \parencite{android-aar}.
@@ -168,11 +169,12 @@ dependencies {
 \end{gradlecode}
 
 \subsection{Dependency Repository}
-By hosting our own internal artifact repository for our libraries, we are able to declare the dependencies in the build-file, and at the same time remove Git submodules and make builds happen faster. Different pieces of software for hosting repositories exist, which we will present in this section.
+By hosting our own internal artifact repository for our libraries, we are able to declare the dependencies in the build-file, and at the same time remove Git submodules and make builds happen faster. This means that we use a separate repositories for source code and binary files. The main reason for this is that Git does not handle binary files well. It keeps every version of binary files \parencite{gitwebsite_attributes}, which will use much space over time. In an artifact repository, on the other hand, only release versions of libraries and a configurable number of development versions are saved.
 
+Different pieces of software for hosting repositories exist, which we will present in this section.
 
-\todo{Skriv hvorfor versionskontrol er vigtigt}
-\todo{Skriv hvorfor vi skal have et repository}
+% Indsnævr ved at sige vi kun kigger på dem, som Gradle understøtter
+
 % http://www.oracle.com/technetwork/articles/java/enterprise-binaries-2227134.html
 % http://blogs.collab.net/subversion/why-you-should-be-using-an-artifact-repository-part-1#.VSEWcpOsUkM
 
