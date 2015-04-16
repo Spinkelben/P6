@@ -2,12 +2,12 @@
 \dummy
 
 \section{Monkey Testing}
-\dummy
+During sprint 1 we encountered some difficulties related to monkey testing. In order to monkey test we need to install the apps on an Android device, but we did not have these easily available. Having signed APKs so that they can be uploaded to Google Play, as detailed in \chapterref{sec:upload_google_play}, we can move these APKs to an FTP server so that the monkey tests can always access the newest release version. Each job on Jenkins automatically moves the signed APK to \mono{/srv/ftp/}.
 
 \section{App Installation Test Case}
 To ensure that all apps of the multi-project are compatible a test on Jenkins is run nightly that installs all apps on a single device. At the end of sprint 1 the GUI groups had issues installing a combination of apps on a single device --- this test case should avoid such an issue in the future.
 
-To do this we find the newest version of all available APKs on the server. The script seen in \listingref{lst:find_all_newest_apks} finds the application id for each available app by finding all files in the directory containing APKs. It then pipes these files to \mono{sed 's|.*/||'} which removes the path of the file. This is then piped to \mono{sed 's|\_v.*||'} that removes everything following the package id. The output of that is then sorted and all duplicates are removed using \mono{sort | uniq}. The sort is necessary as \mono{uniq} only removes duplicate lines that are adjacent. 
+To do this we find the newest version of all available APKs on the server. These APKs are the same that are uploaded to Google Play. The script seen in \listingref{lst:find_all_newest_apks} finds the application id for each available app by finding all files in the directory containing APKs. It then pipes these files to \mono{sed 's|.*/||'} which removes the path of the file. This is then piped to \mono{sed 's|\_v.*||'} that removes everything following the package id. The output of that is then sorted and all duplicates are removed using \mono{sort | uniq}. The sort is necessary as \mono{uniq} only removes duplicate lines that are adjacent. 
 
 The application names are then send to \mono{find\_newest\_apk.sh} that can be seen in \listingref{lst:find_newest_apk}.
 
