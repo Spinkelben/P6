@@ -176,7 +176,7 @@ Different pieces of software for managing artifact repositories exist, which we 
   \item[Repository Browser] It should be possible to browse the artifacts in the repositories, so that the developers can identify the most recent versions of the libraries.
   \item[Role Management] Every developer should be able to browse the repository, but only specific people should be able to configure the repositories.
 \end{description}
-Each of the three repository systems comply with these requirements. They can all be browsed and configured through a web server. As such, it does not really matter which system we choose. We choose to use Artifactory because it has a plugin for Jenkins which may be useful for future projects.
+Each of the three repository systems comply with these requirements. They can all be browsed and configured through a web server. As such, it does not really matter which system we choose. We choose to use Artifactory because it has a plugin for Jenkins which may be useful for future projects. We install the software on our server and do the actual submodule replacement in collaboration with the Git responsible group.
 
 \section{Dependency Workflow}
 Because of the new way of managing dependencies, all developers have to change their workflows. We are responsible for defining a workflow for the new structure, which defines the following tasks:
@@ -190,7 +190,7 @@ Because of the new way of managing dependencies, all developers have to change t
 
 % Gradle plugin
 \subsection{Automatic Version Management}
-\todo{Git hook}
+\todo{Git hook (with Git-group)}
 \todo{New gradle plugin (publish and credentials)}
 
 \todo{Eventually show diagram}
