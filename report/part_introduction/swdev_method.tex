@@ -21,10 +21,10 @@ The \gui groups deal with bugs and implementing new features in the front-end ap
 
 The multi-project groups work with an iterative development method, and the semester is divided into four iterations. No groups have any prior experience with the code base at the start of the project, or with the requirements of the users. Therefore there are many uncertainties associated with the multi-project. This makes an agile method suited for the project.\todo{Fixed Kim note} Suppose the multi-project is organized in a traditional method. Then the multi-project groups will spend much time initially analyzing the current code base and future requirements, rather than actually work on making the code base work (a prime wish for the external customer). These requirements may change over time, which makes it difficult to deliver what the users want.
 
-The agile method used for the project is Scrum, and the groups are organized as Scrum of Scrums\todo{Uddyb eventuelt}\kimnote{Det er nok med en kilde på hvad i mener når i skriver scrum og scrum. Hvis i afviger fra jeres kilde så skal i forklarer hvad i gør anderledes og hvorfor!}. \figureref{fig:multi_project_organization} shows the structure of the multi-project organization, which consists of three levels:
+The agile method used for the project is Scrum, and the groups are organized as Scrum of Scrums. Scrum of Scrums divide the developers into several layers of Scrum teams \parencite{scrum_of_scrums2015}.\todo{Kimnote fix} \figureref{fig:multi_project_organization} shows the structure of the multi-project organization, which consists of three levels:
 
 \begin{description}
-  \item[Multi-Project Level] The purpose of the overall level is to ensure that the roles, work products, and meetings are followed as intended. That is, that the development method is followed. A weekly meeting is held where the product backlog is maintained, the status of each subproject is discussed, and the development method and roles are evaluated. Every group has at least one representative at the weekly multi-project meetings.
+  \item[Multi-Project Level] The purpose of the overall level is to ensure that the roles, work products, and meetings are followed as intended. That is, that the development method is followed. A weekly meeting is held where the status of each subproject is discussed, and the development method and roles are evaluated. Every group has at least one representative at the weekly multi-project meetings.
   \item[Subproject Level] Each subproject has the responsibility of solving a number of user stories related to either \gui, \db, or \bd. This level follows Scrum of Scrums. Representatives from each group in a subproject have sprint planning and sprint end meetings with the other members of the subproject and hold at minimum two Scrum meetings a week. We chose not to meet every day because we think that it will steal to much time, compared to the benefits. 
   \item[Group Level] Each group solve some of the user stories of their subprojects. While Scrum of Scrums dictates that Scrum is followed at all levels, this is not the case for this multi-project organization. This is of course a major deviation from Scrum of Scrums. When initially deciding the software development method, some groups expressed an interest in not running Scrum. Thus, each group is given the freedom to organize how they see fit. However, all groups are expected to fill in the work products and attend the meetings described later.
 \end{description}
@@ -82,7 +82,6 @@ The agile method used for the project is Scrum, and the groups are organized as 
 \caption{Illustration of multi-project organization}%
 \label{fig:multi_project_organization}%
 \end{figure}
-%\fig{multi_project_organization}{Illustration of multi-project organization}{Illustration of multi-project organization. \todo{Temporary figure. Make a nicer in tikz and add some more description.}\kimnote{jeg kan gode lide at i markere "groups" det kunne i også gøre med "teams/subprojects"}}
 
 \subsection{Work Products}
 Two work products from Scrum are used, every group is expected to produce these artifacts:
@@ -125,11 +124,8 @@ As such, we decided during sprint 1 that there are three POs in the multi-projec
 \label{fig:po_illu}%
 \end{figure}
 
-%\fig{po_illu}{Illustration of product owners}{Illustration of product owners. \todo{Temporary figure. Make a nicer in tikz and add some more description. In particular of the arrows.}}
-
 \subsection{Meetings}\label{sec:meetings}
-Each week there is a meeting at the multi-project level. At this meeting the status of the groups in the multi-project is presented and the development method is evaluated. This ensures that all groups know the current status of the project, and that the development method can be continually improved.
-
+Each week there is a meeting at the multi-project level. At this meeting the status of the groups in the multi-project is presented and the development method is evaluated. This ensures that all groups know the current status of the project. This meeting differs from a regular Scrum meeting in that it includes a point on method evaluation, so that the development method can be continually improved.\todo{Kimnote fix}
 
 Each sub-project holds internal Scrum meetings as well. These sub-project Scrum meetings are held at least twice a week. The sub-projects organizes these meetings themselves and use them to discuss things that are relevant only for the members of the sub-project. 
 
