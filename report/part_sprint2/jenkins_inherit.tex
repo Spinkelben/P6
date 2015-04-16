@@ -1,17 +1,17 @@
 \chapter{Restructuring of Jenkins}
-The setup of Jenkins used in sprint 1 was tedious to work with since all jobs were configured independently. If a change had to be made to several jobs, we would have to manually configure the change in each job. Not only did this take a considerable amount of time, but it was also prone to human errors during the process. In this sprint, we have to make small modifications to all jobs several times. This would be very tedious, so we have decided make job configurations easier to manage, even though it is not connect directly to a story. We consider it refactoring.
- The jobs on Jenkins are generally very similar in their configuration. We can benefit from having a base configuration, which the jobs only modify. There exists a Jenkins plug-in for this, called inheritance-plugin \parencite{jenkins-inheritance}. With this plug-in installed, whenever we decide to make a change to e.g.\ the build system, it will not be necessary to change this in each job. Instead, the change can be made on the base job, and all relevant jobs will inherit this change. This also ensures that jobs follow a consistent pipeline and thus do not differ in from job to job.
+The setup of Jenkins used in sprint 1 was tedious to work with since all jobs were configured independently. If a change had to be made to several jobs, we would have to manually configure the change in each job. Not only did this take a considerable amount of time, but it was also prone to human errors during the process. In this sprint, we have to make small modifications to all jobs several times. This would be very tedious, so we have decided make job configurations easier to manage, even though it is not connected directly to a story. We consider it refactoring.
+The jobs on Jenkins are generally very similar in their configuration. We can benefit from having a base configuration, which the jobs only modify. There exists a Jenkins plug-in for this, called inheritance-plugin \parencite{jenkins-inheritance}. With this plug-in installed, whenever we decide to make a change to e.g.\ the build system, it will not be necessary to change this in each job. Instead, the change can be made on the base job, and all relevant jobs will inherit this change. This also ensures that jobs follow a consistent pipeline and thus do not differ in from job to job.
 
 The plug-in requires the jobs to be of a special \emph{inheritable} type. We therefore have to covert the existing jobs to inheritable jobs to take advantage of this. As it is impossible to convert a existing job to the inheritable type, we have to re-create all the jobs again. This is not that big of a deal, as the time to setup will be considerably shorter when taking advantage of the inheritable job type. When the old jobs are removed the build history will be lost. This is a minor nuisance but we consider it a small price to pay, compared to the advantages. When deciding how to structure the build, we see two general categories that are sufficiently distinct: Android apps and Android libraries. We create an abstract job for each of these. They do overlap somewhat in functionality, which means we have to create an abstract job for each job task. As such we create abstract jobs for e.g.\ \emph{run Gradle}, \emph{run unit tests}, \emph{find and move APKs}, and \emph{publish lint report}. The abstract jobs \emph{Android app} and \emph{Android library} inherit from the small abstract tasks that are relevant.
 
-We have modelled this as an OOP class diagram in \todo{Pæn graf over Jenkins jobs og inheritance? JA!}
+We have modelled this as an OOP class diagram in \figureref{fig:jenkins_inherit}.
 
 \begin{figure}%
 \centering
 \tikzsetnextfilename{jenkins_inherit}
 \begin{tikzpicture}[
-  simple/.style={draw, rounded corners, minimum height=1.7em},
-  simplefixed/.style={draw, rounded corners, minimum height=1.7em, minimum width=10em},
+  simple/.style={draw, rounded corners, minimum height=1.8em},
+  simplefixed/.style={draw, rounded corners, minimum height=1.8em, minimum width=10em},
   square/.style={draw, rounded corners, minimum height=1.4em, minimum width=1.4em}]
   
   \begin{scope}[]

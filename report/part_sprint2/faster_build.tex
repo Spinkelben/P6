@@ -59,7 +59,7 @@ To understand which parts of the dependencies that take time, we measure the ind
     %\legend{Test, test, test, test, test, test}
   \end{axis}
 \end{tikzpicture}
-\caption{Timings during build of the Launcher project before updating emulator plugin.}\label{fig:launcher_build_times_1}
+\caption{Timings during build of the Launcher project before updating emulator plugin. TODO: Merge into 1 figure?}\label{fig:launcher_build_times_1}
 \end{figure}
 
 To improve the overall build times, we look at how to speed up the emulator and to avoid running tests on the dependencies every time a project is build. We first update the Android Emulator Jenkins plugin to a new version with improved emulator stability. We do this to ensure that we do not work on improving parts which are already improved in the most recent version of the plugin. After updating, we measure the build times again. As shown in \figureref{fig:launcher_build_times_2}, the emulator startup time is significantly increased. Because of this, the emulator startup time is no longer the primary concern, and we focus on decreasing the dependency build times. \todo{Vi kan måske beskrive test uden emulator her, og konkludere at det ikke er arbejdet værd}
