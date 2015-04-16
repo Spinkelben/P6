@@ -181,16 +181,17 @@ Each of the three repository systems comply with these requirements. They can al
 \section{Dependency Workflow}
 Because of the new way of managing dependencies, all developers have to change their workflows. We are responsible for defining a workflow for the new structure, which defines the following tasks:
 \begin{description}
-  \item[General Usage] It should be clear for the developers how to declare dependencies and their versions.
+  \item[Declaring dependencies] It should be clear for the developers how to declare dependencies and their versions.
   \item[Local Development] Developers should be able to test changes to libraries in dependent projects without committing them to the master branch.
   \item[Release Management] During development, libraries should be released as work-in-progress artifacts. When they are stable, new versions should be released.
 \end{description}
+
 \todo{Major, minor, snapshots}
 
 % Gradle plugin
 \subsection{Automatic Version Management}
 \todo{Git hook}
-\todo{Gradle plugin (credentials)}
+\todo{New gradle plugin (publish and credentials)}
 
 \todo{Eventually show diagram}
 % DIAGRAM:  http://stackoverflow.com/questions/11891890/should-artifactory-not-be-used-to-capture-the-build-artifacts-that-jenkins-produ
