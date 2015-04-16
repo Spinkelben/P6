@@ -157,7 +157,7 @@ A problem with this, however, is that the structure does not use pre-compiled li
 
 An additional problem is that all projects are forced to use the most recent versions of its dependencies. As soon as a dependency is updated, it is automatically applied in all dependent projects. If the interface to a library changes without keeping backward compatibility, all dependent projects will stop working.
 
-Instead, we need a structure which allows projects to reference their dependencies as pre-built libraries while being able to reproduce any build in history. For inspiration, we look at how dependency management is done in the five most starred Android projects on Github\footnote{As of April \nth{15}, these are \emph{ioshed, ViewPagerIndicator, retrofit, EventBus}, and \emph{PhotoView}.}. In all of these projects, dependencies are handled by Gradle and Maven. Maven is a build tool similar to Gradle, but its dependencies management mechanisms are supported in many build tools, including Gradle. Dependencies are declared in the build configuration file, for example in a Gradle file, each of which uniquely identified with a group (package), name, and version number. \listingref{lst:dependency_declaration} shows how a dependency (the \emph{gson} library) is declared in a Gradle file. When the project is built, the build system automatically searches for the dependencies on the declared repositories and downloads them. Because the version code is used to identify dependencies, and the build file is under version control, it is possible reproduce builds.
+Instead, we need a structure which allows projects to reference their dependencies as pre-built libraries while being able to reproduce any build in history. For inspiration, we look at how dependency management is done in the five most starred Android projects on Github\footnote{As of April \nth{15}, these are \emph{ioshed, ViewPagerIndicator, retrofit, EventBus}, and \emph{PhotoView}.}. In all of these projects, dependencies are handled by Gradle and Maven. Maven is a build tool similar to Gradle, but its dependencies management mechanisms are supported in many build tools, including Gradle. Dependencies are declared in the build configuration file, for example in a Gradle file, each of which uniquely identified with a group (package), name, and version number. \listingref{lst:dependency_declaration} shows how a dependency (the \emph{gson} library) is declared in a Gradle file. When the project is built, the build system automatically searches for the dependencies on the declared repositories and downloads them. Because the version code (\mono{2.0} in this case) is used to identify dependencies, and the build file is under version control, it is possible reproduce builds.
 
 \begin{gradlecode}[caption={Dependency declaration in Gradle},label={lst:dependency_declaration}]
 repositories {
@@ -168,7 +168,7 @@ dependencies {
 }
 \end{gradlecode}
 
-\subsection{Dependency Repository}
+\section{Dependency Repository}
 By hosting our own internal Maven artifact repository for our libraries, we are able to declare the dependencies in the build-file and at the same time remove Git submodules and make builds happen faster. This means that we use a separate repositories for source code and binary files. The main reason for this is that Git does not handle binary files well. It keeps every version of binary files \parencite{gitwebsite_attributes}, which will use much space over time. In an artifact repository, on the other hand, only release versions of libraries and a configurable number of development versions are saved.
 
 Different pieces of software for managing artifact repositories exist, which we will present in this section. We restrict ourselves to looking at free repository systems supported by Gradle\parencite{gradle-dependencies-doc}: \emph{Apache Archiva}\parencite{archiva-website}, \emph{Sonatype Nexus}\parencite{nexus-website}, and \emph{Artifactory}\parencite{artifactory-website}. Overall, the only requirements for an artifact repository management system are:
@@ -176,12 +176,21 @@ Different pieces of software for managing artifact repositories exist, which we 
   \item[Repository Browser] It should be possible to browse the artifacts in the repositories, so that the developers can identify the most recent versions of the libraries.
   \item[Role Management] Every developer should be able to browse the repository, but only specific people should be able to configure the repositories.
 \end{description}
-Each of the three repository systems comply with these requirements. As such, it does not really matter which system we choose. We choose to use Artifactory because it has a plugin for Jenkins which may be useful for future projects.
+Each of the three repository systems comply with these requirements. They can all be browsed and configured through a web server. As such, it does not really matter which system we choose. We choose to use Artifactory because it has a plugin for Jenkins which may be useful for future projects.
+
+\section{Dependency Workflow}
+Because of the new way of managing dependencies, all developers have to change their workflows. We are responsible for defining a workflow for the new structure, which defines the following tasks:
+\begin{description}
+  \item[General Usage] It should be clear for the developers how to declare dependencies and their versions.
+  \item[Local Development] Developers should be able to test changes to libraries in dependent projects without committing them to the master branch.
+  \item[Release Management] During development, libraries should be released as work-in-progress artifacts. When they are stable, new versions should be released.
+\end{description}
+\todo{Major, minor, snapshots}
+
+% Gradle plugin
+\subsection{Automatic Version Management}
+\todo{Git hook}
+\todo{Gradle plugin (credentials)}
 
 \todo{Eventually show diagram}
 % DIAGRAM:  http://stackoverflow.com/questions/11891890/should-artifactory-not-be-used-to-capture-the-build-artifacts-that-jenkins-produ
-
-% http://www.oracle.com/technetwork/articles/java/enterprise-binaries-2227134.html
-% http://blogs.collab.net/subversion/why-you-should-be-using-an-artifact-repository-part-1#.VSEWcpOsUkM
-
-% Beskriv evt workflow (major, minor osv)
