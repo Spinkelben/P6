@@ -1,26 +1,27 @@
 \chapter{Improving Build Times}
-The project groups want the build times on Jenkins to be faster. When multiple changes are pushed to the master branch within a short space of time, they will create congestion the build queue. This means that even though the build itself may take only a few minutes, the time it takes from push to finished build may be much longer (and exceed than the 10 minutes advocated by Kent Beck \parencite{beck2004}).
+The project groups want the build times on Jenkins to be faster. When multiple changes are pushed to the master branch within a short space of time, they will create congestion the build queue. This means that even though the build itself may take only a few minutes, the time it takes from push to finished build may be much longer (and exceed the 10 minutes advocated by Kent Beck \parencite{beck2004}).
 
-We measure the time different parts of the Launcher project take to identify in which parts of the build process to make faster. The Launcher project is the main application which depends on many other subprojects (henceforth a ``dependency''). These dependencies are managed as Git submodules \parencite{git-submodules-doc}, which basically clones the contents of a repository (the dependency) at a specific revision into another repository (the dependent project). The build timings are measured on the Jenkins server and shown in \figureref{fig:launcher_build_times_1}. The shows the build timings of the Launcher application and the different dependencies (\emph{Oasis-lib, Giraf-Component, Local-db, Barcode-scanner, and Metadata}), as well as the startup time for the emulator. As can be seen, the emulator and the Giraf-component and Oasis-lib projects have the most significant influence on build times. These three parts use about \SI{90}{\percent} of the total build time. The actual Laucher application itself takes only very little part of the total build time.
+We measure the time different parts of the Launcher project take to identify in which parts of the build process to make faster. The Launcher project is the main application which depends on many other subprojects (henceforth a ``dependency''). These dependencies are managed as Git submodules \parencite{git-submodules-doc}, which basically clones the contents of a repository (the dependency) at a specific revision into another repository (the dependent project). The build timings are measured on the Jenkins server and shown in \figureref{fig:launcher_build_times_1}. This shows the build timings of the Launcher application and the different dependencies (\emph{Oasis-lib, Giraf-Component, Local-db, Barcode-scanner, and Metadata}), as well as the startup time for the emulator. As can be seen, the emulator and the Giraf-component and Oasis-lib projects have the most significant influence on build times. These three parts use about \SI{90}{\percent} of the total build time. The actual Laucher application itself takes only very little part of the total build time.
 
 To understand which parts of the dependencies that take time, we measure the individual build steps (tasks) performed during a build. These can be seen in \appendixref{app:build_times}. The reason that the Oasis-lib dependency takes a long time to build is that it contains a great number of tests which run on the emulator. These tests are run every time a project depending on Oasis-lib builds --- even though the library itself has not been updated. The most significant task when building the Giraf-Component library is the test task as well. However, the Giraf-Component library only contains one simple test, so we do not expect the actual test execution time to use much of this time. Instead, we expect it to be caused by the order in which projects are tested. When preparing the tests, the tests from all projects are combined into a single Android application package (APK-file). The first test task run is responsible for installing this application on the emulator, while the subsequent test tasks can skip this step. Because the Giraf-components project is the first in the sequence of libraries to be tested, this task also installs the tests on the emulator which is likely to take some time.
 \todo{Overvej flere målinger og tag gennemsnit}
 \begin{figure}
 \centering
 \tikzsetnextfilename{timings_beforeemulatorupdate}
-\begin{tikzpicture}[trim axis left, trim axis right]
+\begin{tikzpicture}[]
   \begin{axis}[
     xbar stacked,
-    scale only axis,
+    %scale only axis,
     width=\textwidth,
     axis y line*= none, axis x line*= bottom,
     %xmajorgrids = true,
     ytick = data,
-    yticklabels = {},
+    yticklabels = {Before, After},
     tick align = outside,
     %xtick pos = left,
     bar width=6mm,
     y=8mm,
+    enlarge y limits={abs=0.625},
     %nodes near coords,
     legend style={
       at={(0.5,-0.35)},
@@ -35,103 +36,48 @@ To understand which parts of the dependencies that take time, we measure the ind
     xlabel = {Time (seconds)},
     xmin = 0
   ]
-    \addplot coordinates
-    {(0.2,0)};
+    \addplot+ coordinates
+    {(0.2,0) (0.209,1)};
     \addlegendentry{Metadata}
-    \addplot coordinates
-    {(6.625,0)};
+    \addplot+ coordinates
+    {(6.625,0) (6.625,1)};
     \addlegendentry{Barcode-scanner}
-    \addplot coordinates
-    {(8.393,0)};
+    \addplot+ coordinates
+    {(8.393,0) (8.393,1)};
     \addlegendentry{Launcher}
-    \addplot coordinates
-    {(17.223,0)};
+    \addplot+ coordinates
+    {(17.223,0) (17.223,1)};
     \addlegendentry{Local-db}
-    \addplot coordinates
-    {(160.000,0)};
+    \addplot+ coordinates
+    {(160.000,0) (18.000,1)};
     \addlegendentry{Emulator}
-    \addplot coordinates
-    {(104.696,0)};
+    \addplot+ coordinates
+    {(104.696,0) (104.696,1)};
     \addlegendentry{Giraf-component}
-    \addplot coordinates
-    {(159.497,0)};
+    \addplot+ coordinates
+    {(159.497,0) (159.497,1)};
     \addlegendentry{Oasis-lib}
     %\legend{Test, test, test, test, test, test}
   \end{axis}
 \end{tikzpicture}
-\caption{Timings during build of the Launcher project before updating emulator plugin. TODO: Merge into 1 figure?}\label{fig:launcher_build_times_1}
+\caption{Timings during build of the Launcher project before and after updating emulator plugin}\label{fig:launcher_build_times_1}
 \end{figure}
 
-To improve the overall build times, we look at how to speed up the emulator and to avoid running tests on the dependencies every time a project is build. We first update the Android Emulator Jenkins plugin to a new version with improved emulator stability. We do this to ensure that we do not work on improving parts which are already improved in the most recent version of the plugin. After updating, we measure the build times again. As shown in \figureref{fig:launcher_build_times_2}, the emulator startup time is significantly increased. Because of this, the emulator startup time is no longer the primary concern, and we focus on decreasing the dependency build times. \todo{Vi kan måske beskrive test uden emulator her, og konkludere at det ikke er arbejdet værd}
+To improve the overall build times, we look at how to speed up the emulator and to avoid running tests on the dependencies every time a project is build. We first update the Android Emulator Jenkins plugin to a new version with improved emulator stability. We do this to ensure that we do not work on improving parts which are already improved in the most recent version of the plugin. After updating, we measure the build times again. As shown in \figureref{fig:launcher_build_times_2}, the emulator startup time is significantly decreased. Because of this, the emulator startup time is no longer the primary concern, and we focus on decreasing the dependency build times. \todo{Vi kan måske beskrive test uden emulator her, og konkludere at det ikke er arbejdet værd}
 
-\begin{figure}
-\centering
-\tikzsetnextfilename{timings_afteremulatorupdate}
-\begin{tikzpicture}[trim axis left, trim axis right]
-  \begin{axis}[
-    xbar stacked,
-    scale only axis,
-    width=\textwidth,
-    axis y line*= none, axis x line*= bottom,
-    %xmajorgrids = true,
-    ytick = data,
-    yticklabels = {},
-    tick align = outside,
-    %xtick pos = left,
-    bar width=6mm,
-    y=8mm,
-    %nodes near coords,
-    legend style={
-      at={(0.5,-0.35)},
-      legend columns=4,
-      anchor=north,
-      yshift=0ex,
-      xshift=0ex,
-      draw=none
-      %legend cell align=left
-    },
-    area legend,
-    xlabel = {Time (seconds)},
-    xmin = 0
-  ]
-    \addplot coordinates
-    {(0.209,0)};
-    \addlegendentry{Metadata}
-    \addplot coordinates
-    {(6.625,0)};
-    \addlegendentry{Barcode-scanner}
-    \addplot coordinates
-    {(8.393,0)};
-    \addlegendentry{Launcher}
-    \addplot coordinates
-    {(17.223,0)};
-    \addlegendentry{Local-db}
-    \addplot coordinates
-    {(18.000,0)};
-    \addlegendentry{Emulator}
-    \addplot coordinates
-    {(104.696,0)};
-    \addlegendentry{Giraf-component}
-    \addplot coordinates
-    {(159.497,0)};
-    \addlegendentry{Oasis-lib}
-    %\legend{Test, test, test, test, test, test}
-  \end{axis}
-\end{tikzpicture}
-\caption{Timings during build of the Launcher project.}\label{fig:launcher_build_times_2}
-\end{figure}
 
-One obvious way of decreasing overall build times is to use faster hardware on the server. However, because the multi-project has no financial income, buying new hardware is generally the last resort. In addition, it is difficult to estimate exactly how much of an decrease this will give in practice. Another option is to not test dependencies when dependend projects are build, but only when changes happen in the actual dependency project. While this will decrease the overall build times, each dependency is still built every time a dependend project is built, which limits the amount by which we can decrease the total build times. There may as well arise some quality assurance issues by not testing each build of the dependency. Because of this, we look at improving the build times in a different way, specifically by using pre-compiled libraries.
+
+One obvious way of decreasing overall build times is to use faster hardware on the server. However, because the multi-project has no financial income, buying new hardware is generally the last resort. In addition, it is difficult to estimate exactly how much of a decrease this will give in practice. Another option is to not test dependencies when dependent projects are build, but only when changes happen in the actual dependency project. While this will decrease the overall build times, each dependency is still built every time a dependent project is built, which limits the amount by which we can decrease the total build times. There may as well arise some quality assurance issues by not testing each build of the dependency. Because of this, we look at improving the build times in a different way, specifically by using pre-compiled libraries.
 
 \section{Dependency Management}
-Instead of building and testing dependencies each time a dependend project is built, we look at referring pre-compiled and pre-tested library files. We are inspired by the way \mono{.\@jar}-files are typically used as libraries for Java projects. This way of managing libraries has a number of advantages compared to the current setup:
+Instead of building and testing dependencies each time a dependent project is built, we look at referencing pre-compiled and pre-tested library files. We are inspired by the way \mono{.jar}-files are typically used as libraries for Java projects. This way of managing libraries has a number of advantages compared to the current setup:
 \begin{description}
-  \item [Pre-Compiled and Pre-Tested] Libraries are binary pre-compiled and pre-tested files. This means that dependend projects do not have to build ant test all depencencies, which decreases the build time significantly.
-  \item[Quality Control] Libraries are built and released only if the tests pass, so there will never be dependencies which cannot compile or do not work\footnote{Of course, there may be bugs even if all tests pass, but good test cases decrease the risk}.
+  \item [Pre-Compiled and Pre-Tested] Libraries are binary pre-compiled and pre-tested files. This means that dependent projects do not have to build and test all dependencies, which decreases the build time significantly.
+  \item[Quality Control] Libraries are built and released only if the tests pass, so there will never be dependencies which cannot compile or do not work\footnote{Of course, there may be bugs even if all tests pass, but good test cases decrease the risk.}.
   \item[Integrity] All libraries are built on the same machine and build environment, which means that no machine-specific configurations will influence the released libraries \parencite{huttermann2014}.
-  \item[Cleaner Structure] Nested dependencies (dependency A depends on dependency B which depends on dependency C) is well defined and nicely handled. The individual libraries do not include their dependencies, so it is always the dependend library that has to include all dependencies. Currently, the same dependency may be included multiple times in the same project.
+  \item[Cleaner Structure] Nested dependencies (dependency A depends on dependency B which depends on dependency C) is well defined and nicely handled. The individual libraries do not include their dependencies, so it is always the dependent library that has to include all dependencies. Currently, the same dependency may be included multiple times in the same project.
 \end{description}
-The Android counterpart of Java \mono{.\@jar}-files is \mono{.\@aar}-files. These files are similar to \mono{.\@jar}-files, except that they can contain Android-specific dependencies such as icon resources as well \parencite{android-aar}.
+The Android counterpart of Java \mono{.jar}-files is \mono{.aar}-files. These files are similar to \mono{.jar}-files, except that they can contain Android-specific dependencies such as icon resources as well \parencite{android-aar}.
 
 With this solution, it is clear that we no longer want to use submodules for managing dependencies. Coincidentally, the Git-responsible group in the multi-project work on a user story which states ``Remove Git submodules''. The reason for this user story is that the developers generally find the submodules difficult to work with. Because this overlap with our solution to making build times faster, we decide to solve this in collaboration.
 
@@ -157,7 +103,7 @@ A problem with this, however, is that the structure does not use pre-compiled li
 
 An additional problem is that all projects are forced to use the most recent versions of its dependencies. As soon as a dependency is updated, it is automatically applied in all dependent projects. If the interface to a library changes without keeping backward compatibility, all dependent projects will stop working.
 
-Instead, we need a structure which allows projects to reference their dependencies as pre-built libraries while being able to reproduce any build in history. For inspiration, we look at how dependency management is done in the five most starred Android projects on Github\footnote{As of April \nth{15}, these are \emph{ioshed, ViewPagerIndicator, retrofit, EventBus}, and \emph{PhotoView}.}. In all of these projects, dependencies are handled by Gradle and Maven. Maven is a build tool similar to Gradle, but its dependencies management mechanisms are supported in many build tools, including Gradle. Dependencies are declared in the build configuration file, for example in a Gradle file, each of which uniquely identified with a group (package), name, and version number. \listingref{lst:dependency_declaration} shows how a dependency (the \emph{gson} library) is declared in a Gradle file. When the project is built, the build system automatically searches for the dependencies on the declared repositories and downloads them. Because the version code (\mono{2.0} in this case) is used to identify dependencies, and the build file is under version control, it is possible reproduce builds.
+Instead, we need a structure which allows projects to reference their dependencies as pre-built libraries while being able to reproduce any build in history. For inspiration, we look at how dependency management is done in the five most starred Android projects on Github\footnote{As of April \nth{15}, these are \emph{ioshed}, \emph{ViewPagerIndicator}, \emph{retrofit}, \emph{EventBus}, and \emph{PhotoView}.}. In all of these projects, dependencies are handled by Gradle and Maven. Maven is a build tool similar to Gradle, but its dependencies management mechanisms are supported in many build tools, including Gradle. Dependencies are declared in the build configuration file, for example in a Gradle file, each of which uniquely identified with a group (package), name, and version number. \listingref{lst:dependency_declaration} shows how a dependency (the \emph{gson} library) is declared in a Gradle file. When the project is built, the build system automatically searches for the dependencies on the declared repositories and downloads them. Because the version code (\mono{2.0} in this case) is used to identify dependencies, and the build file is under version control, it is possible reproduce builds.
 
 \begin{gradlecode}[caption={Dependency declaration in Gradle},label={lst:dependency_declaration}]
 repositories {
@@ -171,7 +117,7 @@ dependencies {
 \section{Dependency Repository}
 By hosting our own internal Maven artifact repository for our libraries, we are able to declare the dependencies in the build-file and at the same time remove Git submodules and make builds happen faster. This means that we use a separate repositories for source code and binary files. The main reason for this is that Git does not handle binary files well. It keeps every version of binary files \parencite{gitwebsite_attributes}, which will use much space over time. In an artifact repository, on the other hand, only release versions of libraries and a configurable number of development versions are saved.
 
-Different pieces of software for managing artifact repositories exist, which we will present in this section. We restrict ourselves to looking at free repository systems supported by Gradle\parencite{gradle-dependencies-doc}: \emph{Apache Archiva}\parencite{archiva-website}, \emph{Sonatype Nexus}\parencite{nexus-website}, and \emph{Artifactory}\parencite{artifactory-website}. Overall, the only requirements for an artifact repository management system are:
+Different pieces of software for managing artifact repositories exist, which we will present in this section. We restrict ourselves to looking at free repository systems supported by Gradle \parencite{gradle-dependencies-doc}: \emph{Apache Archiva} \parencite{archiva-website}, \emph{Sonatype Nexus} \parencite{nexus-website}, and \emph{Artifactory} \parencite{artifactory-website}. Overall, the only requirements for an artifact repository management system are:
 \begin{description}
   \item[Repository Browser] It should be possible to browse the artifacts in the repositories, so that the developers can identify the most recent versions of the libraries.
   \item[Role Management] Every developer should be able to browse the repository, but only specific people should be able to configure the repositories.
