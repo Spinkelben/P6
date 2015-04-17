@@ -8,19 +8,20 @@ To understand which parts of the dependencies that take time, we measure the ind
 \begin{figure}
 \centering
 \tikzsetnextfilename{timings_beforeemulatorupdate}
-\begin{tikzpicture}[trim axis left, trim axis right]
+\begin{tikzpicture}[]
   \begin{axis}[
     xbar stacked,
-    scale only axis,
+    %scale only axis,
     width=\textwidth,
     axis y line*= none, axis x line*= bottom,
     %xmajorgrids = true,
     ytick = data,
-    yticklabels = {},
+    yticklabels = {Before, After},
     tick align = outside,
     %xtick pos = left,
     bar width=6mm,
     y=8mm,
+    enlarge y limits={abs=0.625},
     %nodes near coords,
     legend style={
       at={(0.5,-0.35)},
@@ -35,91 +36,36 @@ To understand which parts of the dependencies that take time, we measure the ind
     xlabel = {Time (seconds)},
     xmin = 0
   ]
-    \addplot coordinates
-    {(0.2,0)};
+    \addplot+ coordinates
+    {(0.2,0) (0.209,1)};
     \addlegendentry{Metadata}
-    \addplot coordinates
-    {(6.625,0)};
+    \addplot+ coordinates
+    {(6.625,0) (6.625,1)};
     \addlegendentry{Barcode-scanner}
-    \addplot coordinates
-    {(8.393,0)};
+    \addplot+ coordinates
+    {(8.393,0) (8.393,1)};
     \addlegendentry{Launcher}
-    \addplot coordinates
-    {(17.223,0)};
+    \addplot+ coordinates
+    {(17.223,0) (17.223,1)};
     \addlegendentry{Local-db}
-    \addplot coordinates
-    {(160.000,0)};
+    \addplot+ coordinates
+    {(160.000,0) (18.000,1)};
     \addlegendentry{Emulator}
-    \addplot coordinates
-    {(104.696,0)};
+    \addplot+ coordinates
+    {(104.696,0) (104.696,1)};
     \addlegendentry{Giraf-component}
-    \addplot coordinates
-    {(159.497,0)};
+    \addplot+ coordinates
+    {(159.497,0) (159.497,1)};
     \addlegendentry{Oasis-lib}
     %\legend{Test, test, test, test, test, test}
   \end{axis}
 \end{tikzpicture}
-\caption{Timings during build of the Launcher project before updating emulator plugin. TODO: Merge into 1 figure?}\label{fig:launcher_build_times_1}
+\caption{Timings during build of the Launcher project before and after updating emulator plugin}\label{fig:launcher_build_times_1}
 \end{figure}
 
 To improve the overall build times, we look at how to speed up the emulator and to avoid running tests on the dependencies every time a project is build. We first update the Android Emulator Jenkins plugin to a new version with improved emulator stability. We do this to ensure that we do not work on improving parts which are already improved in the most recent version of the plugin. After updating, we measure the build times again. As shown in \figureref{fig:launcher_build_times_2}, the emulator startup time is significantly decreased. Because of this, the emulator startup time is no longer the primary concern, and we focus on decreasing the dependency build times. \todo{Vi kan måske beskrive test uden emulator her, og konkludere at det ikke er arbejdet værd}
 
-\begin{figure}
-\centering
-\tikzsetnextfilename{timings_afteremulatorupdate}
-\begin{tikzpicture}[trim axis left, trim axis right]
-  \begin{axis}[
-    xbar stacked,
-    scale only axis,
-    width=\textwidth,
-    axis y line*= none, axis x line*= bottom,
-    %xmajorgrids = true,
-    ytick = data,
-    yticklabels = {},
-    tick align = outside,
-    %xtick pos = left,
-    bar width=6mm,
-    y=8mm,
-    %nodes near coords,
-    legend style={
-      at={(0.5,-0.35)},
-      legend columns=4,
-      anchor=north,
-      yshift=0ex,
-      xshift=0ex,
-      draw=none
-      %legend cell align=left
-    },
-    area legend,
-    xlabel = {Time (seconds)},
-    xmin = 0
-  ]
-    \addplot coordinates
-    {(0.209,0)};
-    \addlegendentry{Metadata}
-    \addplot coordinates
-    {(6.625,0)};
-    \addlegendentry{Barcode-scanner}
-    \addplot coordinates
-    {(8.393,0)};
-    \addlegendentry{Launcher}
-    \addplot coordinates
-    {(17.223,0)};
-    \addlegendentry{Local-db}
-    \addplot coordinates
-    {(18.000,0)};
-    \addlegendentry{Emulator}
-    \addplot coordinates
-    {(104.696,0)};
-    \addlegendentry{Giraf-component}
-    \addplot coordinates
-    {(159.497,0)};
-    \addlegendentry{Oasis-lib}
-    %\legend{Test, test, test, test, test, test}
-  \end{axis}
-\end{tikzpicture}
-\caption{Timings during build of the Launcher project.}\label{fig:launcher_build_times_2}
-\end{figure}
+
 
 One obvious way of decreasing overall build times is to use faster hardware on the server. However, because the multi-project has no financial income, buying new hardware is generally the last resort. In addition, it is difficult to estimate exactly how much of a decrease this will give in practice. Another option is to not test dependencies when dependent projects are build, but only when changes happen in the actual dependency project. While this will decrease the overall build times, each dependency is still built every time a dependent project is built, which limits the amount by which we can decrease the total build times. There may as well arise some quality assurance issues by not testing each build of the dependency. Because of this, we look at improving the build times in a different way, specifically by using pre-compiled libraries.
 
@@ -157,7 +103,7 @@ A problem with this, however, is that the structure does not use pre-compiled li
 
 An additional problem is that all projects are forced to use the most recent versions of its dependencies. As soon as a dependency is updated, it is automatically applied in all dependent projects. If the interface to a library changes without keeping backward compatibility, all dependent projects will stop working.
 
-Instead, we need a structure which allows projects to reference their dependencies as pre-built libraries while being able to reproduce any build in history. For inspiration, we look at how dependency management is done in the five most starred Android projects on Github\footnote{As of April \nth{15}, these are \emph{ioshed, ViewPagerIndicator, retrofit, EventBus}, and \emph{PhotoView}.}. In all of these projects, dependencies are handled by Gradle and Maven. Maven is a build tool similar to Gradle, but its dependencies management mechanisms are supported in many build tools, including Gradle. Dependencies are declared in the build configuration file, for example in a Gradle file, each of which uniquely identified with a group (package), name, and version number. \listingref{lst:dependency_declaration} shows how a dependency (the \emph{gson} library) is declared in a Gradle file. When the project is built, the build system automatically searches for the dependencies on the declared repositories and downloads them. Because the version code (\mono{2.0} in this case) is used to identify dependencies, and the build file is under version control, it is possible reproduce builds.
+Instead, we need a structure which allows projects to reference their dependencies as pre-built libraries while being able to reproduce any build in history. For inspiration, we look at how dependency management is done in the five most starred Android projects on Github\footnote{As of April \nth{15}, these are \emph{ioshed}, \emph{ViewPagerIndicator}, \emph{retrofit}, \emph{EventBus}, and \emph{PhotoView}.}. In all of these projects, dependencies are handled by Gradle and Maven. Maven is a build tool similar to Gradle, but its dependencies management mechanisms are supported in many build tools, including Gradle. Dependencies are declared in the build configuration file, for example in a Gradle file, each of which uniquely identified with a group (package), name, and version number. \listingref{lst:dependency_declaration} shows how a dependency (the \emph{gson} library) is declared in a Gradle file. When the project is built, the build system automatically searches for the dependencies on the declared repositories and downloads them. Because the version code (\mono{2.0} in this case) is used to identify dependencies, and the build file is under version control, it is possible reproduce builds.
 
 \begin{gradlecode}[caption={Dependency declaration in Gradle},label={lst:dependency_declaration}]
 repositories {
@@ -171,7 +117,7 @@ dependencies {
 \section{Dependency Repository}
 By hosting our own internal Maven artifact repository for our libraries, we are able to declare the dependencies in the build-file and at the same time remove Git submodules and make builds happen faster. This means that we use a separate repositories for source code and binary files. The main reason for this is that Git does not handle binary files well. It keeps every version of binary files \parencite{gitwebsite_attributes}, which will use much space over time. In an artifact repository, on the other hand, only release versions of libraries and a configurable number of development versions are saved.
 
-Different pieces of software for managing artifact repositories exist, which we will present in this section. We restrict ourselves to looking at free repository systems supported by Gradle\parencite{gradle-dependencies-doc}: \emph{Apache Archiva}\parencite{archiva-website}, \emph{Sonatype Nexus}\parencite{nexus-website}, and \emph{Artifactory}\parencite{artifactory-website}. Overall, the only requirements for an artifact repository management system are:
+Different pieces of software for managing artifact repositories exist, which we will present in this section. We restrict ourselves to looking at free repository systems supported by Gradle \parencite{gradle-dependencies-doc}: \emph{Apache Archiva} \parencite{archiva-website}, \emph{Sonatype Nexus} \parencite{nexus-website}, and \emph{Artifactory} \parencite{artifactory-website}. Overall, the only requirements for an artifact repository management system are:
 \begin{description}
   \item[Repository Browser] It should be possible to browse the artifacts in the repositories, so that the developers can identify the most recent versions of the libraries.
   \item[Role Management] Every developer should be able to browse the repository, but only specific people should be able to configure the repositories.
