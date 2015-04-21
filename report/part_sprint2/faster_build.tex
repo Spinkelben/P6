@@ -76,7 +76,7 @@ Instead of building and testing dependencies each time a dependent project is bu
 \end{description}
 The Android counterpart of Java \mono{.jar}-files is \mono{.aar}-files. These files are similar to \mono{.jar}-files, except that they can contain Android-specific dependencies such as icon resources as well \parencite{android-aar}.
 
-With this solution, it is clear that we no longer want to use submodules for managing dependencies. Coincidentally, the Git-responsible group in the multi-project work on a user story which states ``Remove Git submodules''. The reason for this user story is that the developers generally find the submodules difficult to work with. Because this overlap with our solution to making build times faster, we decide to solve this in collaboration.
+With this solution, it is clear that we no longer want to use submodules for managing dependencies. Coincidentally, the Git-responsible group in the multi-project work on a user story which states \us{Remove Git submodules}. The reason for this user story is that the developers generally find the submodules difficult to work with. Because this overlap with our solution to making build times faster, we decide to solve this in collaboration.
 
 An important requirement for the solution, beside removing Git submodules and improving build times, is that every build should be reproducible. This means that we must be able to reproduce any previously released version. According to Martin Fowler, this is a very important part of continuous integration as it makes it possible to reproduce bugs from previous versions \parencite{fowlerReproducibleBuild}. In the current way of managing dependencies, this requirement is fulfilled.
 
