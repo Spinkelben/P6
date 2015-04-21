@@ -36,36 +36,33 @@ To understand which parts of the dependencies that take time, we measure the ind
     xlabel = {Time (seconds)},
     xmin = 0
   ]
-    \addplot+ coordinates
+    \addplot[colorGshade, fill=colorG] coordinates
     {(0.2,0) (0.209,1)};
     \addlegendentry{Metadata}
-    \addplot+ coordinates
+    \addplot[colorFshade, fill=colorF] coordinates
     {(6.625,0) (6.625,1)};
     \addlegendentry{Barcode-scanner}
-    \addplot+ coordinates
-    {(8.393,0) (8.393,1)};
+    \addplot[colorEshade, fill=colorE] coordinates
+    {(8.393,0) (8.393,1)}; 
     \addlegendentry{Launcher}
-    \addplot+ coordinates
+    \addplot[colorDshade, fill=colorD] coordinates
     {(17.223,0) (17.223,1)};
     \addlegendentry{Local-db}
-    \addplot+ coordinates
+    \addplot[colorCshade, fill=colorC] coordinates
     {(160.000,0) (18.000,1)};
     \addlegendentry{Emulator}
-    \addplot+ coordinates
+    \addplot[colorBshade, fill=colorB] coordinates
     {(104.696,0) (104.696,1)};
     \addlegendentry{Giraf-component}
-    \addplot+ coordinates
+    \addplot[colorAshade, fill=colorA] coordinates
     {(159.497,0) (159.497,1)};
     \addlegendentry{Oasis-lib}
-    %\legend{Test, test, test, test, test, test}
   \end{axis}
 \end{tikzpicture}
 \caption{Timings during build of the Launcher project before and after updating emulator plugin}\label{fig:launcher_build_times_1}
 \end{figure}
 
-To improve the overall build times, we look at how to speed up the emulator and to avoid running tests on the dependencies every time a project is build. We first update the Android Emulator Jenkins plugin to a new version with improved emulator stability. We do this to ensure that we do not work on improving parts which are already improved in the most recent version of the plugin. After updating, we measure the build times again. As shown in \figureref{fig:launcher_build_times_2}, the emulator startup time is significantly decreased. Because of this, the emulator startup time is no longer the primary concern, and we focus on decreasing the dependency build times. \todo{Vi kan måske beskrive test uden emulator her, og konkludere at det ikke er arbejdet værd}
-
-
+To improve the overall build times, we look at how to speed up the emulator and to avoid running tests on the dependencies every time a project is build. We first update the Android Emulator Jenkins plugin to a new version with improved emulator stability. We do this to ensure that we do not work on improving parts which are already improved in the most recent version of the plugin. After updating, we measure the build times again. As shown in \figureref{fig:launcher_build_times_1}, the emulator startup time is significantly decreased. Because of this, the emulator startup time is no longer the primary concern, and we focus on decreasing the dependency build times. \todo{Vi kan måske beskrive test uden emulator her, og konkludere at det ikke er arbejdet værd}
 
 One obvious way of decreasing overall build times is to use faster hardware on the server. However, because the multi-project has no financial income, buying new hardware is generally the last resort. In addition, it is difficult to estimate exactly how much of a decrease this will give in practice. Another option is to not test dependencies when dependent projects are build, but only when changes happen in the actual dependency project. While this will decrease the overall build times, each dependency is still built every time a dependent project is built, which limits the amount by which we can decrease the total build times. There may as well arise some quality assurance issues by not testing each build of the dependency. Because of this, we look at improving the build times in a different way, specifically by using pre-compiled libraries.
 
