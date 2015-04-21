@@ -25,6 +25,7 @@ The application names are then send to \mono{find\_newest\_apk.sh}, as seen prev
 \begin{lstlisting}[language=bash,showstringspaces=false,caption=Script that finds the newest available APK for all apps,label=lst:find_all_newest_apks]
 PACKAGE_NAMES="$(find /srv/ftp/newest_apks/ -name "*release_aligned.apk" | sed 's|.*/||' | sed 's|_v.*||' | sort | uniq)"
 
+
 for p in $PACKAGE_NAMES
 do
     /srv/scripts/find_newest_apk.sh $p
@@ -67,4 +68,10 @@ android {
 }
 \end{gradlecode}{}
 
-Now we generate code coverage reports for debug builds locally and in Jenkins. We would like to also publish the code coverage results in Jenkins. There exists a Jenkins plugin \parencite{jacoco-jenkins-plugin} for this purpose. This plugin is easy to setup, provides detailed coverage statistics, and an overview with the percentage of lines of code covered. We use this plugin for publishing the code coverage metrics in Jenkins.
+Now we generate code coverage reports for debug builds locally and in Jenkins. We would like to also publish the code coverage results in Jenkins. There exists a Jenkins plugin \parencite{jacoco-jenkins-plugin} for this purpose. This plugin is easy to setup, provides detailed coverage statistics, and an overview with the percentage of lines of code covered. We use this plugin for publishing the code coverage metrics in Jenkins. An example of this can be seen in \figureref{fig:jenkins-overview-coco}
+
+\begin{figure}[htbp]
+    \includegraphics[width=\textwidth]{graphics/jenkins-overview-coco.pdf}
+    \caption{Screen shot of a section of the build overview screen, which shows the code coverage column}
+    \label{fig:jenkins-overview-coco}
+\end{figure}

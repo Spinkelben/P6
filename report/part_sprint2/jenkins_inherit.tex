@@ -4,7 +4,7 @@ The jobs on Jenkins are generally very similar in their configuration. We can be
 
 The plug-in requires the jobs to be of a special \emph{inheritable} type. We therefore have to covert the existing jobs to inheritable jobs to take advantage of this. As it is impossible to convert a existing job to the inheritable type, we have to re-create all the jobs again. This is not that big of a deal, as the time to setup will be considerably shorter when taking advantage of the inheritable job type. When the old jobs are removed the build history will be lost. This is a minor nuisance but we consider it a small price to pay, compared to the advantages. When deciding how to structure the build, we see two general categories that are sufficiently distinct: Android apps and Android libraries. We create an abstract job for each of these. They do overlap somewhat in functionality, which means we have to create an abstract job for each job task. As such we create abstract jobs for e.g.\ \emph{run Gradle}, \emph{run unit tests}, \emph{find and move APKs}, and \emph{publish lint report}. The abstract jobs \emph{Android app} and \emph{Android library} inherit from the small abstract tasks that are relevant.
 
-We have modeled this as an OOP class diagram in \figureref{fig:jenkins_inherit}.
+We have modeled this as a diagram in \figureref{fig:jenkins_inherit}.
 
 \begin{figure}%
 \centering
@@ -64,7 +64,7 @@ We have modeled this as an OOP class diagram in \figureref{fig:jenkins_inherit}.
   \draw[<-] (coco) to (libInh);
   \draw[<-] (emu) to (libInh);
         
-  %\draw[decorate, line width=1pt, decoration={brace, mirror}] ([xshift=1.5em]g12.south east) -- ([xshift=1.5em]g12.north east) node [midway, yshift=-0.1em, xshift=2.2em] {Groups};
+  \draw[decorate, line width=1pt, decoration={brace, mirror}] ([xshift=1.5em]pubLib.south east) -- ([xshift=1.5em]pubLib.north east) node [midway, yshift=0em, xshift=2.7em] {Sub-tasks};
   
   %\draw[decorate, line width=1pt, decoration={brace, mirror}] ([xshift=1.5em]bd.south east) -- ([xshift=1.5em]bd.north east) node [midway, yshift=-0.1em, xshift=3.2em] {Subprojects};
   
