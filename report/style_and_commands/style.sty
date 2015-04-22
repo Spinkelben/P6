@@ -144,16 +144,16 @@
     \definecolor{color4}{cmyk}{10,70,0,0}  % reddish purple
     \definecolor{color5}{cmyk}{0,50,100,0} % orange
     \definecolor{color6}{cmyk}{80,0,0,0}   % sky blue
-    
-    %\definecolor{colorA}{RGB}{114,147,203} % 
-    %\definecolor{colorB}{RGB}{225,151,76} % 
-    %\definecolor{colorC}{RGB}{132,186,91} % 
-    %\definecolor{colorD}{RGB}{211,94,96} % 
-    %\definecolor{colorE}{RGB}{128,133,133} % 
-    %\definecolor{colorF}{RGB}{144,103,167} % 
-    %\definecolor{colorG}{RGB}{171,104,87} % 
-    %\definecolor{colorH}{RGB}{204,194,16} % 
-    
+
+    %\definecolor{colorA}{RGB}{114,147,203} %
+    %\definecolor{colorB}{RGB}{225,151,76} %
+    %\definecolor{colorC}{RGB}{132,186,91} %
+    %\definecolor{colorD}{RGB}{211,94,96} %
+    %\definecolor{colorE}{RGB}{128,133,133} %
+    %\definecolor{colorF}{RGB}{144,103,167} %
+    %\definecolor{colorG}{RGB}{171,104,87} %
+    %\definecolor{colorH}{RGB}{204,194,16} %
+
     \definecolor{colorA}{HTML}{5DA5DA} % blue
     \definecolor{colorB}{HTML}{FAA43A} % orange
     \definecolor{colorC}{HTML}{60BD68} % green
@@ -163,7 +163,7 @@
     \definecolor{colorG}{HTML}{DECF3F} % yellow
     \definecolor{colorH}{HTML}{F15854} % red
     \definecolor{colorI}{HTML}{4D4D4D} % gray
-    
+
     \colorlet{colorAshade}{colorA!80!black}
     \colorlet{colorBshade}{colorB!80!black}
     \colorlet{colorCshade}{colorC!80!black}
@@ -209,8 +209,19 @@
     morecomment=[s][\color{javadocblue}]{/**}{*/}
   }
 
-  \lstnewenvironment{javacode}[1]{%
+  \lstnewenvironment{javacode}[1][]{%
     \lstset{style=javastyle, #1}
+  }{}
+
+  \lstdefinestyle{pythonstyle}{%
+    language=Python,
+    keywordstyle=\color{javapurple}\bfseries,
+    stringstyle=\color{javared},
+    commentstyle=\color{javagreen}
+  }
+
+  \lstnewenvironment{pythoncode}[1][]{%
+    \lstset{style=pythonstyle, #1}
   }{}
 
   \lstdefinelanguage{Groovy}[]{Java}{%
@@ -240,7 +251,7 @@
     tabsize=2,
     keepspaces=true,
     showspaces=false,
-    showstringspaces=true,
+    showstringspaces=false,
     breaklines=true,
     breakatwhitespace=true,
     postbreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\color{red}\hookrightarrow\space}}

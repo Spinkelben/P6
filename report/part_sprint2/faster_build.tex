@@ -1,7 +1,7 @@
 \chapter{Improving Build Times}
 The project groups want the build times on Jenkins to be faster. When multiple changes are pushed to the master branch within a short space of time, they will create congestion the build queue. This means that even though the build itself may take only a few minutes, the time it takes from push to finished build may be much longer (and exceed the 10 minutes advocated by Kent Beck \parencite{beck2004}).
 
-We measure the time different parts of the Launcher project take to identify in which parts of the build process to make faster. The Launcher project is the main application which depends on many other subprojects (henceforth a ``dependency''). These dependencies are managed as Git submodules \parencite{git-submodules-doc}, which basically clones the contents of a repository (the dependency) at a specific revision into another repository (the dependent project). The build timings are measured on the Jenkins server and shown in \figureref{fig:launcher_build_times_1}. This shows the build timings of the Launcher application and the different dependencies (\emph{Oasis-lib, Giraf-Component, Local-db, Barcode-scanner, and Metadata}), as well as the startup time for the emulator. As can be seen, the emulator and the Giraf-component and Oasis-lib projects have the most significant influence on build times. These three parts use about \SI{90}{\percent} of the total build time. The actual Laucher application itself takes only very little part of the total build time.
+We measure the time different parts of the Launcher project take to identify in which parts of the build process to make faster. The Launcher project is the main application which depends on many other subprojects (henceforth a ``dependency''). These dependencies are managed as Git submodules \parencite{git-submodules-doc}, which basically clones the contents of a repository (the dependency) at a specific revision into another repository (the dependent project). The build timings are measured on the Jenkins server and shown in \figureref{fig:launcher_build_times_1} (before). This shows the build timings of the Launcher application and the different dependencies (\emph{Oasis-lib, Giraf-Component, Local-db, Barcode-scanner, and Metadata}), as well as the startup time for the emulator. As can be seen, the emulator and the Giraf-component and Oasis-lib projects have the most significant influence on build times. These three parts use about \SI{90}{\percent} of the total build time. The actual Laucher application itself takes only very little part of the total build time.
 
 To understand which parts of the dependencies that take time, we measure the individual build steps (tasks) performed during a build. These can be seen in \appendixref{app:build_times}. The reason that the Oasis-lib dependency takes a long time to build is that it contains a great number of tests which run on the emulator. These tests are run every time a project depending on Oasis-lib builds --- even though the library itself has not been updated. The most significant task when building the Giraf-Component library is the test task as well. However, the Giraf-Component library only contains one simple test, so we do not expect the actual test execution time to use much of this time. Instead, we expect it to be caused by the order in which projects are tested. When preparing the tests, the tests from all projects are combined into a single Android application package (APK-file). The first test task run is responsible for installing this application on the emulator, while the subsequent test tasks can skip this step. Because the Giraf-components project is the first in the sequence of libraries to be tested, this task also installs the tests on the emulator which is likely to take some time.
 \todo{Overvej flere målinger og tag gennemsnit}
@@ -62,7 +62,7 @@ To understand which parts of the dependencies that take time, we measure the ind
 \caption{Timings during build of the Launcher project before and after updating emulator plugin}\label{fig:launcher_build_times_1}
 \end{figure}
 
-To improve the overall build times, we look at how to speed up the emulator and to avoid running tests on the dependencies every time a project is build. We first update the Android Emulator Jenkins plugin to a new version with improved emulator stability. We do this to ensure that we do not work on improving parts which are already improved in the most recent version of the plugin. After updating, we measure the build times again. As shown in \figureref{fig:launcher_build_times_1}, the emulator startup time is significantly decreased. Because of this, the emulator startup time is no longer the primary concern, and we focus on decreasing the dependency build times. \todo{Vi kan måske beskrive test uden emulator her, og konkludere at det ikke er arbejdet værd}
+To improve the overall build times, we look at how to speed up the emulator and to avoid running tests on the dependencies every time a project is build. We first update the Android Emulator Jenkins plugin to a new version with improved emulator stability. We do this to ensure that we do not work on improving parts which are already improved in the most recent version of the plugin. After updating, we measure the build times again. As shown in \figureref{fig:launcher_build_times_1} (after), the emulator startup time is significantly decreased. Because of this, the emulator startup time is no longer the primary concern, and we focus on decreasing the dependency build times. \todo{Vi kan måske beskrive test uden emulator her, og konkludere at det ikke er arbejdet værd}
 
 One obvious way of decreasing overall build times is to use faster hardware on the server. However, because the multi-project has no financial income, buying new hardware is generally the last resort. In addition, it is difficult to estimate exactly how much of a decrease this will give in practice. Another option is to not test dependencies when dependent projects are build, but only when changes happen in the actual dependency project. While this will decrease the overall build times, each dependency is still built every time a dependent project is built, which limits the amount by which we can decrease the total build times. There may as well arise some quality assurance issues by not testing each build of the dependency. Because of this, we look at improving the build times in a different way, specifically by using pre-compiled libraries.
 
@@ -70,7 +70,7 @@ One obvious way of decreasing overall build times is to use faster hardware on t
 Instead of building and testing dependencies each time a dependent project is built, we look at referencing pre-compiled and pre-tested library files. We are inspired by the way \mono{.jar}-files are typically used as libraries for Java projects. This way of managing libraries has a number of advantages compared to the current setup:
 \begin{description}
   \item [Pre-Compiled and Pre-Tested] Libraries are binary pre-compiled and pre-tested files. This means that dependent projects do not have to build and test all dependencies, which decreases the build time significantly.
-  \item[Quality Control] Libraries are built and released only if the tests pass, so there will never be dependencies which cannot compile or do not work\footnote{Of course, there may be bugs even if all tests pass, but good test cases decrease the risk.}.
+  \item[Quality Control] Libraries are built and released only if the tests pass, so there will never be dependencies which cannot compile or do not work\footnote{Of course, there may be bugs even if all tests pass, but good test cases decrease the risk}.
   \item[Integrity] All libraries are built on the same machine and build environment, which means that no machine-specific configurations will influence the released libraries \parencite{huttermann2014}.
   \item[Cleaner Structure] Nested dependencies (dependency A depends on dependency B which depends on dependency C) is well defined and nicely handled. The individual libraries do not include their dependencies, so it is always the dependent library that has to include all dependencies. Currently, the same dependency may be included multiple times in the same project.
 \end{description}
@@ -135,7 +135,7 @@ To learn the developers how to use the new dependency management, we demonstrate
 With the introduction of artifacts, we now distinguish release versions from pre-release versions. In addition, a release can be a \emph{major}, \emph{minor}, or \emph{patch} release. The developers need some guidelines to know when to release the different kind of releases. Rather than inventing our own convention, we rely on the Semantic Versioning 2.0.0 specification\parencite{semver2015}, which has been adopted in several Apache projects\parencite{apacheapr,apacheisis,apacheaccumulo}. Because the versioning is clearly specified, we expect to avoid potential problems caused by libraries breaking backward compatibility. In summary, the Semantic Versioning 2.0.0 specification states that the version name is of the form \mono{major.minor.patch}, each of which being a non-negative integer. For example, version \mono{2.5.1} has major version 2, minor version 5, and patch version 1. The individual numbers are increased as new versions are released. To summarize the Semantic Versioning 2.0.0 specification, the numbers are increased according to the following:
 \begin{description}
   \item[Major] When changes without backward compatibility are introduced, it should be released as a new major version. The minor and patch numbers are reset to 0.
-  \item[Minor] Minor releases are used when new functionality is added with backward-compatibility. The major version is unchanged and the patch version is reset to 0.
+  \item[Minor] Minor releases are used when new functionality is added with backward compatibility. The major version is unchanged and the patch version is reset to 0.
   \item[Patch] A patch is for introducing changes without new functionality (typically bug fixes). The major and minor versions are left unchanged.
 \end{description}
 
@@ -154,5 +154,51 @@ A difficult problem is how to do local development on libraries. The easiest way
 Each Library project has to be configured to publish, locally and to Artifacctory. This configuration is done in the build files. Instead of having to repeat the same information in the build file for every library project we have made a gradle plugin which defines all of the properties needed for publishing, called the \mono{giraf-lib-gradle-plugin}. The plugin contains the URL to the snapshot and release repositories, the path to the credentials file and configurations for local publishing. It also contains a rename task, which renames the output file, such that it can be uploaded. At last it makes the \mono{publishToMavenLocal} task dependent on the \mono{build} task, as it would be a hassle to manually make sure to build first. With this plugin we only have to apply it in the build files to make them publish to Artifactory. 
 
 \subsection{Automatic Version Management}
+Kig i \listingref{lst:git_hook_trigger_build}
+\begin{pythoncode}[caption=Part of the git hook responsible for setting library version names and triggering Jenkins,label=lst:git_hook_trigger_build]
+def trigger_build(commit_msg, commit_id, libraries, repo_name, publish_snapshot=False):
+    """
+    Triggers a build on Jenkins.
 
-\todo{Git hook (with Git-group)}
+    Parameters:
+        commit_msg:       The contents of the commit message. Used for versioning.
+        commit_id:        The id of the commit to build.
+        libraries:        The known libraries and their versions.
+        repo_name:        The name of the repository.
+        publish_snapshot: If true, snapshots will be published.
+    """
+    version_name = ""
+    for lib in libraries:
+        if lib.name == repo_name and commit_msg != None:
+            new_major = lib.major
+            new_minor = lib.minor
+            new_patch = lib.patch
+            if "@major" in commit_msg.lower():
+                new_major = str(int(lib.major) + 1)
+                new_minor = "0"
+                new_patch = "1"
+                version_name = "%s.0.0" % (new_major,)
+            elif "@minor" in commit_msg.lower():
+                new_minor = str(int(lib.minor) + 1)
+                version_name = "%s.%s.0" % (lib.major, new_minor)
+                new_patch = "1"
+            elif "@patch" in commit_msg.lower():
+                version_name = "%s.%s.%s" % (lib.major, lib.minor, lib.patch)
+                new_patch = str(int(lib.patch) + 1)
+            else:
+                if not publish_snapshot:
+                    return
+                version_name = "%s.%s.%s-SNAPSHOT" % (lib.major, lib.minor, lib.patch)
+            # Send request
+            try:
+                send_build_request(lib.jobname, version_name, commit_id)
+                # Apply lib changes (request succeeded)
+                lib.major = new_major
+                lib.minor = new_minor
+                lib.patch = new_patch
+                print_version_name(version_name)
+            except (ConnectionError, Timeout) as e:
+                print "ERROR TRIGGERING BUILD"
+                print e
+            return
+\end{pythoncode}
