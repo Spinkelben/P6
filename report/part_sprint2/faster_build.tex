@@ -66,7 +66,14 @@ To improve the overall build times, we look at how to speed up the emulator and 
 
 One obvious way of decreasing overall build times is to use faster hardware on the server. However, because the multi-project has no financial income, buying new hardware is generally the last resort. In addition, it is difficult to estimate exactly how much of a decrease this will give in practice. Another option is to not test dependencies when dependent projects are build, but only when changes happen in the actual dependency project. While this will decrease the overall build times, each dependency is still built every time a dependent project is built, which limits the amount by which we can decrease the total build times. There may as well arise some quality assurance issues by not testing each build of the dependency. Because of this, we look at improving the build times in a different way, specifically by using pre-compiled libraries.
 
-\section{Dependency Management}
+\begin{chapterorganization}
+  \item in \sectionref{sec:dependency_management} \dummy;
+  \item in \sectionref{sec:dependency_repository} \dummy;
+  \item in \sectionref{sec:dependency_workflow} \dummy;
+  \item in \sectionref{sec:automating_vm} \dummy
+\end{chapterorganization}
+
+\section{Dependency Management}\label{sec:dependency_management}
 Instead of building and testing dependencies each time a dependent project is built, we look at referencing pre-compiled and pre-tested library files. We are inspired by the way \mono{.jar}-files are typically used as libraries for Java projects. This way of managing libraries has a number of advantages compared to the current setup:
 \begin{description}
   \item [Pre-Compiled and Pre-Tested] Libraries are binary pre-compiled and pre-tested files. This means that dependent projects do not have to build and test all dependencies, which decreases the build time significantly.
@@ -111,7 +118,7 @@ dependencies {
 }
 \end{gradlecode}
 
-\section{Dependency Repository}
+\section{Dependency Repository}\label{sec:dependency_repository}
 By hosting our own internal Maven artifact repository for our libraries, we are able to declare the dependencies in the build-file and at the same time remove Git submodules and make builds happen faster. This means that we use a separate repositories for source code and binary files. The main reason for this is that Git does not handle binary files well. It keeps every version of binary files \parencite{gitwebsite_attributes}, which will use much space over time. In an artifact repository, on the other hand, only release versions of libraries and a configurable number of development (pre-release) versions are saved.
 
 Different pieces of software for managing artifact repositories exist, which we will present in this section. We restrict ourselves to looking at free repository systems supported by Gradle \parencite{gradle-dependencies-doc}: \emph{Apache Archiva} \parencite{archiva-website}, \emph{Sonatype Nexus} \parencite{nexus-website}, and \emph{Artifactory} \parencite{artifactory-website}. Overall, the only requirements for an artifact repository management system are:
@@ -121,7 +128,7 @@ Different pieces of software for managing artifact repositories exist, which we 
 \end{description}
 Each of the three repository systems comply with these requirements. They can all be browsed and configured through a web server. As such, it does not really matter which system we choose. We choose to use Artifactory because it has a plugin for Jenkins which may be useful for future projects. We install the software on our server and do the actual submodule replacement in collaboration with the Git responsible group.
 
-\section{Dependency Workflow}
+\section{Dependency Workflow}\label{sec:dependency_workflow}
 Because of the new way of managing dependencies, all developers have to change their workflows. To make the transition run smooth, we define a workflow for the new structure, which defines the following tasks:
 \begin{description}
   \item[Release Management and Versioning] During development, libraries should be released as work-in-progress artifacts. When they are stable, new versions should be released.
