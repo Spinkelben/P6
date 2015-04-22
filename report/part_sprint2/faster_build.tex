@@ -171,8 +171,12 @@ Developers must be able to test their changes in the dependent projects locally 
 \todo{Eventually show diagram}
 % DIAGRAM:  http://stackoverflow.com/questions/11891890/should-artifactory-not-be-used-to-capture-the-build-artifacts-that-jenkins-produ
 
-\subsection{Automatic Version Management}
-Kig i \listingref{lst:git_hook_trigger_build}
+\subsection{Configuring the Projects to Publish}
+Each Library project has to be configured to publish, locally and to Artifacctory. This configuration is done in the build files. Instead of having to repeat the same information in the build file for every library project we have made a gradle plugin which defines all of the properties needed for publishing, called the \mono{giraf-lib-gradle-plugin}. The plugin contains the URL to the snapshot and release repositories, the path to the credentials file and configurations for local publishing. It also contains a rename task, which renames the output file, such that it can be uploaded. At last it makes the \mono{publishToMavenLocal} task dependent on the \mono{build} task, as it would be a hassle to manually make sure to build first. With this plugin we only have to apply it in the build files to make them publish to Artifactory.
+
+\section{Automating Version Management}\label{sec:automating_vm}
+Kig i \listingref{lst:git_hook_trigger_build} og referer til \appendixref{app:git_hook}.
+
 \begin{pythoncode}[caption=Part of the git hook responsible for setting library version names and triggering Jenkins,label=lst:git_hook_trigger_build]
 def trigger_build(commit_msg, commit_id, libraries, repo_name, publish_snapshot=False):
     """
