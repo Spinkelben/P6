@@ -2,9 +2,37 @@
 Jenkins compiles and builds the projects but does nothing with the generated APKs. One of the user stories selected in this sprint is \us{automatic upload of alpha releases to Google Play}.
 
 Before the APKs can be published to Google Play, they need to be signed with our signature. The Android plug-in for Gradle has functionality for automatic signing of APKs, and we will use this to sign. A keystore file is used to sign, and we are not interested in everybody having this file as it serves as a proof of identification. We save the file on the server, which means that it becomes impossible to build release versions of the apps locally.
-Google Play store requires an incrementing build number of every app. Incrementing the build number is not done per default, so we need to set up the build to increase the version code every time a app is successfully built. \todo{Write about how increase version code.} \todo{Er det build number eller version code?}
+When uploading a new app to Google Play, the version code of the new app must be greater than the version code of the app already in the app store. Incrementing the version code is not done per default, so we need to set up the build to increase the version code every time a app is successfully built. 
+
+We have written a Gradle plugin handling this, the major part of this seen in \listingref{lst:gradle_versioncode}. The plugin keeps a properties file with the current version code for all apps. Upon executing the \mono{increaseVersionCode} Gradle task, it reads the version code (line 8) from the properties file and increments it (line 12). Then it writes it to the app manifest file (line 13), such that the build following will use the new version code. Finally, it updates the property file with the new version code (line 15), such that the next build will use this version code. If no current version code is found in the properties file (line 21), we assume the app is new and starts at version code \mono{1}, and as such we do not increment it (line 10).
+\begin{gradlecode}[caption=Part of our Gradle plugin for updating version code,label=lst:gradle_versioncode]
+project.task('increaseVersionCode') << {
+    // [...]
+    // Check to see if properties file exists.
+    if (project.file(versionCodesFilePath).exists() != true) {
+        throw new GradleException("No version code file found. Only Jenkins should run this task")
+    }
+    // [...]
+    def newVersion = getVersionCode(project, applicationId)
+    def versionCode = newVersion['value']
+    if (!newVersion['created']) {
+        // Increment version code if not new
+        versionCode++
+        // Write incremented version code to manifest
+        // [...]
+        // Write incremented version code back to properties file
+        // [...]
+    }
+}
+
+def getVersionCode(project, applicationId) {
+    // Reads the version code from the properties file. Returns 1 if the version code does not exist.
+}
+\end{gradlecode}
+
+\todo{Write about how increase version code.}
  
-Now the apks have been signed, they need to be uploaded. This can be done in two ways: via a Jenkins plugin \parencite{jenkins-play-plugin} or through Gradle \parencite{gradle-play-plugin}. The Jenkins plugin is easy to use, but requires that you know the exact name and location of the of the APK to upload.
+Now the apks have been signed, they need to be uploaded. This can be done in two ways: via a Jenkins plugin \parencite{jenkins-play-plugin} or through Gradle \parencite{gradle-play-plugin}. The Jenkins plugin is easy to use, but requires that you know the exact name and location of the of the APK to upload. Therefore we use Gradle. 
 \todo{Skriv om plugin her}
 
 \todo{Skriv om vores endelige løsning.}
