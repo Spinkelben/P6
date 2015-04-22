@@ -151,8 +151,9 @@ A difficult problem is how to do local development on libraries. The easiest way
 % DIAGRAM:  http://stackoverflow.com/questions/11891890/should-artifactory-not-be-used-to-capture-the-build-artifacts-that-jenkins-produ
 
 
-\subsection{Automatic Version Management}
-Kig i \listingref{lst:git_hook_trigger_build}
+\section{Automating Version Management}
+Kig i \listingref{lst:git_hook_trigger_build} og referer til \appendixref{app:git_hook}.
+
 \begin{pythoncode}[caption=Part of the git hook responsible for setting library version names and triggering Jenkins,label=lst:git_hook_trigger_build]
 def trigger_build(commit_msg, commit_id, libraries, repo_name, publish_snapshot=False):
     """
