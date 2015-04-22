@@ -11,7 +11,7 @@ NEWEST_BUILD="$(find /srv/ftp/newest_apks/ -name "$1*release_aligned.apk" | sed 
 find /srv/ftp/newest_apks/ -name "$1*b${NEWEST_BUILD}_release_aligned.apk"
 \end{lstlisting}
 
-When the app has been installed on the device, we run a monkey test on it using the Jenkins plugin. Starting a monkey test will launch the app. This poses problems for the majority of the Giraf apps, as they require extra information when starting, such as user information. If the apps are not given this information at launch they will crash. This means that all monkey tests report failure. The only app that require no extra information is the launcher. However, as the launcher uses the first 5-10 minutes downloading pictograms, the monkey test only presses on a loading screen.
+When the app has been installed on the device, we run a monkey test on it using the Jenkins plugin. Starting a monkey test will launch the app. This poses problems for the majority of the Giraf apps, as they require extra information when starting, such as user information. If the apps are not given this information at launch they will crash. This means that all monkey tests report failure. The only app that require no extra information is the launcher. However, as the launcher uses the first 5--10 minutes downloading pictograms, the monkey test only presses on a loading screen.
 
 The \mono{monkey} command does not support sending extra information when starting apps. We did not anticipate this obstacle and did therefore not manage to implement monkey testing for apps fully.
 
