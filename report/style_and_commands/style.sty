@@ -209,7 +209,7 @@
     morecomment=[s][\color{javadocblue}]{/**}{*/}
   }
 
-  \lstnewenvironment{javacode}[1]{%
+  \lstnewenvironment{javacode}[1][]{%
     \lstset{style=javastyle, #1}
   }{}
 
@@ -220,7 +220,7 @@
     commentstyle=\color{javagreen}
   }
 
-  \lstnewenvironment{pythoncode}[1]{%
+  \lstnewenvironment{pythoncode}[1][]{%
     \lstset{style=pythonstyle, #1}
   }{}
 
