@@ -29,10 +29,5 @@ def getVersionCode(project, applicationId) {
     // Reads the version code from the properties file. Returns 1 if the version code does not exist.
 }
 \end{gradlecode}
-
-\todo{Write about how increase version code.}
  
-Now the apks have been signed, they need to be uploaded. This can be done in two ways: via a Jenkins plugin \parencite{jenkins-play-plugin} or through Gradle \parencite{gradle-play-plugin}. The Jenkins plugin is easy to use, but requires that you know the exact name and location of the of the APK to upload. Therefore we use Gradle. 
-\todo{Skriv om plugin her}
-
-\todo{Skriv om vores endelige løsning.}
+Now the APKs have been signed, they need to be uploaded. This can be done in two ways: via a Jenkins plugin \parencite{jenkins-play-plugin} or through Gradle \parencite{gradle-play-plugin}. The Jenkins plugin is easy to use, but requires that you know the exact name and location of the of the APK to upload. The Gradle plugin knows this already, since the information is already present in the Gradle build environment. Therefore we use Gradle to publish to Google Play via a Google Play API\@.
