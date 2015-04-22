@@ -145,11 +145,12 @@ During development, pre-release versions can be denoted by the version code foll
 The new pre-built dependencies are declared almost the same way as previously. Instead of referring a path to a local directory containing the dependency, the reference is declared as a Maven dependency (as previously described). To accomodate this, we release the current version of each library as version 1.0.0 and make all dependent projects reference these. In addition.
 
 \subsection{Local Development}
-A difficult problem is how to do local development on libraries. The easiest way of doing this is to make changes, run tests, and commit the changes to the master branch. A fact, however, is that our tests are not comprehensive enough to accommodate this workflow. In addition, it may take rather long time for the dependency to get released due to congestion on the continuous integration server. Instead, developers must be able to test their changes in the dependend projects locally without committing their changes. Our solution to this problem is to publish the dependency on a local Maven repository on every development machine. To test the dependency in another project, the dependent project point to the local dependency rather than that on the common repository. Conveniently, the Maven plugin for Gradle has support for publishing and referring to local repositories. The build task \mono{publishToMavenLocal} publishes an artifact to the local repository. For the developers' convenience, we expand the gradle Giraf library plugin to make this task dependend on the \mono{build} task to make sure that the artifact is actually created. Otherwise, the developers should manually make sure that the artifact is created which can be a hassle.
-
-\subsection{Automatic Version Management}
-\todo{Git hook (with Git-group)}
-\todo{New gradle plugin (publish and credentials)}
+A difficult problem is how to do local development on libraries. The easiest way of doing this is to make changes, run tests, and commit the changes to the master branch. A fact, however, is that our tests are not comprehensive enough to accommodate this workflow. In addition, it may take rather long time for the dependency to get released due to congestion on the continuous integration server. Instead, developers must be able to test their changes in the dependend projects locally without committing their changes. Our solution to this problem is to publish the dependency on a local Maven repository on every development machine. To test the dependency in another project, the dependent project point to the local dependency rather than that on the common repository. Conveniently, the Maven plugin for Gradle has support for publishing and referring to local repositories. The build task \mono{publishToMavenLocal} publishes an artifact to the local repository.
 
 \todo{Eventually show diagram}
+
+\subsection{Automatic Version Management}
+
+\todo{Git hook (with Git-group)}
+
 % DIAGRAM:  http://stackoverflow.com/questions/11891890/should-artifactory-not-be-used-to-capture-the-build-artifacts-that-jenkins-produ
