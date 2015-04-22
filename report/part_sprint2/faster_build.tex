@@ -66,7 +66,14 @@ To improve the overall build times, we look at how to speed up the emulator and 
 
 One obvious way of decreasing overall build times is to use faster hardware on the server. However, because the multi-project has no financial income, buying new hardware is generally the last resort. In addition, it is difficult to estimate exactly how much of a decrease this will give in practice. Another option is to not test dependencies when dependent projects are build, but only when changes happen in the actual dependency project. While this will decrease the overall build times, each dependency is still built every time a dependent project is built, which limits the amount by which we can decrease the total build times. There may as well arise some quality assurance issues by not testing each build of the dependency. Because of this, we look at improving the build times in a different way, specifically by using pre-compiled libraries.
 
-\section{Dependency Management}
+\begin{chapterorganization}
+  \item in \sectionref{sec:dependency_management} \dummy;
+  \item in \sectionref{sec:dependency_repository} \dummy;
+  \item in \sectionref{sec:dependency_workflow} \dummy;
+  \item in \sectionref{sec:automating_vm} \dummy
+\end{chapterorganization}
+
+\section{Dependency Management}\label{sec:dependency_management}
 Instead of building and testing dependencies each time a dependent project is built, we look at referencing pre-compiled and pre-tested library files. We are inspired by the way \mono{.jar}-files are typically used as libraries for Java projects. This way of managing libraries has a number of advantages compared to the current setup:
 \begin{description}
   \item [Pre-Compiled and Pre-Tested] Libraries are binary pre-compiled and pre-tested files. This means that dependent projects do not have to build and test all dependencies, which decreases the build time significantly.
@@ -111,7 +118,7 @@ dependencies {
 }
 \end{gradlecode}
 
-\section{Dependency Repository}
+\section{Dependency Repository}\label{sec:dependency_repository}
 By hosting our own internal Maven artifact repository for our libraries, we are able to declare the dependencies in the build-file and at the same time remove Git submodules and make builds happen faster. This means that we use a separate repositories for source code and binary files. The main reason for this is that Git does not handle binary files well. It keeps every version of binary files \parencite{gitwebsite_attributes}, which will use much space over time. In an artifact repository, on the other hand, only release versions of libraries and a configurable number of development (pre-release) versions are saved.
 
 Different pieces of software for managing artifact repositories exist, which we will present in this section. We restrict ourselves to looking at free repository systems supported by Gradle \parencite{gradle-dependencies-doc}: \emph{Apache Archiva} \parencite{archiva-website}, \emph{Sonatype Nexus} \parencite{nexus-website}, and \emph{Artifactory} \parencite{artifactory-website}. Overall, the only requirements for an artifact repository management system are:
@@ -121,7 +128,7 @@ Different pieces of software for managing artifact repositories exist, which we 
 \end{description}
 Each of the three repository systems comply with these requirements. They can all be browsed and configured through a web server. As such, it does not really matter which system we choose. We choose to use Artifactory because it has a plugin for Jenkins which may be useful for future projects. We install the software on our server and do the actual submodule replacement in collaboration with the Git responsible group.
 
-\section{Dependency Workflow}
+\section{Dependency Workflow}\label{sec:dependency_workflow}
 Because of the new way of managing dependencies, all developers have to change their workflows. To make the transition run smooth, we define a workflow for the new structure, which defines the following tasks:
 \begin{description}
   \item[Release Management and Versioning] During development, libraries should be released as work-in-progress artifacts. When they are stable, new versions should be released.
@@ -142,16 +149,31 @@ With the introduction of artifacts, we now distinguish release versions from pre
 During development, pre-release versions can be denoted by the version code followed by a hyphen and an identifier (e.g.\ \mono{2.5.1-ALPHA} or \mono{2.5.1-SNAPSHOT}). Due to the specifics of Maven dependencies, we require this identifier to always be \mono{SNAPSHOT}. This enables Maven to handle pre-releases differently than release versions.
 
 \subsection{Declaring Dependencies}
-The new pre-built dependencies are declared almost the same way as previously. Instead of referring a path to a local directory containing the dependency, the reference is declared as a Maven dependency (as previously described). To accommodate this, we release the current version of each library as version 1.0.0 and make all dependent projects reference these. In addition.
+The new pre-built dependencies are declared almost the same way as previously. Instead of referring a path to a local directory containing the dependency, the reference is declared as a Maven dependency (as previously described). To accommodate this, we release the current version of each library as version 1.0.0 and make all dependent projects reference these. \listingref{lst:dependency_declaration_giraf} shows an example of how the dependencies are declared for a Giraf-project, including the declaration of the repository containing the dependencies.
+
+\begin{gradlecode}[caption={Dependency declaration for a Giraf project},label={lst:dependency_declaration_giraf}]
+repositories {
+    maven {
+        url 'http://cs-cust06-int.cs.aau.dk/artifactory/libraries'
+    }
+    mavenLocal()
+}
+
+dependencies {
+    compile(group: 'dk.aau.cs.giraf', name: 'girafComponent', version: '1.3.0-SNAPSHOT', ext: 'aar')
+    compile(group: 'dk.aau.cs.giraf', name: 'oasisLib', version: '1.1.2', ext: 'aar')
+}
+\end{gradlecode}
 
 \subsection{Local Development}
-A difficult problem is how to do local development on libraries. The easiest way of doing this is to make changes, run tests, and commit the changes to the master branch. A fact, however, is that our tests are not comprehensive enough to accommodate this workflow. In addition, it may take rather long time for the dependency to get released due to congestion on the continuous integration server. Instead, developers must be able to test their changes in the dependent projects locally without committing their changes. Our solution to this problem is to publish the dependency on a local Maven repository on every development machine. To test the dependency in another project, the dependent project point to the local dependency rather than that on the common repository. Conveniently, the Maven plugin for Gradle has support for publishing and referring to local repositories. The build task \mono{publishToMavenLocal} publishes an artifact to the local repository.
+Developers must be able to test their changes in the dependent projects locally without committing their changes, as part of continuous integration \parencite{fowlerCI}. Our solution is to publish the dependency on a local Maven repository on every development machine. To test the dependency in another project, the dependent project points to the local repository rather than that on the common repository. Conveniently, the Maven plugin for Gradle has support for publishing and referring to local repositories. The build task \mono{publishToMavenLocal} publishes an artifact to the local repository.
 
 \todo{Eventually show diagram}
 % DIAGRAM:  http://stackoverflow.com/questions/11891890/should-artifactory-not-be-used-to-capture-the-build-artifacts-that-jenkins-produ
 
-\subsection{Configuring the Projects to Publish}
-Each Library project has to be configured to publish, locally and to Artifacctory. This configuration is done in the build files. Instead of having to repeat the same information in the build file for every library project we have made a gradle plugin which defines all of the properties needed for publishing, called the \mono{giraf-lib-gradle-plugin}. The plugin contains the URL to the snapshot and release repositories, the path to the credentials file and configurations for local publishing. It also contains a rename task, which renames the output file, such that it can be uploaded. At last it makes the \mono{publishToMavenLocal} task dependent on the \mono{build} task, as it would be a hassle to manually make sure to build first. With this plugin we only have to apply it in the build files to make them publish to Artifactory.
+\section{Configuring the Projects to Publish}
+\todo{Hvor skal jeg være?}
+Each library project has to be configured to publish, locally and to Artifacctory. This configuration is done in the build files. Instead of having to repeat the same information in the build file for every library project we have made a Gradle plugin which defines all of the properties needed for publishing, called the \mono{giraf-lib-gradle-plugin}. The plugin contains the URL to the snapshot and release repositories, the path to the credentials file and configurations for local publishing. It also contains a rename task, which renames the output file, such that it can be uploaded. At last it makes the \mono{publishToMavenLocal} task dependent on the \mono{build} task, as it would be a hassle to manually make sure to build first. With this plugin we only have to apply it in the build files to make them publish to Artifactory.\todo{Tilføj kode til appendiks?}
 
 \section{Automating Version Management}\label{sec:automating_vm}
 Kig i \listingref{lst:git_hook_trigger_build} og referer til \appendixref{app:git_hook}.
