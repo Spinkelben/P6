@@ -145,14 +145,14 @@ During development, pre-release versions can be denoted by the version code foll
 The new pre-built dependencies are declared almost the same way as previously. Instead of referring a path to a local directory containing the dependency, the reference is declared as a Maven dependency (as previously described). To accomodate this, we release the current version of each library as version 1.0.0 and make all dependent projects reference these. In addition.
 
 \subsection{Local Development}
-A difficult problem is how to do local development on libraries. The easiest way of doing this is to make changes, run tests, and commit the changes to the master branch. A fact, however, is that our tests are not comprehensive enough to accommodate this workflow. In addition, it may take rather long time for the dependency to get released due to congestion on the continuous integration server. Instead, developers must be able to test their changes in the dependend projects locally without committing their changes. Our solution to this problem is to publish the dependency on a local Maven repository on every development machine. To test the dependency in another project, the dependent project point to the local dependency rather than that on the common repository. Conveniently, the Maven plugin for Gradle has support for publishing and referring to local repositories. The build task \mono{publishToMavenLocal} publishes an artifact to the local repository. For the developers' convenience, we expand the gradle Giraf library plugin to make this task dependend on the \mono{build} task to make sure that the artifact is actually created. Otherwise, the developers should manually make sure that the artifact is created which can be a hassle.
-
-\subsection{Configuring the Projects}
-\todo{Remember to add that we makes publishToMavenLocal dependant on the build task.}
-
-\subsection{Automatic Version Management}
-\todo{Git hook (with Git-group)}
-\todo{New gradle plugin (publish and credentials)}
+A difficult problem is how to do local development on libraries. The easiest way of doing this is to make changes, run tests, and commit the changes to the master branch. A fact, however, is that our tests are not comprehensive enough to accommodate this workflow. In addition, it may take rather long time for the dependency to get released due to congestion on the continuous integration server. Instead, developers must be able to test their changes in the dependent projects locally without committing their changes. Our solution to this problem is to publish the dependency on a local Maven repository on every development machine. To test the dependency in another project, the dependent project point to the local dependency rather than that on the common repository. Conveniently, the Maven plugin for Gradle has support for publishing and referring to local repositories. The build task \mono{publishToMavenLocal} publishes an artifact to the local repository.
 
 \todo{Eventually show diagram}
 % DIAGRAM:  http://stackoverflow.com/questions/11891890/should-artifactory-not-be-used-to-capture-the-build-artifacts-that-jenkins-produ
+
+\subsection{Configuring the Projects to Publish}
+Each Library project has to be configured to publish, locally and to Artifacctory. This configuration is done in the build files. Instead of having to repeat the same information in the build file for every library project we have made a gradle plugin which defines all of the properties needed for publishing, called the \mono{giraf-lib-gradle-plugin}. The plugin contains the URL to the snapshot and release repositories, the path to the credentials file and configurations for local publishing. It also contains a rename task, which renames the output file, such that it can be uploaded. At last it makes the \mono{publishToMavenLocal} task dependent on the \mono{build} task, as it would be a hassle to manually make sure to build first. With this plugin we only have to apply it in the build files to make them publish to Artifactory. 
+
+\subsection{Automatic Version Management}
+
+\todo{Git hook (with Git-group)}
