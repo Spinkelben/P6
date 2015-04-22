@@ -152,8 +152,8 @@ A difficult problem is how to do local development on libraries. The easiest way
 
 
 \subsection{Automatic Version Management}
-
-\begin{pythoncode}[caption=Part of our Gradle plugin for updating version code,label=lst:gradle_versioncode]
+Kig i \listingref{lst:git_hook_trigger_build}
+\begin{pythoncode}[caption=Part of the git hook responsible for setting library version names and triggering Jenkins,label=lst:git_hook_trigger_build]
 def trigger_build(commit_msg, commit_id, libraries, repo_name, publish_snapshot=False):
     """
     Triggers a build on Jenkins.
