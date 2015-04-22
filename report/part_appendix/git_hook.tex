@@ -1,0 +1,190 @@
+\chapter{Git Hook}
+
+\begin{pythoncode}[caption=Post-update git hook for managing library releases and triggering Jenkins]
+#!/usr/bin/python
+
+import os
+import subprocess
+import re
+import fileinput
+import requests
+from requests.exceptions import ConnectionError
+from requests.exceptions import Timeout
+
+VERSION_FILE = '/var/lib/jenkins/project_version_codes/libversion'
+JENKINS_BASE_URL = 'http://localhost/jenkins'
+GIT_RO_BASE_URL = 'http://cs-cust06-int.cs.aau.dk/git-ro'
+
+class Library(object):
+    def __init__(self, name, major, minor, patch, jobname):
+        self.name = name
+        self.major = major
+        self.minor = minor
+        self.patch = patch
+        self.jobname = jobname
+
+def main():
+    """Main function for handling push"""
+    # Load libraries
+    libraries = load_libraries()
+    # Read repo name
+    repo = re.sub('.git', '', execute_sh_cmd('basename $(pwd)')[0])
+    # If repo is not defined as a library, just trigger Jenkins the regular way.
+    if not is_library(libraries, repo):
+        try:
+            trigger_jenkins_poll(repo)
+            print "Thank you for your push. Jenkins will be serving you in a moment."
+        except (ConnectionError, Timeout) as e:
+            print "ERROR TRIGGERING BUILD"
+            print e
+        return
+
+    # Read from stdin
+    for line in fileinput.input():
+        old_rev, new_rev, refs = line.split()
+        # Only deploy if on master branch
+        if not 'master' in refs:
+            continue
+        recent_msg = None
+        # Get commits in push
+        commit_ids = get_commit_ids(old_rev, new_rev)
+        for commit in commit_ids:
+            commit_msg, exit_code = execute_sh_cmd('git log --format=%%B -n 1 %s' % (commit,))
+            if commit == new_rev:
+                if exit_code == 0:
+                    recent_msg = commit_msg
+                continue
+            if exit_code == 0:
+                trigger_build(commit_msg, commit, libraries, repo)
+
+        if recent_msg != None:
+            trigger_build(recent_msg, new_rev, libraries, repo, True)
+
+    write_libraries_to_disc(libraries)
+
+def is_library(libraries, repo_name):
+    has_lib = False
+    for lib in libraries:
+        if repo_name == lib.name:
+            has_lib = True
+            break
+    return has_lib
+
+def load_libraries():
+    """Loads all known libraries and their current versions from the property file."""
+    libraries = []
+    if os.path.isfile(VERSION_FILE):
+        with open(VERSION_FILE) as v:
+            # Regex for matching lib name, major version, minor version, and Jenkins job name
+            rg = re.compile('((?:\w*-*)+), major=(\d*), minor=(\d*), patch=(\d*), jobname=((?:\w*-*)+)', re.IGNORECASE|re.DOTALL)
+            libs = v.readlines()
+            for lib in libs:
+                m = rg.search(lib)
+                if m:
+                    libraries.append(Library(m.group(1), m.group(2), m.group(3), m.group(4), m.group(5)))
+            v.close()
+    return libraries
+
+def write_libraries_to_disc(libraries):
+    """Writes the libraries back to the libary file"""
+    # Read updated versions
+    versionFile = open(VERSION_FILE, 'wr+')
+    versionFile.truncate()
+    for repo in libraries:
+        versionFile.write('repo=%s, major=%s, minor=%s, patch=%s, jobname=%s\n' % (repo.name, repo.major, repo.minor, repo.patch, repo.jobname))
+    versionFile.close()
+
+def execute_sh_cmd(cmd):
+    """Executes the given command
+
+    Return value: Tuple containing (output, exit code).
+    """
+    p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+    val = p.stdout.read().rstrip('\n')
+    exit_code = p.wait()
+    return val, exit_code
+
+def get_commit_ids(start_id, end_id):
+    """Returns commit ids from the given interval, from first to last"""
+    output, exit_code = execute_sh_cmd('git rev-list --reverse %s..%s' % (start_id, end_id))
+    if exit_code != 0 or output == "":
+        return []
+
+    # Parse output
+    return output.split('\n')
+
+
+def print_version_name(version_name):
+    """Pretty-prints the version name."""
+    print "-------------"
+    print "RELEASE: %s" % version_name
+    print "-------------"
+
+def trigger_jenkins_poll(repo_name):
+    """Sends a poll build request to Jenkins."""
+    url = "%s/git/notifyCommit" % (JENKINS_BASE_URL)
+    payload = {'url': "%s/%s" % (GIT_RO_BASE_URL, repo_name)}
+    requests.get(url, params=payload)
+
+def send_build_request(job_name, version_name, commit_id):
+    """
+    Sends a build POST request to Jenkins.
+
+    Parameters:
+        job_name:     The name of the Jenkins job building this library.
+        version_name: The version name of the library.
+        commit_id:  The corresponding commit id.
+    """
+    url = "%s/view/Libraries/job/%s/buildWithParameters" % (JENKINS_BASE_URL, job_name)
+    payload = {'libVersion': version_name, 'commitId': commit_id}
+    requests.post(url, data=payload)
+
+def trigger_build(commit_msg, commit_id, libraries, repo_name, publish_snapshot=False):
+    """
+    Triggers a build on Jenkins.
+
+    Parameters:
+        commit_msg:       The contents of the commit message. Used for versioning.
+        commit_id:        The id of the commit to build.
+        libraries:        The known libraries and their versions.
+        repo_name:        The name of the repository.
+        publish_snapshot: If true, snapshots will be published.
+    """
+    version_name = ""
+    for lib in libraries:
+        if lib.name == repo_name and commit_msg != None:
+            new_major = lib.major
+            new_minor = lib.minor
+            new_patch = lib.patch
+            if "@major" in commit_msg.lower():
+                new_major = str(int(lib.major) + 1)
+                new_minor = "0"
+                new_patch = "1"
+                version_name = "%s.0.0" % (new_major,)
+            elif "@minor" in commit_msg.lower():
+                new_minor = str(int(lib.minor) + 1)
+                version_name = "%s.%s.0" % (lib.major, new_minor)
+                new_patch = "1"
+            elif "@patch" in commit_msg.lower():
+                version_name = "%s.%s.%s" % (lib.major, lib.minor, lib.patch)
+                new_patch = str(int(lib.patch) + 1)
+            else:
+                if not publish_snapshot:
+                    return
+                version_name = "%s.%s.%s-SNAPSHOT" % (lib.major, lib.minor, lib.patch)
+            # Send request
+            try:
+                send_build_request(lib.jobname, version_name, commit_id)
+                # Apply lib changes (request succeeded)
+                lib.major = new_major
+                lib.minor = new_minor
+                lib.patch = new_patch
+                print_version_name(version_name)
+            except (ConnectionError, Timeout) as e:
+                print "ERROR TRIGGERING BUILD"
+                print e
+            return
+
+if __name__ == "__main__":
+    main()
+\end{pythoncode}
