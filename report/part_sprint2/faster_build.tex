@@ -43,7 +43,7 @@ To understand which parts of the dependencies that take time, we measure the ind
     {(6.625,0) (6.625,1)};
     \addlegendentry{Barcode-scanner}
     \addplot[colorEshade, fill=colorE] coordinates
-    {(8.393,0) (8.393,1)}; 
+    {(8.393,0) (8.393,1)};
     \addlegendentry{Launcher}
     \addplot[colorDshade, fill=colorD] coordinates
     {(17.223,0) (17.223,1)};
@@ -112,7 +112,7 @@ dependencies {
 \end{gradlecode}
 
 \section{Dependency Repository}
-By hosting our own internal Maven artifact repository for our libraries, we are able to declare the dependencies in the build-file and at the same time remove Git submodules and make builds happen faster. This means that we use a separate repositories for source code and binary files. The main reason for this is that Git does not handle binary files well. It keeps every version of binary files \parencite{gitwebsite_attributes}, which will use much space over time. In an artifact repository, on the other hand, only release versions of libraries and a configurable number of development versions are saved.
+By hosting our own internal Maven artifact repository for our libraries, we are able to declare the dependencies in the build-file and at the same time remove Git submodules and make builds happen faster. This means that we use a separate repositories for source code and binary files. The main reason for this is that Git does not handle binary files well. It keeps every version of binary files \parencite{gitwebsite_attributes}, which will use much space over time. In an artifact repository, on the other hand, only release versions of libraries and a configurable number of development (pre-release) versions are saved.
 
 Different pieces of software for managing artifact repositories exist, which we will present in this section. We restrict ourselves to looking at free repository systems supported by Gradle \parencite{gradle-dependencies-doc}: \emph{Apache Archiva} \parencite{archiva-website}, \emph{Sonatype Nexus} \parencite{nexus-website}, and \emph{Artifactory} \parencite{artifactory-website}. Overall, the only requirements for an artifact repository management system are:
 \begin{description}
@@ -124,21 +124,29 @@ Each of the three repository systems comply with these requirements. They can al
 \section{Dependency Workflow}
 Because of the new way of managing dependencies, all developers have to change their workflows. To make the transition run smooth, we define a workflow for the new structure, which defines the following tasks:
 \begin{description}
-  \item[Declaring dependencies] It should be clear for the developers how to declare dependencies and their versions.
+  \item[Release Management and Versioning] During development, libraries should be released as work-in-progress artifacts. When they are stable, new versions should be released.
+  \item[Declaring Dependencies] It should be clear for the developers how to declare dependencies and their versions.
   \item[Local Development] Developers should be able to test changes to libraries in dependent projects without committing them to the master branch.
-  \item[Release Management] During development, libraries should be released as work-in-progress artifacts. When they are stable, new versions should be released.
 \end{description}
 
-The first task is relatively simple. Instead of referring a path to a local directory containing the dependency, the reference is declared as a Maven dependency (as previously described). To accomodate this, we release the current version of each library as version 1.0 and make all dependent projects reference these. In addition, we write a guide for the developers which describes how to add new dependencies etc\@.
+To learn the developers how to use the new dependency management, we demonstrate the workflow we present here during the multi project meeting. We also write a guide which they can use for future reference.\todo{Add to appendix?}
 
-A more difficult problem is how to do local development on libraries. The easiest way of doing this is to make changes, run tests, and commit the changes to the master branch. An fact, however, is that our tests are not comprehensive enough to accommodate this workflow. In addition, it may take rather long time for the dependency to get released due to congestion on the continuous integration server. Instead, developers must be able to test their changes in the dependend projects locally without committing their changes. Our solution to this problem is to publish the dependency on a local Maven repository on every development machine. To test the dependency in another project, the dependent project point to the local dependency rather than that on the common repository. Conveniently, the Maven plugin for Gradle has support for publishing and referring to local repositories. The build task \mono{publishToMavenLocal} publishes an artifact to the local repository. For the developers' convenience, we expand the gradle Giraf library plugin to make this task dependend on the \mono{build} task to make sure that the artifact is actually created. Otherwise, the developers should manually make sure that the artifact is created which can be a hassle.
+\subsection{Release Management and Versioning}
+With the introduction of artifacts, we now distinguish release versions from pre-release versions. In addition, a release can be a \emph{major}, \emph{minor}, or \emph{patch} release. The developers need some guidelines to know when to release the different kind of releases. Rather than inventing our own convention, we rely on the Semantic Versioning 2.0.0 specification\parencite{semver2015}, which has been adopted in several Apache projects\parencite{apacheapr,apacheisis,apacheaccumulo}. Because the versioning is clearly specified, we expect to avoid potential problems caused by libraries breaking backward compatibility. In summary, the Semantic Versioning 2.0.0 specification states that the version name is of the form \mono{major.minor.patch}, each of which being a non-negative integer. For example, version \mono{2.5.1} has major version 2, minor version 5, and patch version 1. The individual numbers are increased as new versions are released. To summarize the Semantic Versioning 2.0.0 specification, the numbers are increased according to the following:
+\begin{description}
+  \item[Major] When changes without backward compatibility are introduced, it should be released as a new major version. The minor and patch numbers are reset to 0.
+  \item[Minor] Minor releases are used when new functionality is added with backward-compatibility. The major version is unchanged and the patch version is reset to 0.
+  \item[Patch] A patch is for introducing changes without new functionality (typically bug fixes). The major and minor versions are left unchanged.
+\end{description}
 
-With the introduction of artifacts, we now distinguish release versions from development versions. In addition, a release can be a \emph{major} or \emph{minor} release. The developers need some guidelines to know when to release a major or minor release.
+During development, pre-release versions can be denoted by the version code followed by a hyphen and an identifier (e.g.\ \mono{2.5.1-ALPHA} or \mono{2.5.1-SNAPSHOT}). Due to the specifics of Maven dependencies, we require this identifier to always be \mono{SNAPSHOT}. This enables Maven to handle pre-releases differently than release versions.
 
-% Release management
-\todo{Major, minor, snapshots}
+\subsection{Declaring Dependencies}
+The new pre-built dependencies are declared almost the same way as previously. Instead of referring a path to a local directory containing the dependency, the reference is declared as a Maven dependency (as previously described). To accomodate this, we release the current version of each library as version 1.0.0 and make all dependent projects reference these. In addition.
 
-% Gradle plugin
+\subsection{Local Development}
+A difficult problem is how to do local development on libraries. The easiest way of doing this is to make changes, run tests, and commit the changes to the master branch. A fact, however, is that our tests are not comprehensive enough to accommodate this workflow. In addition, it may take rather long time for the dependency to get released due to congestion on the continuous integration server. Instead, developers must be able to test their changes in the dependend projects locally without committing their changes. Our solution to this problem is to publish the dependency on a local Maven repository on every development machine. To test the dependency in another project, the dependent project point to the local dependency rather than that on the common repository. Conveniently, the Maven plugin for Gradle has support for publishing and referring to local repositories. The build task \mono{publishToMavenLocal} publishes an artifact to the local repository. For the developers' convenience, we expand the gradle Giraf library plugin to make this task dependend on the \mono{build} task to make sure that the artifact is actually created. Otherwise, the developers should manually make sure that the artifact is created which can be a hassle.
+
 \subsection{Automatic Version Management}
 \todo{Git hook (with Git-group)}
 \todo{New gradle plugin (publish and credentials)}
