@@ -70,7 +70,7 @@ One obvious way of decreasing overall build times is to use faster hardware on t
 Instead of building and testing dependencies each time a dependent project is built, we look at referencing pre-compiled and pre-tested library files. We are inspired by the way \mono{.jar}-files are typically used as libraries for Java projects. This way of managing libraries has a number of advantages compared to the current setup:
 \begin{description}
   \item [Pre-Compiled and Pre-Tested] Libraries are binary pre-compiled and pre-tested files. This means that dependent projects do not have to build and test all dependencies, which decreases the build time significantly.
-  \item[Quality Control] Libraries are built and released only if the tests pass, so there will never be dependencies which cannot compile or do not work\footnote{Of course, there may be bugs even if all tests pass, but good test cases decrease the risk.}.
+  \item[Quality Control] Libraries are built and released only if the tests pass, so there will never be dependencies which cannot compile or do not work\footnote{Of course, there may be bugs even if all tests pass, but good test cases decrease the risk}.
   \item[Integrity] All libraries are built on the same machine and build environment, which means that no machine-specific configurations will influence the released libraries \parencite{huttermann2014}.
   \item[Cleaner Structure] Nested dependencies (dependency A depends on dependency B which depends on dependency C) is well defined and nicely handled. The individual libraries do not include their dependencies, so it is always the dependent library that has to include all dependencies. Currently, the same dependency may be included multiple times in the same project.
 \end{description}
