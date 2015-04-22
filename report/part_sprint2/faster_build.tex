@@ -153,4 +153,50 @@ A difficult problem is how to do local development on libraries. The easiest way
 
 \subsection{Automatic Version Management}
 
-\todo{Git hook (with Git-group)}
+\begin{pythoncode}[caption=Part of our Gradle plugin for updating version code,label=lst:gradle_versioncode]
+def trigger_build(commit_msg, commit_id, libraries, repo_name, publish_snapshot=False):
+    """
+    Triggers a build on Jenkins.
+
+    Parameters:
+        commit_msg:       The contents of the commit message. Used for versioning.
+        commit_id:        The id of the commit to build.
+        libraries:        The known libraries and their versions.
+        repo_name:        The name of the repository.
+        publish_snapshot: If true, snapshots will be published.
+    """
+    version_name = ""
+    for lib in libraries:
+        if lib.name == repo_name and commit_msg != None:
+            new_major = lib.major
+            new_minor = lib.minor
+            new_patch = lib.patch
+            if "@major" in commit_msg.lower():
+                new_major = str(int(lib.major) + 1)
+                new_minor = "0"
+                new_patch = "1"
+                version_name = "%s.0.0" % (new_major,)
+            elif "@minor" in commit_msg.lower():
+                new_minor = str(int(lib.minor) + 1)
+                version_name = "%s.%s.0" % (lib.major, new_minor)
+                new_patch = "1"
+            elif "@patch" in commit_msg.lower():
+                version_name = "%s.%s.%s" % (lib.major, lib.minor, lib.patch)
+                new_patch = str(int(lib.patch) + 1)
+            else:
+                if not publish_snapshot:
+                    return
+                version_name = "%s.%s.%s-SNAPSHOT" % (lib.major, lib.minor, lib.patch)
+            # Send request
+            try:
+                send_build_request(lib.jobname, version_name, commit_id)
+                # Apply lib changes (request succeeded)
+                lib.major = new_major
+                lib.minor = new_minor
+                lib.patch = new_patch
+                print_version_name(version_name)
+            except (ConnectionError, Timeout) as e:
+                print "ERROR TRIGGERING BUILD"
+                print e
+            return
+\end{pythoncode}
