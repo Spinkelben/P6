@@ -32,7 +32,7 @@ do
 done
 \end{lstlisting}
 
-When the newest available APK for each app has been found, they are installed on an Android device. Line 3 tries to install an APK and stores the output in \mono{INSTALL\_OUTPUT}. The output is stored, as \mono{adb install} gives an error code of 0, even if it fails. We therefore have to read the output to check if an error occurred so that Jenkins will report the job as a failure. This is done at line 6 where we check that the output contains the string \mono{success}. The \mono{-i} option makes \mono{grep} case insensitive. At line 9 -- 10 we exit with 1 if the output does not contain \mono{success}.
+When the newest available APK for each app has been found, they are installed on an Android device. Line 3 tries to install an APK and stores the output in \mono{INSTALL\_OUTPUT}. The output is stored, as \mono{adb install} gives an error code of 0, even if it fails. We therefore have to read the output to check if an error occurred so that Jenkins will report the job as a failure. This is done at line 6 where we check that the output contains the string \mono{success}. The \mono{-i} option makes \mono{grep} case insensitive. At line 9--10 we exit with 1 if the output does not contain \mono{success}.
 
 \begin{lstlisting}[language=bash,showstringspaces=false,caption=Script that installs the given APKs to an Android device,label=lst:install_apks_on_android_device]
 for a in $@
