@@ -142,7 +142,21 @@ With the introduction of artifacts, we now distinguish release versions from pre
 During development, pre-release versions can be denoted by the version code followed by a hyphen and an identifier (e.g.\ \mono{2.5.1-ALPHA} or \mono{2.5.1-SNAPSHOT}). Due to the specifics of Maven dependencies, we require this identifier to always be \mono{SNAPSHOT}. This enables Maven to handle pre-releases differently than release versions.
 
 \subsection{Declaring Dependencies}
-The new pre-built dependencies are declared almost the same way as previously. Instead of referring a path to a local directory containing the dependency, the reference is declared as a Maven dependency (as previously described). To accomodate this, we release the current version of each library as version 1.0.0 and make all dependent projects reference these. In addition.
+The new pre-built dependencies are declared almost the same way as previously. Instead of referring a path to a local directory containing the dependency, the reference is declared as a Maven dependency (as previously described). To accommodate this, we release the current version of each library as version 1.0.0 and make all dependent projects reference these. \listingref{lst:dependency_declaration_giraf} shows an example of how the dependencies are declared for a Giraf-project, including the declaration of the repository containing the dependencies.
+
+\begin{gradlecode}[caption={Dependency declaration for a Giraf project},label={lst:dependency_declaration_giraf}]
+repositories {
+    maven {
+        url 'http://cs-cust06-int.cs.aau.dk/artifactory/libraries'
+    }
+    mavenLocal()
+}
+
+dependencies {
+    compile(group: 'dk.aau.cs.giraf', name: 'girafComponent', version: '1.3.0-SNAPSHOT', ext: 'aar')
+    compile(group: 'dk.aau.cs.giraf', name: 'oasisLib', version: '1.1.2', ext: 'aar')
+}
+\end{gradlecode}
 
 \subsection{Local Development}
 A difficult problem is how to do local development on libraries. The easiest way of doing this is to make changes, run tests, and commit the changes to the master branch. A fact, however, is that our tests are not comprehensive enough to accommodate this workflow. In addition, it may take rather long time for the dependency to get released due to congestion on the continuous integration server. Instead, developers must be able to test their changes in the dependend projects locally without committing their changes. Our solution to this problem is to publish the dependency on a local Maven repository on every development machine. To test the dependency in another project, the dependent project point to the local dependency rather than that on the common repository. Conveniently, the Maven plugin for Gradle has support for publishing and referring to local repositories. The build task \mono{publishToMavenLocal} publishes an artifact to the local repository.
