@@ -1,21 +1,22 @@
 \chapter{Sprint Two Review}\label{chap:sprint2_end}
 
 \begin{chapterorganization}
-  \item in \sectionref{sec:s2_goals} we evaluate how the sprint went and wether we reached our goals on a group level.
-  \item in \sectionref{sec:s2_multiprj_review} we evaluate how the sprint wen't on the multi project level.
+  \item in \sectionref{sec:s2_goals} we evaluate how the sprint went and whether we reached our goals on a group level.
+  \item in \sectionref{sec:s2_multiprj_review} we evaluate how the sprint went on the multi project level.
 \end{chapterorganization}
 
 \section{Sprint Goals}\label{sec:s2_goals}
 \begin{description}
     \item[Set up Monkey Testing] We did not manage to finish the setup of automatic monkey tests, due to unexpected technical difficulties. Therefore the monkey test user story remains in the Product Backlog.
-    \item[Faster Build] We had initially created some tasks was aimed at reducing the time spent on testing, especially the emulator startup time. However short after the sprint begun, a patch was released to the Jenkins Android Emulator Plug-n, which reduced the emulator startup time drastically. Therefore we emulator related tasks. Later we found out that it was a bug that was causing the build to start before the emulator was finished booting. Therefore we have overlooked an important delay in the build process in this sprint. \\
-    We have replaced submodule dependencies, with binary files. This greatly improves the build time, as the dependencies do not have to be built every time a project is built. 
+    \item[Faster Build] We had initially created some tasks was aimed at reducing the time spent on testing, especially the emulator startup time. However short after the sprint begun, a patch was released to the Jenkins Android Emulator Plugin, which reduced the emulator startup time drastically. As such we down prioritized the emulator related tasks. Later we found out that it was a bug that was causing the build to start before the emulator was finished booting. We have therefore overlooked an important delay in the build process in this sprint.
+
+    We have replaced submodule dependencies with binary files. This greatly improves the build time, as the dependencies do not have to be built every time a project is built.
     \item[Uploading of apps to Google Play] We have successfully enabled automatic upload of GIRAF-apps to Google Play. Every time an app successfully builds on Jenkins the app is automatically uploaded and released on Google play on the alpha track. From there the Google Play group can easily upgrade a alpha release to a beta or production release.
     \item[Test Case Installation] Every night the newest build of each app is installed on an emulator to identify any problems, especially the conflicting providers problem.
-    \item[Code Coverage] Code coverage reports are generated for all project and the result are published on Jenkins. Detailed statistics are available on the job page, and the percentage of LoC covered for every project is visible on the Job overview page. 
+    \item[Code Coverage] Code coverage reports are generated for all project and the result are published on Jenkins. Detailed statistics are available on the job page, and the percentage of lines of code covered for every project is visible on the Job overview page. 
 \end{description}
 
-We did not schedule enough time for writing project report this sprint, as we had a backlog of report items to write going in to this sprint. We did estimate and schedule how much time was needed to complete the report for sprint 1. Our estimations prsoved accurate. However we completely neglected to estimate and allocate any time for writing report about sprint 2, so we will be taking extra time in the next sprint for report writing to catch up.
+We did not schedule enough time for writing project report this sprint, as we had a backlog of report items to write going in to this sprint. We did estimate and schedule how much time was needed to complete the report for sprint 1. Our estimations proved accurate. However we completely neglected to estimate and allocate any time for writing report about sprint 2, so we will be taking extra time in the next sprint for report writing to catch up.
 
 
 \section{Multi-Project Sprint Review}\label{sec:s2_multiprj_review}
