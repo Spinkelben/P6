@@ -6,6 +6,7 @@ The project groups want the build times on Jenkins to be faster. When multiple c
   \item in \sectionref{sec:dependency_management} \dummy;
   \item in \sectionref{sec:dependency_repository} \dummy;
   \item in \sectionref{sec:dependency_workflow} \dummy;
+  \item in \sectionref{sec:conf_project_to_publish} \dummy;
   \item in \sectionref{sec:automating_vm} \dummy;
   \item in \sectionref{sec:faster_build_evaluation} \dummy
 \end{chapterorganization}
@@ -174,8 +175,8 @@ Developers must be able to test their changes in the dependent projects locally 
 \todo{Eventually show diagram}
 % DIAGRAM:  http://stackoverflow.com/questions/11891890/should-artifactory-not-be-used-to-capture-the-build-artifacts-that-jenkins-produ
 
-\section{Configuring the Projects to Publish}
-\todo{Hvor skal jeg være?}
+\section{Configuring the Projects to Publish}\label{sec:conf_project_to_publish}
+\todo{Ligger jeg rigtigt?}
 Each library project has to be configured to publish, locally and to Artifacctory. This configuration is done in the build files. Instead of having to repeat the same information in the build file for every library project we have made a Gradle plugin which defines all of the properties needed for publishing, called the \mono{giraf-lib-gradle-plugin}. The plugin contains the URL to the snapshot and release repositories, the path to the credentials file and configurations for local publishing. It also contains a rename task, which renames the output file, such that it can be uploaded. At last it makes the \mono{publishToMavenLocal} task dependent on the \mono{build} task, as it would be a hassle to manually make sure to build first. With this plugin we only have to apply it in the build files to make them publish to Artifactory.\todo{Tilføj kode til appendiks?}
 
 \section{Automating Version Management}\label{sec:automating_vm}
