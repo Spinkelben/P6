@@ -2,13 +2,13 @@
 The project groups want the build times on Jenkins to be faster. When multiple changes are pushed to the master branch within a short space of time, they will create congestion the build queue. This means that even though the build itself may take only a few minutes, the time it takes from push to finished build may be much longer (and exceed the 10 minutes advocated by Kent Beck \parencite{beck2004}).
 
 \begin{chapterorganization}
-  \item in \sectionref{sec:measuring_build_times} \dummy;
-  \item in \sectionref{sec:dependency_management} \dummy;
-  \item in \sectionref{sec:dependency_repository} \dummy;
-  \item in \sectionref{sec:dependency_workflow} \dummy;
-  \item in \sectionref{sec:conf_project_to_publish} \dummy;
-  \item in \sectionref{sec:automating_vm} \dummy;
-  \item in \sectionref{sec:faster_build_evaluation} \dummy
+  \item in \sectionref{sec:measuring_build_times} we measure the time of building the Launcher app;
+  \item in \sectionref{sec:dependency_management} we present an alternative solution to the current Git submodule dependency system;
+  \item in \sectionref{sec:dependency_repository} we choose a dependency repository for storing binaries;
+  \item in \sectionref{sec:dependency_workflow} we define the workflow for the multi-project developers when working with the new dependency system;
+  \item in \sectionref{sec:conf_project_to_publish} we configure the Giraf projects to use the new dependency system;
+  \item in \sectionref{sec:automating_vm} we describe how versions of binaries are automatically managed;
+  \item in \sectionref{sec:faster_build_evaluation} we evaluate the build times after implementing binary dependencies
 \end{chapterorganization}
 
 \section{Measuring Build Times}\label{sec:measuring_build_times}
