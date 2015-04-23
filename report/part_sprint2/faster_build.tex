@@ -1,6 +1,17 @@
 \chapter{Improving Build Times}
 The project groups want the build times on Jenkins to be faster. When multiple changes are pushed to the master branch within a short space of time, they will create congestion the build queue. This means that even though the build itself may take only a few minutes, the time it takes from push to finished build may be much longer (and exceed the 10 minutes advocated by Kent Beck \parencite{beck2004}).
 
+\begin{chapterorganization}
+  \item in \sectionref{sec:measuring_build_times} we measure the time of building the Launcher app;
+  \item in \sectionref{sec:dependency_management} we present an alternative solution to the current Git submodule dependency system;
+  \item in \sectionref{sec:dependency_repository} we choose a dependency repository for storing binaries;
+  \item in \sectionref{sec:dependency_workflow} we define the workflow for the multi-project developers when working with the new dependency system;
+  \item in \sectionref{sec:conf_project_to_publish} we configure the Giraf projects to use the new dependency system;
+  \item in \sectionref{sec:automating_vm} we describe how versions of binaries are automatically managed;
+  \item in \sectionref{sec:faster_build_evaluation} we evaluate the build times after implementing binary dependencies
+\end{chapterorganization}
+
+\section{Measuring Build Times}\label{sec:measuring_build_times}
 We measure the time different parts of the Launcher project take to identify in which parts of the build process to make faster. The Launcher project is the main application which depends on many other subprojects (henceforth a ``dependency''). These dependencies are managed as Git submodules \parencite{git-submodules-doc}, which basically clones the contents of a repository (the dependency) at a specific revision into another repository (the dependent project). The build timings are measured on the Jenkins server and shown in \figureref{fig:launcher_build_times_1} (before). This shows the build timings of the Launcher application and the different dependencies (\emph{Oasis-lib, Giraf-Component, Local-db, Barcode-scanner, and Metadata}), as well as the startup time for the emulator. As can be seen, the emulator and the Giraf-component and Oasis-lib projects have the most significant influence on build times. These three parts use about \SI{90}{\percent} of the total build time. The actual Laucher application itself takes only very little part of the total build time.
 
 To understand which parts of the dependencies that take time, we measure the individual build steps (tasks) performed during a build. These can be seen in \appendixref{app:build_times}. The reason that the Oasis-lib dependency takes a long time to build is that it contains a great number of tests which run on the emulator. These tests are run every time a project depending on Oasis-lib builds --- even though the library itself has not been updated. The most significant task when building the Giraf-Component library is the test task as well. However, the Giraf-Component library only contains one simple test, so we do not expect the actual test execution time to use much of this time. Instead, we expect it to be caused by the order in which projects are tested. When preparing the tests, the tests from all projects are combined into a single Android application package (APK-file). The first test task run is responsible for installing this application on the emulator, while the subsequent test tasks can skip this step. Because the Giraf-components project is the first in the sequence of libraries to be tested, this task also installs the tests on the emulator which is likely to take some time.
@@ -65,13 +76,6 @@ To understand which parts of the dependencies that take time, we measure the ind
 To improve the overall build times, we look at how to speed up the emulator and to avoid running tests on the dependencies every time a project is build. We first update the Android Emulator Jenkins plugin to a new version with improved emulator stability. We do this to ensure that we do not work on improving parts which are already improved in the most recent version of the plugin. After updating, we measure the build times again. As shown in \figureref{fig:launcher_build_times_1} (after), the emulator startup time is significantly decreased. Because of this, the emulator startup time is no longer the primary concern, and we focus on decreasing the dependency build times. \todo{Vi kan måske beskrive test uden emulator her, og konkludere at det ikke er arbejdet værd}
 
 One obvious way of decreasing overall build times is to use faster hardware on the server. However, because the multi-project has no financial income, buying new hardware is generally the last resort. In addition, it is difficult to estimate exactly how much of a decrease this will give in practice. Another option is to not test dependencies when dependent projects are build, but only when changes happen in the actual dependency project. While this will decrease the overall build times, each dependency is still built every time a dependent project is built, which limits the amount by which we can decrease the total build times. There may as well arise some quality assurance issues by not testing each build of the dependency. Because of this, we look at improving the build times in a different way, specifically by using pre-compiled libraries.
-
-\begin{chapterorganization}
-  \item in \sectionref{sec:dependency_management} \dummy;
-  \item in \sectionref{sec:dependency_repository} \dummy;
-  \item in \sectionref{sec:dependency_workflow} \dummy;
-  \item in \sectionref{sec:automating_vm} \dummy
-\end{chapterorganization}
 
 \section{Dependency Management}\label{sec:dependency_management}
 Instead of building and testing dependencies each time a dependent project is built, we look at referencing pre-compiled and pre-tested library files. We are inspired by the way \mono{.jar}-files are typically used as libraries for Java projects. This way of managing libraries has a number of advantages compared to the current setup:
@@ -171,8 +175,8 @@ Developers must be able to test their changes in the dependent projects locally 
 \todo{Eventually show diagram}
 % DIAGRAM:  http://stackoverflow.com/questions/11891890/should-artifactory-not-be-used-to-capture-the-build-artifacts-that-jenkins-produ
 
-\section{Configuring the Projects to Publish}
-\todo{Hvor skal jeg være?}
+\section{Configuring the Projects to Publish}\label{sec:conf_project_to_publish}
+\todo{Ligger jeg rigtigt?}
 Each library project has to be configured to publish, locally and to Artifacctory. This configuration is done in the build files. Instead of having to repeat the same information in the build file for every library project we have made a Gradle plugin which defines all of the properties needed for publishing, called the \mono{giraf-lib-gradle-plugin}. The plugin contains the URL to the snapshot and release repositories, the path to the credentials file and configurations for local publishing. It also contains a rename task, which renames the output file, such that it can be uploaded. At last it makes the \mono{publishToMavenLocal} task dependent on the \mono{build} task, as it would be a hassle to manually make sure to build first. With this plugin we only have to apply it in the build files to make them publish to Artifactory.\todo{Tilføj kode til appendiks?}
 
 \section{Automating Version Management}\label{sec:automating_vm}
@@ -225,3 +229,11 @@ def trigger_build(commit_msg, commit_id, libraries, repo_name, publish_snapshot=
                 print e
             return
 \end{pythoncode}
+
+\section{Evaluation of Build Times with Binary Dependencies}\label{sec:faster_build_evaluation}
+\dummy
+
+\subsection{Android Emulator Bug}
+When we started to work on improving build times, a new version of the Android Emulator Plugin (2.13) was released. This release contains a change in the way emulator startup is detected. It is necessary to detect when the Android emulator has started, so that APKs can be installed on it and tests can be run. Previously the plugin had checked whether the emulator has started up using \mono{adb shell getprop dev.bootcomplete}. However, this property does not specify that the emulator has started fully, as it may still be in the boot animation when this property returns true. As such the check was switched to  \mono{adb shell getprop init.svc.bootanim} which indicates that the emulator is no longer in the boot animation, and thus have started fully. However, since the emulator in the plugin has the \mono{-no-boot-anim} flag, the emulator has no boot animation. This is to improve loading times, but it also means that the new check for the boot animation will return true immediately, as there is no boot animation. This results in the plugin specifying that the emulator is ready too early, which can lead to potential errors when working with the emulator.
+
+At first this change did not affect us, since building times when building submodules were sufficiently long for the emulator to have started fully regardless. However, as we improve building times with binary dependencies, we start getting no test found errors because of the not yet started emulator. We submit a bug report for the plugin\footnote{\url{https://issues.jenkins-ci.org/browse/JENKINS-27702}} and a pull request removing the \mono{-no-boot-anim} flag for the compiler\footnote{\url{https://github.com/jenkinsci/android-emulator-plugin/pull/49}}. Removing the \mono{-no-boot-anim} flag will result in slightly longer loading times for the emulator, but is necessary to detect that the emulator has started fully.
