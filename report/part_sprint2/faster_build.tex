@@ -8,7 +8,9 @@ The project groups want the build times on Jenkins to be faster. When multiple c
   \item in \sectionref{sec:dependency_workflow} we define the workflow for the multi-project developers when working with the new dependency system;
   \item in \sectionref{sec:conf_project_to_publish} we configure the Giraf projects to use the new dependency system;
   \item in \sectionref{sec:automating_vm} we describe how versions of binaries are automatically managed;
-  \item in \sectionref{sec:faster_build_evaluation} we evaluate the build times after implementing binary dependencies.
+  \item in \sectionref{sec:emulator_bug} we describe a serious bug in the Android Emulator plugin for Jenkins and present a solution;
+  \item in \sectionref{sec:faster_build_evaluation} we evaluate the build times after implementing binary dependencies;
+  \item in \sectionref{sec:non-emulator_testing} we discuss the opportunity to improve build times further by implementing non-emulator testing.
 \end{chapterorganization}
 
 \section{Measuring Build Times}\label{sec:measuring_build_times}
@@ -40,33 +42,33 @@ To understand which parts of the dependencies that take time, we measure the ind
       anchor=north,
       yshift=0ex,
       xshift=0ex,
-      draw=none
-      %legend cell align=left
+      draw=none,
+      legend cell align=left
     },
     area legend,
     xlabel = {Time (seconds)},
     xmin = 0
   ]
+    \addplot[colorCshade, fill=colorC] coordinates
+    {(115.000,0) (18.000,1)};
+    \addlegendentry{Emulator}
     \addplot[colorGshade, fill=colorG] coordinates
-    {(0.2,0) (0.209,1)};
+    {(0.28,0) (0.28,1)};
     \addlegendentry{Metadata}
     \addplot[colorFshade, fill=colorF] coordinates
-    {(6.625,0) (6.625,1)};
+    {(7.711,0) (7.711,1)};
     \addlegendentry{Barcode-scanner}
     \addplot[colorEshade, fill=colorE] coordinates
     {(8.393,0) (8.393,1)};
     \addlegendentry{Launcher}
     \addplot[colorDshade, fill=colorD] coordinates
-    {(17.223,0) (17.223,1)};
+    {(17.315,0) (17.315,1)};
     \addlegendentry{Local-db}
-    \addplot[colorCshade, fill=colorC] coordinates
-    {(160.000,0) (18.000,1)};
-    \addlegendentry{Emulator}
     \addplot[colorBshade, fill=colorB] coordinates
-    {(104.696,0) (104.696,1)};
+    {(105.782,0) (105.782,1)};
     \addlegendentry{Giraf-component}
     \addplot[colorAshade, fill=colorA] coordinates
-    {(159.497,0) (159.497,1)};
+    {(159.739,0) (159.739,1)};
     \addlegendentry{Oasis-lib}
   \end{axis}
 \end{tikzpicture}
@@ -186,35 +188,36 @@ With the dependency workflow defined, we integrate it with continuous integratio
 
 In addition to this, we automate release versioning to some degree. Developers need not to declare the version of a library in its build file --- instead, they simply include the keywords \mono{@patch}, \mono{@minor}, or \mono{@major} in the commit message to release a patch, minor, or major version, respectively. This automatically takes care of increasing and resetting version numbers. For example, if the current version is \mono{1.2.1}, a \mono{@minor} keyword will release a new artifact with version \mono{1.3.0}. If no keyword is given, the release is assumed to be a pre-release, which causes the version name to be the \emph{next} patch release number with a \mono{-SNAPSHOT} postfix (e.g.\ \mono{1.2.2-SNAPSHOT} if the most recent release is \mono{1.2.1}). If multiple commits are pushed at the same time, we trigger only one pre-release build per release. For example, if it contains four commits with messages \mono{test1}, \mono{test2}, \mono{@patch}, \mono{test3}, respectively, two pre-releases (one before and one after the patch) and one patch are build. Similarly, if a push contains several commits without any release keyword, only one pre-release will be built. \todo{Maybe this could be illustrated somehow?}
 \begin{figure}
-    \centering
-    \begin{tikzpicture}[
-    simple/.style={draw, circle, minimum size=0.5cm}]
+  \centering
+  \tikzsetnextfilename{git_library_versions}
+  \begin{tikzpicture}[
+  simple/.style={draw, circle, minimum size=0.5cm}]
 
-    %Commit nodes
-    \node[simple] (master-1) at (0,5) {A};
-    \node[simple] (local-1) at (2,4) {B};
-    \node[simple] (local-2) at (2,3) {C};
-    \node[simple] (local-3) at (2,2) {D};
-    \node[simple] (local-4) at (2,1) {E};
-    \node[simple] (master-2) at (0,0) {F};
+  %Commit nodes
+  \node[simple] (master-1) at (0,5) {A};
+  \node[simple] (local-1) at (2,4) {B};
+  \node[simple] (local-2) at (2,3) {C};
+  \node[simple] (local-3) at (2,2) {D};
+  \node[simple] (local-4) at (2,1) {E};
+  \node[simple] (master-2) at (0,0) {F};
 
-    %Titles
-    \node(master) [above=of master-1, minimum size=0.5cm, yshift=-1cm] {\mono{master}};
-    %\path \let \p1 = (1,1), \p2 = (2,2) in node at (1, 1) {\mono{local}};
-    %\node(local) [right=of master] {\mono{Local}};
-    %\node(version-title) [right=of local] {\mono{Version}};
-    %\node(commit-title) [right=of version-title] {\mono{Commit message}};
+  %Titles
+  \node(master) [above=of master-1, minimum size=0.5cm, yshift=-1cm] {\mono{master}};
+  %\path \let \p1 = (1,1), \p2 = (2,2) in node at (1, 1) {\mono{local}};
+  %\node(local) [right=of master] {\mono{Local}};
+  %\node(version-title) [right=of local] {\mono{Version}};
+  %\node(commit-title) [right=of version-title] {\mono{Commit message}};
 
-    %Versions
-    \node(major-version) [right=of local-3] {\mono{1.2.4}};
-    \node(init-version) [right=of master-1, xshift=2cm] {\mono{1.2.3}};
-    \node(old-snap)  [right=of local-2] {\mono{1.2.4-SNAPSHOT}};
-    \node(new-snap)  [right=of local-4] {\mono{1.2.5-SNAPSHOT}};
+  %Versions
+  \node(major-version) [right=of local-3] {\mono{1.2.4}};
+  \node(init-version) [right=of master-1, xshift=2cm] {\mono{1.2.3}};
+  \node(old-snap)  [right=of local-2] {\mono{1.2.4-SNAPSHOT}};
+  \node(new-snap)  [right=of local-4] {\mono{1.2.5-SNAPSHOT}};
 
-    %Patch node
-    \node(patch-note) [right=of major-version] {\mono{@patch}};
-
-    \end{tikzpicture}
+  %Patch node
+  \node(patch-note) [right=of major-version] {\mono{@patch}};
+  \end{tikzpicture}
+\caption{Finish figure and add caption}\label{fig:git_library_versions}
 \end{figure}
 The Git hook previously described is extended with functionality to manage this. We implement this automation in collaboration with the Git-responsible group. As part of the implementation phase, we refactor by changing the programming language from Bash to Python, because of the greater level of abstraction provided by Python compared to Bash. Part of the code is shown in \listingref{lst:git_hook_trigger_build}. This function is called for each commit message contained in the push. It first identifies the library corresponding to the repository pushed to (lines 13--14), and afterwards checks for keywords in the git message and formats the new version name (lines 18--33). Jenkins is then triggered with a HTTP POST request containing the Jenkins job name, the version name of the release, and the commit id of the release commit as arguments. Finally, the library versions are updated in a global library object and the version name is printed to the user. The full code can be seen in \appendixref{app:git_hook}. The most recent versions of the different libraries are stored in a file together with the names of their repositories and Jenkins jobs.
 
@@ -266,11 +269,23 @@ def trigger_build(commit_msg, commit_id, libraries, repo_name, publish_snapshot=
             return
 \end{pythoncode}
 
+\section{Android Emulator Bug}\label{sec:emulator_bug}
+When we started to work on improving build times, a new version of the Android Emulator Plugin (2.13) was released. This release contains a change in the way emulator startup is detected. It is necessary to detect when the Android emulator has started, so that APKs can be installed on it and tests can be run. Previously the plugin had checked whether the emulator has started up using \mono{adb shell getprop dev.bootcomplete}. However, this property does not specify that the emulator has started fully, as it may still be in the boot animation when this property returns true. As such the check was switched to  \mono{adb shell getprop init.svc.bootanim} which indicates that the emulator is no longer in the boot animation, and thus have started fully. However, since the emulator in the plugin has the \mono{-no-boot-anim} flag, the emulator has no boot animation. This is to improve loading times, but it also means that the new check for the boot animation will return true immediately, as there is no boot animation. This results in the plugin specifying that the emulator is ready too early, which can lead to potential errors when working with the emulator.
+
+At first this change did not affect us, since building times when building submodules were sufficiently long for the emulator to have started fully regardless. However, as we improve building times with binary dependencies, we start getting no test found errors because of the not yet started emulator. We submit a bug report for the plugin\footnote{\url{https://issues.jenkins-ci.org/browse/JENKINS-27702}} and a pull request removing the \mono{-no-boot-anim} flag for the compiler\footnote{\url{https://github.com/jenkinsci/android-emulator-plugin/pull/49}}. Removing the \mono{-no-boot-anim} flag will result in slightly longer loading times for the emulator, but is necessary to detect that the emulator has started fully.
+
 \section{Evaluation of Build Times with Binary Dependencies}\label{sec:faster_build_evaluation}
+We measure the time of building the launcher after having implemented binary dependencies. To make a fair comparison, we run the launcher with the Gradle targets \mono{check connectedCheck assembleRelease}, whereas in fact we now run every app with \mono{clean check connectedCheck increaseVersionCode assembleRelease publishApkRelease} now. The added tasks \mono{increaseVersionCode} and \mono{publishApkRelease} make it possible to publish apps to Google Play. In addition the \mono{clean} task at the start is to ensure that a previous build does not affect the current build.
+
+After having implemented the new dependency system we discovered there was a bug with the Android Emulator plugin on Jenkins that resulted in the very fast startups show in \figureref{fig:launcher_build_times_1}, as described in \sectionref{sec:emulator_bug} in detail. We therefore compare the build times with the emulator starting correctly (and therefore slowly).
+
+\figureref{fig:launcher_build_times_2} shows three bars. \emph{Old slow} shows the build times before the new dependency system with the emulator working correctly. \emph{New limited targets} shows the build times with the build targets \mono{check connectedCheck assembleRelease}. When running the same build targets as before, there is an improvement in the build times, as the dependencies \emph{Local-db}, \emph{Giraf-component}, and \emph{Oasis-lib} are not built. \mono{Barcode-scanner} is still built, as it is not a library used for any other projects than the launcher. It can be seen that the build time for \emph{Launcher} has increased dramatically. This is because there is now a UI test that takes a significant amount of time. This test was not there when we did the initial timing of the entire launcher project.
+
+While the build times seem to have improved, each app job on Jenkins now uploads an APK to Google Play. \emph{New all targets} in \figureref{fig:launcher_build_times_2} shows the build time of the launcher app when running all targets. The overall build time has thus increased from the original build time of the launcher project. Therefore we have not managed to decrease the build times of projects, but we have nonetheless made improvements. Had we not made these improvements the build times would be even longer.
 
 \begin{figure}
 \centering
-\tikzsetnextfilename{timings_beforeemulatorupdate}
+\tikzsetnextfilename{launcher_timings}
 \begin{tikzpicture}[]
   \begin{axis}[
     xbar stacked,
@@ -279,7 +294,7 @@ def trigger_build(commit_msg, commit_id, libraries, repo_name, publish_snapshot=
     axis y line*= none, axis x line*= bottom,
     %xmajorgrids = true,
     ytick = data,
-    yticklabels = {Before, After},
+    yticklabels = {Old slow, New limited targets, New all targets},
     tick align = outside,
     %xtick pos = left,
     bar width=6mm,
@@ -292,45 +307,40 @@ def trigger_build(commit_msg, commit_id, libraries, repo_name, publish_snapshot=
       anchor=north,
       yshift=0ex,
       xshift=0ex,
-      draw=none
-      %legend cell align=left
+      draw=none,
+      legend cell align=left
     },
     area legend,
     xlabel = {Time (seconds)},
     xmin = 0
   ]
+    \addplot[colorCshade, fill=colorC] coordinates
+    {(115.000,0) (115.000,1) (115.000,3)};
+    \addlegendentry{Emulator}
     \addplot[colorGshade, fill=colorG] coordinates
-    {(0.2,0) (0.209,1)};
+    {(0.28,0) (0.0,1) (0.0,3)};
     \addlegendentry{Metadata}
     \addplot[colorFshade, fill=colorF] coordinates
-    {(6.625,0) (6.625,1)};
+    {(7.711,0) (22.843,1) (38.731,3)};
     \addlegendentry{Barcode-scanner}
     \addplot[colorEshade, fill=colorE] coordinates
-    {(8.393,0) (8.393,1)};
+    {(8.393,0) (161.036,1) (356.664,3)};
     \addlegendentry{Launcher}
     \addplot[colorDshade, fill=colorD] coordinates
-    {(17.223,0) (17.223,1)};
+    {(17.315,0) (0.0,1) (0.0,3)};
     \addlegendentry{Local-db}
-    \addplot[colorCshade, fill=colorC] coordinates
-    {(160.000,0) (18.000,1)};
-    \addlegendentry{Emulator}
     \addplot[colorBshade, fill=colorB] coordinates
-    {(104.696,0) (104.696,1)};
+    {(105.782,0) (0.0,1) (0.0,3)};
     \addlegendentry{Giraf-component}
     \addplot[colorAshade, fill=colorA] coordinates
-    {(159.497,0) (159.497,1)};
+    {(159.739,0) (0.0,1) (0.0,3)};
     \addlegendentry{Oasis-lib}
   \end{axis}
 \end{tikzpicture}
 \caption{Comparison of Launcher timings}\label{fig:launcher_build_times_2}
 \end{figure}
 
-\subsection{Android Emulator Bug}
-When we started to work on improving build times, a new version of the Android Emulator Plugin (2.13) was released. This release contains a change in the way emulator startup is detected. It is necessary to detect when the Android emulator has started, so that APKs can be installed on it and tests can be run. Previously the plugin had checked whether the emulator has started up using \mono{adb shell getprop dev.bootcomplete}. However, this property does not specify that the emulator has started fully, as it may still be in the boot animation when this property returns true. As such the check was switched to  \mono{adb shell getprop init.svc.bootanim} which indicates that the emulator is no longer in the boot animation, and thus have started fully. However, since the emulator in the plugin has the \mono{-no-boot-anim} flag, the emulator has no boot animation. This is to improve loading times, but it also means that the new check for the boot animation will return true immediately, as there is no boot animation. This results in the plugin specifying that the emulator is ready too early, which can lead to potential errors when working with the emulator.
-
-At first this change did not affect us, since building times when building submodules were sufficiently long for the emulator to have started fully regardless. However, as we improve building times with binary dependencies, we start getting no test found errors because of the not yet started emulator. We submit a bug report for the plugin\footnote{\url{https://issues.jenkins-ci.org/browse/JENKINS-27702}} and a pull request removing the \mono{-no-boot-anim} flag for the compiler\footnote{\url{https://github.com/jenkinsci/android-emulator-plugin/pull/49}}. Removing the \mono{-no-boot-anim} flag will result in slightly longer loading times for the emulator, but is necessary to detect that the emulator has started fully.
-
-\section{Non-Emulator Testing}
+\section{Non-Emulator Testing}\label{sec:non-emulator_testing}
 As presented in the previous section, it takes a long time for the Android emulator to start. In addition, the emulator takes memory and CPU-time from the actual build process, which is likely to make the build slower. We look at how to test Android applications and libraries sufficiently without using an emulator. Overall, we consider two ways of doing this: Testing on a physical device (connected by USB) and on the Java Virtual Machine (JVM).
 
 \subsection{Testing on a Physical Device}

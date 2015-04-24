@@ -1,0 +1,6 @@
+check connectedCheck assembleRelease
+
+Milliseconds; Task
+22843; Barcode-scanner
+115000; Emulator
+161036; Launcher

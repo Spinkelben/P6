@@ -1,7 +1,7 @@
 check connectedCheck assembleRelease
 
-Milliseconds; Task
-18000ms;Emulator
+Milliseconds;Task
+160000ms;Emulator
 309ms;GIRAF_Components:preBuild
 105ms;OasisLib:mergeReleaseProguardFiles
 94ms;OasisLib:preBuild
