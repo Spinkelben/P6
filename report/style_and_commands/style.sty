@@ -70,6 +70,9 @@
   % Typographic tweaks.
   \usepackage[babel]{microtype} % Enables kerning. Load after fonts.
   \usepackage{textcomp} % Uses the glyphs present in the fonts, rather than LaTeX workarounds for old fonts.
+  %\usepackage[htt]{hyphenat} % Lets texttt hyphenate.
+
+  {{\ttfamily \hyphenchar\the\font=`\-}%
 
   % Parts style.
   \setkomafont{part}{\normalfont\Huge\fontseries{k}\sffamily\color{partcolor}}
