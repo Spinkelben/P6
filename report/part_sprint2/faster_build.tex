@@ -189,7 +189,7 @@ In addition to this, we automate release versioning to some degree. Developers n
     \centering
     \begin{tikzpicture}[
     simple/.style={draw, circle, minimum size=0.5cm}]
-    
+
     %Commit nodes
     \node[simple] (master-1) at (0,5) {A};
     \node[simple] (local-1) at (2,4) {B};
@@ -197,23 +197,23 @@ In addition to this, we automate release versioning to some degree. Developers n
     \node[simple] (local-3) at (2,2) {D};
     \node[simple] (local-4) at (2,1) {E};
     \node[simple] (master-2) at (0,0) {F};
-    
+
     %Titles
     \node(master) [above=of master-1, minimum size=0.5cm, yshift=-1cm] {\mono{master}};
     %\path \let \p1 = (1,1), \p2 = (2,2) in node at (1, 1) {\mono{local}};
     %\node(local) [right=of master] {\mono{Local}};
     %\node(version-title) [right=of local] {\mono{Version}};
     %\node(commit-title) [right=of version-title] {\mono{Commit message}};
-    
+
     %Versions
     \node(major-version) [right=of local-3] {\mono{1.2.4}};
     \node(init-version) [right=of master-1, xshift=2cm] {\mono{1.2.3}};
     \node(old-snap)  [right=of local-2] {\mono{1.2.4-SNAPSHOT}};
     \node(new-snap)  [right=of local-4] {\mono{1.2.5-SNAPSHOT}};
-    
+
     %Patch node
     \node(patch-note) [right=of major-version] {\mono{@patch}};
-     
+
     \end{tikzpicture}
 \end{figure}
 The Git hook previously described is extended with functionality to manage this. We implement this automation in collaboration with the Git-responsible group. As part of the implementation phase, we refactor by changing the programming language from Bash to Python, because of the greater level of abstraction provided by Python compared to Bash. Part of the code is shown in \listingref{lst:git_hook_trigger_build}. This function is called for each commit message contained in the push. It first identifies the library corresponding to the repository pushed to (lines 13--14), and afterwards checks for keywords in the git message and formats the new version name (lines 18--33). Jenkins is then triggered with a HTTP POST request containing the Jenkins job name, the version name of the release, and the commit id of the release commit as arguments. Finally, the library versions are updated in a global library object and the version name is printed to the user. The full code can be seen in \appendixref{app:git_hook}. The most recent versions of the different libraries are stored in a file together with the names of their repositories and Jenkins jobs.
@@ -331,14 +331,16 @@ When we started to work on improving build times, a new version of the Android E
 At first this change did not affect us, since building times when building submodules were sufficiently long for the emulator to have started fully regardless. However, as we improve building times with binary dependencies, we start getting no test found errors because of the not yet started emulator. We submit a bug report for the plugin\footnote{\url{https://issues.jenkins-ci.org/browse/JENKINS-27702}} and a pull request removing the \mono{-no-boot-anim} flag for the compiler\footnote{\url{https://github.com/jenkinsci/android-emulator-plugin/pull/49}}. Removing the \mono{-no-boot-anim} flag will result in slightly longer loading times for the emulator, but is necessary to detect that the emulator has started fully.
 
 \section{Non-Emulator Testing}
-As presented in the previous section, it takes a long time for the Android emulator to start. In addition, the emulator takes memory and CPU-time from the actual build process, which is likely to make the build slower. We look at how to test Android applications and libraries sufficiently without using an emulator. Overall, we consider two ways of doing this: Testing on the Java Virtual Machine and on a physical device (connected by USB).
+As presented in the previous section, it takes a long time for the Android emulator to start. In addition, the emulator takes memory and CPU-time from the actual build process, which is likely to make the build slower. We look at how to test Android applications and libraries sufficiently without using an emulator. Overall, we consider two ways of doing this: Testing on the Java Virtual Machine (JVM) and on a physical device (connected by USB).
 
 \subsection{Testing on the Java Virtual Machine}
-One option is to run tests on the Java Virtual Machine instead of the emulated Dalvik Virtual Machine. By not emulating the virtual machine, the test can be executed faster. However, this also means that the tests will not run on the Android operating system but on the operating system running the Java Virtual Machine. Because of this, some system features will have to be mocked, which in some cases may not provide a realistic simulation of the Android system. This may be acceptable, though, and we can eventually solve it by running functional test on an emulator at night when timing is no concern.
+One option is to run tests on the Java Virtual Machine instead of the emulated Dalvik Virtual Machine. By not emulating the virtual machine, the test can be executed faster. However, this also means that the tests will not run on the Android operating system but on the operating system running the JVM\@. Because of this, some system features will have to be mocked, which in some cases may not provide a realistic simulation of the Android system. This may be acceptable, though, and we can eventually solve it by running functional test on an emulator at night when timing is no concern.
 
 \subsubsection{Robolectric}
-\emph{Robolectric}\parencite{robolectric2015} is a library for testing Android applications without an emulator or device. It contains implementations of the base Android SDK classes such that it can run on the Java Virtual Machine. It supports both unit testing and functional testing by providing access to UI elements and databases.
-% TODO: Afviger lidt fra standard android test. Kræver noget opsætning. Vi har ikke tid i dette sprint.
+\emph{Robolectric}\parencite{robolectric2015} is a library for testing Android applications without an emulator or device. It contains implementations of the base Android SDK classes such that it can run on the Java Virtual Machine. It supports both unit testing and functional testing by providing access to UI elements and databases. To support this, however, the test case implementation differs slightly from those using the official Android test framework. Because of this, our existing tests need to be rewritten to support the library. In addition, it is not possible to run Robolectric tests on a device or emulator. As a result, it is necessary to have two tests, one using Robolectric and one using the Android test framework, if the test cases should run on both the JVM and an emulator or device.
+
+While Robolectric is likely to speed-up the build times and seems to be relatively easy to use, the changes required convert existing tests to Robolectric are too extensive for us to perform in this sprint.\todo{Maybe give implementation examples to support statements} Therefor, we choose not to implement Robolectric. However, the library ought to be considered if build times need to be decreased further.
 
 \subsection{Testing on a Physical Device}
+
 % http://square.github.io/spoon/
