@@ -341,7 +341,12 @@ While the build times seem to have improved, each app job on Jenkins now uploads
 \end{figure}
 
 \section{Non-Emulator Testing}\label{sec:non-emulator_testing}
-As presented in the previous section, it takes a long time for the Android emulator to start. In addition, the emulator takes memory and CPU-time from the actual build process, which is likely to make the build slower. We look at how to test Android applications and libraries sufficiently without using an emulator. Overall, we consider two ways of doing this: Testing on the Java Virtual Machine (JVM) and on a physical device (connected by USB).
+As presented in the previous section, it takes a long time for the Android emulator to start. In addition, the emulator takes memory and CPU-time from the actual build process, which is likely to make the build slower. We look at how to test Android applications and libraries sufficiently without using an emulator. Overall, we consider two ways of doing this: Testing on a physical device (connected by USB) and on the Java Virtual Machine (JVM).
+
+\subsection{Testing on a Physical Device}
+Another alternative to the Android emulator is to run tests on a physical device. A physical device is typically faster than the emulator and it need not to boot every time we build. A downside of testing on a physical device is the expense of having one or more tablets only for testing. If we want to test on a wide range of Android devices, this can be a significant expense for a project without financial income. A single tablet may currently be sufficient for our project though, as we only test on a single emulator configuration anyway.
+
+In the ideal continuous integration setup, each build is tested on all devices we support. Programs such as \emph{Spoon}\parencite{spoon2015}, which automatically distribute a test application to several devices and run it simultaneously, would both reduce build times and improve the overall quality assurance. However, because of the expense of this solution and the limited time left in this sprint, we choose not to look more into this.
 
 \subsection{Testing on the Java Virtual Machine}
 One option is to run tests on the Java Virtual Machine instead of the emulated Dalvik Virtual Machine. By not emulating the virtual machine, the test can be executed faster. However, this also means that the tests will not run on the Android operating system but on the operating system running the JVM\@. Because of this, some system features will have to be mocked, which in some cases may not provide a realistic simulation of the Android system. This may be acceptable, though, and we can eventually solve it by running functional test on an emulator at night when timing is no concern.
@@ -350,7 +355,3 @@ One option is to run tests on the Java Virtual Machine instead of the emulated D
 \emph{Robolectric}\parencite{robolectric2015} is a library for testing Android applications without an emulator or device. It contains implementations of the base Android SDK classes such that it can run on the Java Virtual Machine. It supports both unit testing and functional testing by providing access to UI elements and databases. To support this, however, the test case implementation differs slightly from those using the official Android test framework. Because of this, our existing tests need to be rewritten to support the library. In addition, it is not possible to run Robolectric tests on a device or emulator. As a result, it is necessary to have two tests, one using Robolectric and one using the Android test framework, if the test cases should run on both the JVM and an emulator or device.
 
 While Robolectric is likely to speed-up the build times and seems to be relatively easy to use, the changes required convert existing tests to Robolectric are too extensive for us to perform in this sprint.\todo{Maybe give implementation examples to support statements} Therefor, we choose not to implement Robolectric. However, the library ought to be considered if build times need to be decreased further.
-
-\subsection{Testing on a Physical Device}
-
-% http://square.github.io/spoon/
