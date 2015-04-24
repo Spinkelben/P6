@@ -66,6 +66,7 @@
   % Sprints.
   \newcounter{sprintcounter}%\addtocounter{sprintcounter}{1}
   \newcommand{\sprint}[1]{%
+    \clearpage{}
     \stepcounter{sprintcounter}
     \part*{Sprint \arabic{sprintcounter}\\\vspace{1cm}\textnormal{\textsf{#1}}}
     \addcontentsline{toc}{part}{Sprint \arabic{sprintcounter}: #1}
