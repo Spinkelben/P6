@@ -1,0 +1,6 @@
+clean check connectedCheck increaseVersionCode assembleRelease publishApkRelease -PdisablePreDex
+
+Milliseconds; Task
+38731; Barcode-scanner
+115000; Emulator
+356664; Launcher
