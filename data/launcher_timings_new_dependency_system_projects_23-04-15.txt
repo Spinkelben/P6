@@ -1,0 +1,6 @@
+Milliseconds; Task
+48789; Barcode-scanner
+115000; Emulator
+377786; Launcher
+
+48789+115000+377786 = 541575/1000 = 541.575/60 = 9.026250000000001

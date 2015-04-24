@@ -60,6 +60,10 @@
 \input{part_introduction/swdev_method}
 \input{part_introduction/sw_cm}
 
+% Sprints
+\clearpage{}
+\ihead{Sprint \arabic{sprintcounter}} % Puts >>Sprint X<< in headers.
+
 \sprint{Initialization Phase and Configuration Management}
 \input{part_sprint1/sprint1}
 
@@ -71,6 +75,9 @@
 
 \sprint{Some title}
 \input{part_sprint4/sprint4}
+
+% End sprints.
+\ihead{}
 
 \chaptergroup{Collaborations}
 \input{part_collaboration/collab}
@@ -98,7 +105,7 @@
 \phantomsection\addcontentsline{toc}{chapter}{Bibliography}
 \label{bibliography}
 \printbibliography{}
-%\cleardoublepage{}
+\clearpage{}
 \ohead{{\MakeUppercase\leftmark}\rightmark}
 
 % Appendix

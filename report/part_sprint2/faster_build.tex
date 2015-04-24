@@ -1,5 +1,5 @@
 \chapter{Improving Build Times}
-The project groups want the build times on Jenkins to be faster. When multiple changes are pushed to the master branch within a short space of time, they will create congestion the build queue. This means that even though the build itself may take only a few minutes, the time it takes from push to finished build may be much longer (and exceed the 10 minutes advocated by Kent Beck \parencite{beck2004}).
+The project groups want the build times on Jenkins to be faster. When multiple changes are pushed to the master branch within a short space of time, the triggered build jobs will create congestion the build queue. This means that even though the build itself may take only a few minutes, the time it takes from push to finished build may be much longer and exceed the 10 minutes advocated by Kent Beck \parencite{beck2004}.
 
 \begin{chapterorganization}
   \item in \sectionref{sec:measuring_build_times} we measure the time of building the Launcher app;
@@ -8,13 +8,13 @@ The project groups want the build times on Jenkins to be faster. When multiple c
   \item in \sectionref{sec:dependency_workflow} we define the workflow for the multi-project developers when working with the new dependency system;
   \item in \sectionref{sec:conf_project_to_publish} we configure the Giraf projects to use the new dependency system;
   \item in \sectionref{sec:automating_vm} we describe how versions of binaries are automatically managed;
-  \item in \sectionref{sec:faster_build_evaluation} we evaluate the build times after implementing binary dependencies
+  \item in \sectionref{sec:faster_build_evaluation} we evaluate the build times after implementing binary dependencies.
 \end{chapterorganization}
 
 \section{Measuring Build Times}\label{sec:measuring_build_times}
-We measure the time different parts of the Launcher project take to identify in which parts of the build process to make faster. The Launcher project is the main application which depends on many other subprojects (henceforth a ``dependency''). These dependencies are managed as Git submodules \parencite{git-submodules-doc}, which basically clones the contents of a repository (the dependency) at a specific revision into another repository (the dependent project). The build timings are measured on the Jenkins server and shown in \figureref{fig:launcher_build_times_1} (before). This shows the build timings of the Launcher application and the different dependencies (\emph{Oasis-lib, Giraf-Component, Local-db, Barcode-scanner, and Metadata}), as well as the startup time for the emulator. As can be seen, the emulator and the Giraf-component and Oasis-lib projects have the most significant influence on build times. These three parts use about \SI{90}{\percent} of the total build time. The actual Laucher application itself takes only very little part of the total build time.
+We measure the build time of the different parts of the Launcher project in order to identify which parts of the build process to make faster. The Launcher project is the main application which depends on many other subprojects (henceforth a ``dependency''). These dependencies are managed as Git submodules \parencite{git-submodules-doc}, which basically clones the contents of a repository (the dependency) at a specific revision into another repository (the dependent project). The build timings are measured on the Jenkins server and shown in \figureref{fig:launcher_build_times_1} (before). This shows the build timings of the Launcher application and the different dependencies (\emph{Oasis-lib}, \emph{Giraf-Component}, \emph{Local-db}, \emph{Barcode-scanner}, and \emph{Metadata}), as well as the start up time of the emulator. As can be seen, the emulator and the \emph{Giraf-component} and \emph{Oasis-lib} projects have the most significant influence on build times. These three parts use about \SI{90}{\percent} of the total build time. The actual Laucher application itself takes only very little part of the total build time.
 
-To understand which parts of the dependencies that take time, we measure the individual build steps (tasks) performed during a build. These can be seen in \appendixref{app:build_times}. The reason that the Oasis-lib dependency takes a long time to build is that it contains a great number of tests which run on the emulator. These tests are run every time a project depending on Oasis-lib builds --- even though the library itself has not been updated. The most significant task when building the Giraf-Component library is the test task as well. However, the Giraf-Component library only contains one simple test, so we do not expect the actual test execution time to use much of this time. Instead, we expect it to be caused by the order in which projects are tested. When preparing the tests, the tests from all projects are combined into a single Android application package (APK-file). The first test task run is responsible for installing this application on the emulator, while the subsequent test tasks can skip this step. Because the Giraf-components project is the first in the sequence of libraries to be tested, this task also installs the tests on the emulator which is likely to take some time.
+To understand which parts of the dependencies that take time, we measure the individual build steps (tasks) performed during a build. These can be seen in \appendixref{app:build_times}. The reason that the \emph{Oasis-lib} dependency takes a long time to build is that it contains a great number of tests which run on the emulator. These tests are run every time a project depending on \emph{Oasis-lib} builds --- even though the library itself has not been updated. The most significant task when building the \emph{Giraf-Component} library is the test task as well. However, the \emph{Giraf-Component} library only contains one simple test, so we do not expect the actual test execution time to use much of this time. Instead, we expect it to be caused by the order in which projects are tested. When preparing the tests, the tests from all projects are combined into a single Android application package (APK-file). The first test task run is responsible for installing this application on the emulator, while the subsequent test tasks can skip this step. Because the \emph{Giraf-components} project is the first in the sequence of libraries to be tested, this task also installs the tests on the emulator which is likely to take some time.
 \todo{Overvej flere målinger og tag gennemsnit}
 \begin{figure}
 \centering
@@ -73,7 +73,7 @@ To understand which parts of the dependencies that take time, we measure the ind
 \caption{Timings during build of the Launcher project before and after updating emulator plugin}\label{fig:launcher_build_times_1}
 \end{figure}
 
-To improve the overall build times, we look at how to speed up the emulator and to avoid running tests on the dependencies every time a project is build. We first update the Android Emulator Jenkins plugin to a new version with improved emulator stability. We do this to ensure that we do not work on improving parts which are already improved in the most recent version of the plugin. After updating, we measure the build times again. As shown in \figureref{fig:launcher_build_times_1} (after), the emulator startup time is significantly decreased. Because of this, the emulator startup time is no longer the primary concern, and we focus on decreasing the dependency build times. \todo{Vi kan måske beskrive test uden emulator her, og konkludere at det ikke er arbejdet værd}
+As a preparation step, we first update the Android Emulator Jenkins plugin to a new version with improved emulator stability. We do this to ensure that we do not work on improving parts which are already improved in the most recent version of the plugin. After updating, we measure the build times again. As shown in \figureref{fig:launcher_build_times_1} (after), the emulator startup time is significantly decreased. Because of this, the emulator startup time is no longer the primary concern, and we focus on decreasing the dependency build times.
 
 One obvious way of decreasing overall build times is to use faster hardware on the server. However, because the multi-project has no financial income, buying new hardware is generally the last resort. In addition, it is difficult to estimate exactly how much of a decrease this will give in practice. Another option is to not test dependencies when dependent projects are build, but only when changes happen in the actual dependency project. While this will decrease the overall build times, each dependency is still built every time a dependent project is built, which limits the amount by which we can decrease the total build times. There may as well arise some quality assurance issues by not testing each build of the dependency. Because of this, we look at improving the build times in a different way, specifically by using pre-compiled libraries.
 
@@ -82,14 +82,14 @@ Instead of building and testing dependencies each time a dependent project is bu
 \begin{description}
   \item [Pre-Compiled and Pre-Tested] Libraries are binary pre-compiled and pre-tested files. This means that dependent projects do not have to build and test all dependencies, which decreases the build time significantly.
   \item[Quality Control] Libraries are built and released only if the tests pass, so there will never be dependencies which cannot compile or do not work\footnote{Of course, there may be bugs even if all tests pass, but good test cases decrease the risk}.
-  \item[Integrity] All libraries are built on the same machine and build environment, which means that no machine-specific configurations will influence the released libraries \parencite{huttermann2014}.
+  \item[Integrity] All libraries are built on the same machine and build environment, which means that no machine-specific configurations will influence the released libraries \parencite{humble2010, huttermann2014}.
   \item[Cleaner Structure] Nested dependencies (dependency A depends on dependency B which depends on dependency C) is well defined and nicely handled. The individual libraries do not include their dependencies, so it is always the dependent library that has to include all dependencies. Currently, the same dependency may be included multiple times in the same project.
 \end{description}
 The Android counterpart of Java \mono{.jar}-files is \mono{.aar}-files. These files are similar to \mono{.jar}-files, except that they can contain Android-specific dependencies such as icon resources as well \parencite{android-aar}.
 
 With this solution, it is clear that we no longer want to use submodules for managing dependencies. Coincidentally, the Git-responsible group in the multi-project work on a user story which states \us{Remove Git submodules}. The reason for this user story is that the developers generally find the submodules difficult to work with. Because this overlap with our solution to making build times faster, we decide to solve this in collaboration.
 
-An important requirement for the solution, beside removing Git submodules and improving build times, is that every build should be reproducible. This means that we must be able to reproduce any previously released version. According to Martin Fowler, this is a very important part of continuous integration as it makes it possible to reproduce bugs from previous versions \parencite{fowlerReproducibleBuild}. In the current way of managing dependencies, this requirement is fulfilled.
+An important requirement for the solution, besides removing Git submodules and improving build times, is that every build should be reproducible. This means that we must be able to reproduce any previously released version. This is a very important part of continuous integration as it makes it possible to reproduce bugs from previous versions \parencite{fowlerReproducibleBuild,humble2010}. In the current way of managing dependencies, this requirement is fulfilled.
 
 \subsection{Agreement Upon Submodule Replacement Strategy}
 The Git-responsible group initially propose to remove submodules by merging all repositories into one, each project having its own directory located in the root directory of the repository, as shown in \figureref{fig:single_repo_structure}. Dependencies are then handled by referring to the relative path of the dependency. For example, if \mono{ProjectA} depends on \mono{ProjectB}, \mono{ProjectA} will contain a reference to \mono{../ProjectB}. This solution makes all releases reproducible, which is one of the requirements to the solution. The repository can simply be checked out to a specific commit corresponding to a specific release.
@@ -143,7 +143,7 @@ Because of the new way of managing dependencies, all developers have to change t
 To learn the developers how to use the new dependency management, we demonstrate the workflow we present here during the multi project meeting. We also write a guide which they can use for future reference.\todo{Add to appendix?}
 
 \subsection{Release Management and Versioning}
-With the introduction of artifacts, we now distinguish release versions from pre-release versions. In addition, a release can be a \emph{major}, \emph{minor}, or \emph{patch} release. The developers need some guidelines to know when to release the different kind of releases. Rather than inventing our own convention, we rely on the Semantic Versioning 2.0.0 specification\parencite{semver2015}, which has been adopted in several Apache projects\parencite{apacheapr,apacheisis,apacheaccumulo}. Because the versioning is clearly specified, we expect to avoid potential problems caused by libraries breaking backward compatibility. In summary, the Semantic Versioning 2.0.0 specification states that the version name is of the form \mono{major.minor.patch}, each of which being a non-negative integer. For example, version \mono{2.5.1} has major version 2, minor version 5, and patch version 1. The individual numbers are increased as new versions are released. To summarize the Semantic Versioning 2.0.0 specification, the numbers are increased according to the following:
+With the introduction of artifacts, we now distinguish release versions from pre-release versions. In addition, a release can be a \emph{major}, \emph{minor}, or \emph{patch} release. The developers need some guidelines to know when to release the different kind of releases. Rather than inventing our own convention, we rely on the Semantic Versioning 2.0.0 specification \parencite{semver2015}, which has been adopted in several Apache projects \parencite{apacheapr,apacheisis,apacheaccumulo}. Because the versioning is clearly specified, we expect to avoid potential problems caused by libraries breaking backward compatibility. In summary, the Semantic Versioning 2.0.0 specification states that the version name is of the form \mono{major.minor.patch}, each of which being a non-negative integer. For example, version \mono{2.5.1} has major version 2, minor version 5, and patch version 1. The individual numbers are increased as new versions are released. To summarize the Semantic Versioning 2.0.0 specification, the numbers are increased according to the following:
 \begin{description}
   \item[Major] When changes without backward compatibility are introduced, it should be released as a new major version. The minor and patch numbers are reset to 0.
   \item[Minor] Minor releases are used when new functionality is added with backward compatibility. The major version is unchanged and the patch version is reset to 0.
@@ -175,9 +175,6 @@ Developers must be able to test their changes in the dependent projects locally 
 \todo{Eventually show diagram}
 % DIAGRAM:  http://stackoverflow.com/questions/11891890/should-artifactory-not-be-used-to-capture-the-build-artifacts-that-jenkins-produ
 
-\subsection{Configuring the Projects to Publish}
-Each Library project has to be configured to publish, locally and to Artifacctory. This configuration is done in the build files. Instead of having to repeat the same information in the build files for every library project, we make a gradle plugin which defines all properties needed for publishing, called the \mono{giraf-lib-gradle-plugin}. The plugin contains the URL to the snapshot and release repositories, the path to the credentials file (to Artifactory) and configurations for local publishing. It also declares a rename task, which renames the output file such that we know its name when we are to upload it. At last it makes the \mono{publishToMavenLocal} task dependent on the \mono{build} task, as it would be a hassle to manually make sure to build first. With this plugin we only have to apply it in the build files to make them publish to Artifactory.
-
 \section{Configuring the Projects to Publish}\label{sec:conf_project_to_publish}
 \todo{Ligger jeg rigtigt?}
 Each library project has to be configured to publish, locally and to Artifactory. This configuration is done in the build files. Instead of having to repeat the same information in the build file for every library project, we make a Gradle plugin which defines all properties needed for publishing, called the \mono{giraf-lib-gradle-plugin}. The plugin contains the URL to the snapshot and release repositories, the path to a credentials file (to Artifactory), and configurations for local publishing. It also declares a rename task, which renames the output file, such that Jenkins knows its name when it is to upload it. At last, it makes the \mono{publishToMavenLocal} task dependent on the \mono{build} task, as it would be a hassle to manually make sure to build first. With this plugin we only have to apply it in the build files to make them publish to Artifactory.\todo{Tilføj kode til appendiks?}
@@ -185,7 +182,7 @@ Each library project has to be configured to publish, locally and to Artifactory
 Because the credentals file is stored on the build server, it is also not possible for the developers to publish libraries themselves; each build must pass on Jenkins before it is released.
 
 \section{Automating Dependency Management}\label{sec:automating_vm}
-With the dependency workflow defined, we integrate it with continuous integration. As earlier mentioned, we want to automate as much as possible to ease the work of the developers. For dependency management, Gradle already does a lot for us: it automatically locates and downloads declared dependencies and creates tasks for publishing new ones to the artifact repository.
+With the dependency workflow defined, we integrate it with continuous integration. As earlier mentioned, we want to automate as much as possible to ease the work of the developers. For dependency management, Gradle already does a lot for us: It automatically locates and downloads declared dependencies and creates tasks for publishing new ones to the artifact repository.
 
 In addition to this, we automate release versioning to some degree. Developers need not to declare the version of a library in its build file --- instead, they simply include the keywords \mono{@patch}, \mono{@minor}, or \mono{@major} in the commit message to release a patch, minor, or major version, respectively. This automatically takes care of increasing and resetting version numbers. For example, if the current version is \mono{1.2.1}, a \mono{@minor} keyword will release a new artifact with version \mono{1.3.0}. If no keyword is given, the release is assumed to be a pre-release, which causes the version name to be the \emph{next} patch release number with a \mono{-SNAPSHOT} postfix (e.g.\ \mono{1.2.2-SNAPSHOT} if the most recent release is \mono{1.2.1}). If multiple commits are pushed at the same time, we trigger only one pre-release build per release. For example, if it contains four commits with messages \mono{test1}, \mono{test2}, \mono{@patch}, \mono{test3}, respectively, two pre-releases (one before and one after the patch) and one patch are build. Similarly, if a push contains several commits without any release keyword, only one pre-release will be built. \todo{Maybe this could be illustrated somehow?}
 \begin{figure}
@@ -270,9 +267,68 @@ def trigger_build(commit_msg, commit_id, libraries, repo_name, publish_snapshot=
 \end{pythoncode}
 
 \section{Evaluation of Build Times with Binary Dependencies}\label{sec:faster_build_evaluation}
-\dummy
+
+\begin{figure}
+\centering
+\tikzsetnextfilename{timings_beforeemulatorupdate}
+\begin{tikzpicture}[]
+  \begin{axis}[
+    xbar stacked,
+    %scale only axis,
+    width=\textwidth,
+    axis y line*= none, axis x line*= bottom,
+    %xmajorgrids = true,
+    ytick = data,
+    yticklabels = {Before, After},
+    tick align = outside,
+    %xtick pos = left,
+    bar width=6mm,
+    y=8mm,
+    enlarge y limits={abs=0.625},
+    %nodes near coords,
+    legend style={
+      at={(0.5,-0.35)},
+      legend columns=4,
+      anchor=north,
+      yshift=0ex,
+      xshift=0ex,
+      draw=none
+      %legend cell align=left
+    },
+    area legend,
+    xlabel = {Time (seconds)},
+    xmin = 0
+  ]
+    \addplot[colorGshade, fill=colorG] coordinates
+    {(0.2,0) (0.209,1)};
+    \addlegendentry{Metadata}
+    \addplot[colorFshade, fill=colorF] coordinates
+    {(6.625,0) (6.625,1)};
+    \addlegendentry{Barcode-scanner}
+    \addplot[colorEshade, fill=colorE] coordinates
+    {(8.393,0) (8.393,1)};
+    \addlegendentry{Launcher}
+    \addplot[colorDshade, fill=colorD] coordinates
+    {(17.223,0) (17.223,1)};
+    \addlegendentry{Local-db}
+    \addplot[colorCshade, fill=colorC] coordinates
+    {(160.000,0) (18.000,1)};
+    \addlegendentry{Emulator}
+    \addplot[colorBshade, fill=colorB] coordinates
+    {(104.696,0) (104.696,1)};
+    \addlegendentry{Giraf-component}
+    \addplot[colorAshade, fill=colorA] coordinates
+    {(159.497,0) (159.497,1)};
+    \addlegendentry{Oasis-lib}
+  \end{axis}
+\end{tikzpicture}
+\caption{Comparison of Launcher timings}\label{fig:launcher_build_times_2}
+\end{figure}
 
 \subsection{Android Emulator Bug}
 When we started to work on improving build times, a new version of the Android Emulator Plugin (2.13) was released. This release contains a change in the way emulator startup is detected. It is necessary to detect when the Android emulator has started, so that APKs can be installed on it and tests can be run. Previously the plugin had checked whether the emulator has started up using \mono{adb shell getprop dev.bootcomplete}. However, this property does not specify that the emulator has started fully, as it may still be in the boot animation when this property returns true. As such the check was switched to  \mono{adb shell getprop init.svc.bootanim} which indicates that the emulator is no longer in the boot animation, and thus have started fully. However, since the emulator in the plugin has the \mono{-no-boot-anim} flag, the emulator has no boot animation. This is to improve loading times, but it also means that the new check for the boot animation will return true immediately, as there is no boot animation. This results in the plugin specifying that the emulator is ready too early, which can lead to potential errors when working with the emulator.
 
 At first this change did not affect us, since building times when building submodules were sufficiently long for the emulator to have started fully regardless. However, as we improve building times with binary dependencies, we start getting no test found errors because of the not yet started emulator. We submit a bug report for the plugin\footnote{\url{https://issues.jenkins-ci.org/browse/JENKINS-27702}} and a pull request removing the \mono{-no-boot-anim} flag for the compiler\footnote{\url{https://github.com/jenkinsci/android-emulator-plugin/pull/49}}. Removing the \mono{-no-boot-anim} flag will result in slightly longer loading times for the emulator, but is necessary to detect that the emulator has started fully.
+
+\section{Non-Emulator Testing}
+\todo{To be written}

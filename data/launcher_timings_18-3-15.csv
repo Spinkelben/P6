@@ -1,54 +1,75 @@
+check connectedCheck assembleRelease
+
 Milliseconds; Task
-18000; Emulator
-309; GIRAF_Components:preBuild
-105; OasisLib:mergeReleaseProguardFiles
-94; OasisLib:preBuild
-154; local-db:preBuild
-63; local-db:compileReleaseAidl
-86; metadata_local:compileJava
-60; metadata_local:jar
-65; local-db:compileReleaseJava
-1015; local-db:packageReleaseJar
-63; metadata:compileJava
-92; OasisLib:compileReleaseJava
-50; GIRAF_Components:prepareWorkspaceOasisLibUnspecifiedLibrary
-238; GIRAF_Components:mergeDebugResources
-200; GIRAF_Components:processDebugResources
-114; GIRAF_Components:compileDebugJava
-243; GIRAF_Components:mergeReleaseResources
-171; GIRAF_Components:processReleaseResources
-53; GIRAF_Components:compileReleaseJava
-11826; GIRAF_Components:lint
-60; OasisLib:compileDebugJava
-3872; OasisLib:lint
-128; barcodescanner:preBuild
-102; barcodescanner:processDebugResources
-161; barcodescanner:compileDebugJava
-72; barcodescanner:packageReleaseResources
-67; barcodescanner:processReleaseResources
-69; barcodescanner:compileReleaseJava
-6026; barcodescanner:lint
-207; GIRAF_Components:packageReleaseResources
-116; GIRAF_Components:bundleRelease
-110; launcher-app:preBuild
-89; launcher-app:prepareWorkspaceGIRAF_ComponentsUnspecifiedLibrary
-348; launcher-app:mergeDebugResources
-175; launcher-app:processDebugResources
-59; launcher-app:compileDebugJava
-130; launcher-app:mergeReleaseResources
-87; launcher-app:processReleaseResources
-50; launcher-app:compileReleaseJava
-7292; launcher-app:lint
-976; local-db:lint
-81; GIRAF_Components:packageDebugResources
-81; GIRAF_Components:mergeDebugTestResources
-91007; GIRAF_Components:connectedAndroidTest
-139; OasisLib:unzipJacocoAgent
-73; OasisLib:instrumentDebug
-56; OasisLib:packageDebugResources
-98; OasisLib:compileDebugTestJava
-59; OasisLib:packageDebugTest
-152473; OasisLib:connectedAndroidTest
-2376; OasisLib:createDebugCoverageReport
-53; launcher-app:dexDebug
-14950; local-db:connectedAndroidTest
+18000ms;Emulator
+309ms;GIRAF_Components:preBuild
+105ms;OasisLib:mergeReleaseProguardFiles
+94ms;OasisLib:preBuild
+154ms;local-db:preBuild
+63ms;local-db:compileReleaseAidl
+86ms;metadata_local:compileJava
+60ms;metadata_local:jar
+65ms;local-db:compileReleaseJava
+1015ms;local-db:packageReleaseJar
+63ms;metadata:compileJava
+92ms;OasisLib:compileReleaseJava
+50ms;GIRAF_Components:prepareWorkspaceOasisLibUnspecifiedLibrary
+238ms;GIRAF_Components:mergeDebugResources
+200ms;GIRAF_Components:processDebugResources
+114ms;GIRAF_Components:compileDebugJava
+243ms;GIRAF_Components:mergeReleaseResources
+171ms;GIRAF_Components:processReleaseResources
+53ms;GIRAF_Components:compileReleaseJava
+11826ms;GIRAF_Components:lint
+60ms;OasisLib:compileDebugJava
+3872ms;OasisLib:lint
+128ms;barcodescanner:preBuild
+102ms;barcodescanner:processDebugResources
+161ms;barcodescanner:compileDebugJava
+72ms;barcodescanner:packageReleaseResources
+67ms;barcodescanner:processReleaseResources
+69ms;barcodescanner:compileReleaseJava
+6026ms;barcodescanner:lint
+207ms;GIRAF_Components:packageReleaseResources
+116ms;GIRAF_Components:bundleRelease
+110ms;launcher-app:preBuild
+89ms;launcher-app:prepareWorkspaceGIRAF_ComponentsUnspecifiedLibrary
+348ms;launcher-app:mergeDebugResources
+175ms;launcher-app:processDebugResources
+59ms;launcher-app:compileDebugJava
+130ms;launcher-app:mergeReleaseResources
+87ms;launcher-app:processReleaseResources
+50ms;launcher-app:compileReleaseJava
+7292ms;launcher-app:lint
+976ms;local-db:lint
+81ms;GIRAF_Components:packageDebugResources
+81ms;GIRAF_Components:mergeDebugTestResources
+91007ms;GIRAF_Components:connectedAndroidTest
+139ms;OasisLib:unzipJacocoAgent
+73ms;OasisLib:instrumentDebug
+56ms;OasisLib:packageDebugResources
+98ms;OasisLib:compileDebugTestJava
+59ms;OasisLib:packageDebugTest
+152473ms;OasisLib:connectedAndroidTest
+2376ms;OasisLib:createDebugCoverageReport
+53ms;launcher-app:dexDebug
+14950ms;local-db:connectedAndroidTest
+173ms;GIRAF_Components:preBuild
+111ms;OasisLib:mergeReleaseProguardFiles
+81ms;OasisLib:preBuild
+92ms;local-db:preBuild
+71ms;metadata_local:compileJava
+186ms;GIRAF_Components:mergeReleaseResources
+204ms;GIRAF_Components:processReleaseResources
+64ms;GIRAF_Components:compileReleaseJava
+184ms;GIRAF_Components:packageReleaseResources
+117ms;GIRAF_Components:bundleRelease
+139ms;barcodescanner:preBuild
+66ms;barcodescanner:processReleaseResources
+881ms;barcodescanner:compileReleaseJava
+81ms;launcher-app:preBuild
+69ms;launcher-app:prepareWorkspaceGIRAF_ComponentsUnspecifiedLibrary
+191ms;launcher-app:mergeReleaseResources
+96ms;launcher-app:processReleaseResources
+6652ms;launcher-app:lintVitalRelease
+89ms;launcher-app:dexRelease
