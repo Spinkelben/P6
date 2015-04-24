@@ -289,12 +289,13 @@ While the build times seem to have improved, each app job on Jenkins now uploads
 \begin{tikzpicture}[]
   \begin{axis}[
     xbar stacked,
-    %scale only axis,
-    width=\textwidth,
+    scale only axis,
+    width=\textwidth-\widthof{New limited targets}-0.1cm,
     axis y line*= none, axis x line*= bottom,
     %xmajorgrids = true,
     ytick = data,
     yticklabels = {Old slow, New limited targets, New all targets},
+    yticklabel style={inner sep=0pt, align=right, xshift=-0.1cm},
     tick align = outside,
     %xtick pos = left,
     bar width=6mm,
