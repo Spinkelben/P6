@@ -301,4 +301,14 @@ When we started to work on improving build times, a new version of the Android E
 At first this change did not affect us, since building times when building submodules were sufficiently long for the emulator to have started fully regardless. However, as we improve building times with binary dependencies, we start getting no test found errors because of the not yet started emulator. We submit a bug report for the plugin\footnote{\url{https://issues.jenkins-ci.org/browse/JENKINS-27702}} and a pull request removing the \mono{-no-boot-anim} flag for the compiler\footnote{\url{https://github.com/jenkinsci/android-emulator-plugin/pull/49}}. Removing the \mono{-no-boot-anim} flag will result in slightly longer loading times for the emulator, but is necessary to detect that the emulator has started fully.
 
 \section{Non-Emulator Testing}
-\todo{To be written}
+As presented in the previous section, it takes a long time for the Android emulator to start. In addition, the emulator takes memory and CPU-time from the actual build process, which is likely to make the build slower. We look at how to test Android applications and libraries sufficiently without using an emulator. Overall, we consider two ways of doing this: Testing on the Java Virtual Machine and on a physical device (connected by USB).
+
+\subsection{Testing on the Java Virtual Machine}
+One option is to run tests on the Java Virtual Machine instead of the emulated Dalvik Virtual Machine. By not emulating the virtual machine, the test can be executed faster. However, this also means that the tests will not run on the Android operating system but on the operating system running the Java Virtual Machine. Because of this, some system features will have to be mocked, which in some cases may not provide a realistic simulation of the Android system. This may be acceptable, though, and we can eventually solve it by running functional test on an emulator at night when timing is no concern.
+
+\subsubsection{Robolectric}
+\emph{Robolectric}\parencite{robolectric2015} is a library for testing Android applications without an emulator or device. It contains implementations of the base Android SDK classes such that it can run on the Java Virtual Machine. It supports both unit testing and functional testing by providing access to UI elements and databases.
+% TODO: Afviger lidt fra standard android test. Kræver noget opsætning. Vi har ikke tid i dette sprint.
+
+\subsection{Testing on a Physical Device}
+% http://square.github.io/spoon/
