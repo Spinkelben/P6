@@ -73,7 +73,7 @@ To understand which parts of the dependencies that take time, we measure the ind
 \caption{Timings during build of the Launcher project before and after updating emulator plugin}\label{fig:launcher_build_times_1}
 \end{figure}
 
-To improve the overall build times, we look at how to speed up the emulator and to avoid running tests on the dependencies every time a project is build. We first update the Android Emulator Jenkins plugin to a new version with improved emulator stability. We do this to ensure that we do not work on improving parts which are already improved in the most recent version of the plugin. After updating, we measure the build times again. As shown in \figureref{fig:launcher_build_times_1} (after), the emulator startup time is significantly decreased. Because of this, the emulator startup time is no longer the primary concern, and we focus on decreasing the dependency build times. \todo{Vi kan måske beskrive test uden emulator her, og konkludere at det ikke er arbejdet værd}
+As a preparation step, we first update the Android Emulator Jenkins plugin to a new version with improved emulator stability. We do this to ensure that we do not work on improving parts which are already improved in the most recent version of the plugin. After updating, we measure the build times again. As shown in \figureref{fig:launcher_build_times_1} (after), the emulator startup time is significantly decreased. Because of this, the emulator startup time is no longer the primary concern, and we focus on decreasing the dependency build times.
 
 One obvious way of decreasing overall build times is to use faster hardware on the server. However, because the multi-project has no financial income, buying new hardware is generally the last resort. In addition, it is difficult to estimate exactly how much of a decrease this will give in practice. Another option is to not test dependencies when dependent projects are build, but only when changes happen in the actual dependency project. While this will decrease the overall build times, each dependency is still built every time a dependent project is built, which limits the amount by which we can decrease the total build times. There may as well arise some quality assurance issues by not testing each build of the dependency. Because of this, we look at improving the build times in a different way, specifically by using pre-compiled libraries.
 
@@ -185,8 +185,38 @@ Because the credentals file is stored on the build server, it is also not possib
 With the dependency workflow defined, we integrate it with continuous integration. As earlier mentioned, we want to automate as much as possible to ease the work of the developers. For dependency management, Gradle already does a lot for us: It automatically locates and downloads declared dependencies and creates tasks for publishing new ones to the artifact repository.
 
 In addition to this, we automate release versioning to some degree. Developers need not to declare the version of a library in its build file --- instead, they simply include the keywords \mono{@patch}, \mono{@minor}, or \mono{@major} in the commit message to release a patch, minor, or major version, respectively. This automatically takes care of increasing and resetting version numbers. For example, if the current version is \mono{1.2.1}, a \mono{@minor} keyword will release a new artifact with version \mono{1.3.0}. If no keyword is given, the release is assumed to be a pre-release, which causes the version name to be the \emph{next} patch release number with a \mono{-SNAPSHOT} postfix (e.g.\ \mono{1.2.2-SNAPSHOT} if the most recent release is \mono{1.2.1}). If multiple commits are pushed at the same time, we trigger only one pre-release build per release. For example, if it contains four commits with messages \mono{test1}, \mono{test2}, \mono{@patch}, \mono{test3}, respectively, two pre-releases (one before and one after the patch) and one patch are build. Similarly, if a push contains several commits without any release keyword, only one pre-release will be built. \todo{Maybe this could be illustrated somehow?}
+\begin{figure}
+    \centering
+    \begin{tikzpicture}[
+    simple/.style={draw, circle, minimum size=0.5cm}]
 
-The Git hook previously described is extended with functionality to manage this. We implement this automation in collaboration with the Git-responsible group. As part of the implementation phase, we refactor by changing the programming language from Bash to Python, because of the greater level of abstraction provided by Python compared to Bash. Part of the code is shown in \listingref{lst:git_hook_trigger_build}. This code is called for each commit message contained in the push. It first identifies the library corresponding to the repository pushed to (lines 13--14), and afterwards checks for keywords in the Git message and formats the new version name (lines 18--33). Jenkins is then triggered with a HTTP POST request containing the Jenkins job name, the version name of the release, and the commit id of the release commit as arguments. Finally, the library versions are updated in a global library object and the version name is printed to the user. The full code can be seen in \appendixref{app:git_hook}. The most recent versions of the different libraries are stored in a file together with the names of their repositories and Jenkins jobs.
+    %Commit nodes
+    \node[simple] (master-1) at (0,5) {A};
+    \node[simple] (local-1) at (2,4) {B};
+    \node[simple] (local-2) at (2,3) {C};
+    \node[simple] (local-3) at (2,2) {D};
+    \node[simple] (local-4) at (2,1) {E};
+    \node[simple] (master-2) at (0,0) {F};
+
+    %Titles
+    \node(master) [above=of master-1, minimum size=0.5cm, yshift=-1cm] {\mono{master}};
+    %\path \let \p1 = (1,1), \p2 = (2,2) in node at (1, 1) {\mono{local}};
+    %\node(local) [right=of master] {\mono{Local}};
+    %\node(version-title) [right=of local] {\mono{Version}};
+    %\node(commit-title) [right=of version-title] {\mono{Commit message}};
+
+    %Versions
+    \node(major-version) [right=of local-3] {\mono{1.2.4}};
+    \node(init-version) [right=of master-1, xshift=2cm] {\mono{1.2.3}};
+    \node(old-snap)  [right=of local-2] {\mono{1.2.4-SNAPSHOT}};
+    \node(new-snap)  [right=of local-4] {\mono{1.2.5-SNAPSHOT}};
+
+    %Patch node
+    \node(patch-note) [right=of major-version] {\mono{@patch}};
+
+    \end{tikzpicture}
+\end{figure}
+The Git hook previously described is extended with functionality to manage this. We implement this automation in collaboration with the Git-responsible group. As part of the implementation phase, we refactor by changing the programming language from Bash to Python, because of the greater level of abstraction provided by Python compared to Bash. Part of the code is shown in \listingref{lst:git_hook_trigger_build}. This function is called for each commit message contained in the push. It first identifies the library corresponding to the repository pushed to (lines 13--14), and afterwards checks for keywords in the git message and formats the new version name (lines 18--33). Jenkins is then triggered with a HTTP POST request containing the Jenkins job name, the version name of the release, and the commit id of the release commit as arguments. Finally, the library versions are updated in a global library object and the version name is printed to the user. The full code can be seen in \appendixref{app:git_hook}. The most recent versions of the different libraries are stored in a file together with the names of their repositories and Jenkins jobs.
 
 \begin{pythoncode}[caption=Part of the git hook responsible for setting library version names and triggering Jenkins,label=lst:git_hook_trigger_build]
 def trigger_build(commit_msg, commit_id, libraries, repo_name, publish_snapshot=False):
@@ -300,3 +330,18 @@ We measure the time of building the launcher after having implemented binary dep
 When we started to work on improving build times, a new version of the Android Emulator Plugin (2.13) was released. This release contains a change in the way emulator startup is detected. It is necessary to detect when the Android emulator has started, so that APKs can be installed on it and tests can be run. Previously the plugin had checked whether the emulator has started up using \mono{adb shell getprop dev.bootcomplete}. However, this property does not specify that the emulator has started fully, as it may still be in the boot animation when this property returns true. As such the check was switched to  \mono{adb shell getprop init.svc.bootanim} which indicates that the emulator is no longer in the boot animation, and thus have started fully. However, since the emulator in the plugin has the \mono{-no-boot-anim} flag, the emulator has no boot animation. This is to improve loading times, but it also means that the new check for the boot animation will return true immediately, as there is no boot animation. This results in the plugin specifying that the emulator is ready too early, which can lead to potential errors when working with the emulator.
 
 At first this change did not affect us, since building times when building submodules were sufficiently long for the emulator to have started fully regardless. However, as we improve building times with binary dependencies, we start getting no test found errors because of the not yet started emulator. We submit a bug report for the plugin\footnote{\url{https://issues.jenkins-ci.org/browse/JENKINS-27702}} and a pull request removing the \mono{-no-boot-anim} flag for the compiler\footnote{\url{https://github.com/jenkinsci/android-emulator-plugin/pull/49}}. Removing the \mono{-no-boot-anim} flag will result in slightly longer loading times for the emulator, but is necessary to detect that the emulator has started fully.
+
+\section{Non-Emulator Testing}
+As presented in the previous section, it takes a long time for the Android emulator to start. In addition, the emulator takes memory and CPU-time from the actual build process, which is likely to make the build slower. We look at how to test Android applications and libraries sufficiently without using an emulator. Overall, we consider two ways of doing this: Testing on the Java Virtual Machine (JVM) and on a physical device (connected by USB).
+
+\subsection{Testing on the Java Virtual Machine}
+One option is to run tests on the Java Virtual Machine instead of the emulated Dalvik Virtual Machine. By not emulating the virtual machine, the test can be executed faster. However, this also means that the tests will not run on the Android operating system but on the operating system running the JVM\@. Because of this, some system features will have to be mocked, which in some cases may not provide a realistic simulation of the Android system. This may be acceptable, though, and we can eventually solve it by running functional test on an emulator at night when timing is no concern.
+
+\subsubsection{Robolectric}
+\emph{Robolectric}\parencite{robolectric2015} is a library for testing Android applications without an emulator or device. It contains implementations of the base Android SDK classes such that it can run on the Java Virtual Machine. It supports both unit testing and functional testing by providing access to UI elements and databases. To support this, however, the test case implementation differs slightly from those using the official Android test framework. Because of this, our existing tests need to be rewritten to support the library. In addition, it is not possible to run Robolectric tests on a device or emulator. As a result, it is necessary to have two tests, one using Robolectric and one using the Android test framework, if the test cases should run on both the JVM and an emulator or device.
+
+While Robolectric is likely to speed-up the build times and seems to be relatively easy to use, the changes required convert existing tests to Robolectric are too extensive for us to perform in this sprint.\todo{Maybe give implementation examples to support statements} Therefor, we choose not to implement Robolectric. However, the library ought to be considered if build times need to be decreased further.
+
+\subsection{Testing on a Physical Device}
+
+% http://square.github.io/spoon/

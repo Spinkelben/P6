@@ -21,5 +21,23 @@ verification
 
 \chapter{Collaboration 2}%\label{chap:...}
 
+\begin{figure}%
+  \centering
+  \tikzsetnextfilename{version_management}
+  \begin{tikzpicture}
+    \path (0,0)
+      node[cloud, cloud puffs=14.2, cloud ignores aspect, minimum width=2.8cm, minimum height=1.3cm, align=center, draw, anchor=west] (git-cloud) at (0, 0) {Git repository}
+      -- (\textwidth/2,0) node[cloud, cloud puffs=13.6, cloud ignores aspect, minimum width=2.3cm, minimum height=1.3cm, align=center, draw] (jenkins-cloud) {Jenkins}
+      -- (\textwidth-1mm,0) node[cloud, cloud puffs=14.8, cloud ignores aspect, minimum width=2.6cm, minimum height=1.3cm, align=center, draw, anchor=east] (art-cloud) {Artifactory};
+
+    \draw[->, dashed] (git-cloud) -- node[anchor=south] {Trigger build} (jenkins-cloud);
+    \draw[->, dashed] (jenkins-cloud) -- node[anchor=south] {Release artifact} (art-cloud);
+    
+    %\node[draw, minimum height=1cm, minimum width=3cm] (dev machine) at (0, 4) {Dev machine};
+  \end{tikzpicture}
+  \caption{}%
+  \label{}%
+\end{figure}
+
 % Chapters
 %\input{part_spring1/somefile}
