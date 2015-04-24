@@ -8,7 +8,9 @@ The project groups want the build times on Jenkins to be faster. When multiple c
   \item in \sectionref{sec:dependency_workflow} we define the workflow for the multi-project developers when working with the new dependency system;
   \item in \sectionref{sec:conf_project_to_publish} we configure the Giraf projects to use the new dependency system;
   \item in \sectionref{sec:automating_vm} we describe how versions of binaries are automatically managed;
-  \item in \sectionref{sec:faster_build_evaluation} we evaluate the build times after implementing binary dependencies.
+  \item in \sectionref{sec:emulator_bug} we describe a serious bug in the Android Emulator plugin for Jenkins and present a solution;
+  \item in \sectionref{sec:faster_build_evaluation} we evaluate the build times after implementing binary dependencies;
+  \item in \sectionref{sec:non-emulator_testing} we discuss the opportunity to improve build times further by implementing non-emulator testing.
 \end{chapterorganization}
 
 \section{Measuring Build Times}\label{sec:measuring_build_times}
@@ -266,10 +268,15 @@ def trigger_build(commit_msg, commit_id, libraries, repo_name, publish_snapshot=
             return
 \end{pythoncode}
 
+\section{Android Emulator Bug}\label{sec:emulator_bug}
+When we started to work on improving build times, a new version of the Android Emulator Plugin (2.13) was released. This release contains a change in the way emulator startup is detected. It is necessary to detect when the Android emulator has started, so that APKs can be installed on it and tests can be run. Previously the plugin had checked whether the emulator has started up using \mono{adb shell getprop dev.bootcomplete}. However, this property does not specify that the emulator has started fully, as it may still be in the boot animation when this property returns true. As such the check was switched to  \mono{adb shell getprop init.svc.bootanim} which indicates that the emulator is no longer in the boot animation, and thus have started fully. However, since the emulator in the plugin has the \mono{-no-boot-anim} flag, the emulator has no boot animation. This is to improve loading times, but it also means that the new check for the boot animation will return true immediately, as there is no boot animation. This results in the plugin specifying that the emulator is ready too early, which can lead to potential errors when working with the emulator.
+
+At first this change did not affect us, since building times when building submodules were sufficiently long for the emulator to have started fully regardless. However, as we improve building times with binary dependencies, we start getting no test found errors because of the not yet started emulator. We submit a bug report for the plugin\footnote{\url{https://issues.jenkins-ci.org/browse/JENKINS-27702}} and a pull request removing the \mono{-no-boot-anim} flag for the compiler\footnote{\url{https://github.com/jenkinsci/android-emulator-plugin/pull/49}}. Removing the \mono{-no-boot-anim} flag will result in slightly longer loading times for the emulator, but is necessary to detect that the emulator has started fully.
+
 \section{Evaluation of Build Times with Binary Dependencies}\label{sec:faster_build_evaluation}
 We measure the time of building the launcher after having implemented binary dependencies. To make a fair comparison, we run the launcher with the Gradle targets \mono{check connectedCheck assembleRelease}, whereas in fact we now run every app with \mono{clean check connectedCheck increaseVersionCode assembleRelease publishApkRelease} now. The added tasks \mono{increaseVersionCode} and \mono{publishApkRelease} make it possible to publish apps to Google Play. In addition the \mono{clean} task at the start is to ensure that a previous build does not affect the current build.
 
-After having implemented the new dependency system we discovered there was a bug with the Android Emulator plugin on Jenkins that resulted in the very fast startups show in \figureref{fig:launcher_build_times_1}. The bug is described in \sectionref{sec:emulator_bug} in detail. We therefore compare the build times with the emulator starting correctly (and therefore slowly).
+After having implemented the new dependency system we discovered there was a bug with the Android Emulator plugin on Jenkins that resulted in the very fast startups show in \figureref{fig:launcher_build_times_1}, as described in \sectionref{sec:emulator_bug} in detail. We therefore compare the build times with the emulator starting correctly (and therefore slowly).
 
 \figureref{fig:launcher_build_times_2} shows three bars. \emph{Old slow} shows the build times before the new dependency system with the emulator working correctly. \emph{New limited targets} shows the build times with the build targets \mono{check connectedCheck assembleRelease}. When running the same build targets as before, there is an improvement in the build times, as the dependencies \emph{Local-db}, \emph{Giraf-component}, and \emph{Oasis-lib} are not built. \mono{Barcode-scanner} is still built, as it is not a library used for any other projects than the launcher. It can be seen that the build time for \emph{Launcher} has increased dramatically. This is because there is now a UI test that takes a significant amount of time. This test was not there when we did the initial timing of the entire launcher project.
 
@@ -332,12 +339,7 @@ While the build times seem to have improved, each app job on Jenkins now uploads
 \caption{Comparison of Launcher timings}\label{fig:launcher_build_times_2}
 \end{figure}
 
-\subsection{Android Emulator Bug}\label{sec:emulator_bug}
-When we started to work on improving build times, a new version of the Android Emulator Plugin (2.13) was released. This release contains a change in the way emulator startup is detected. It is necessary to detect when the Android emulator has started, so that APKs can be installed on it and tests can be run. Previously the plugin had checked whether the emulator has started up using \mono{adb shell getprop dev.bootcomplete}. However, this property does not specify that the emulator has started fully, as it may still be in the boot animation when this property returns true. As such the check was switched to  \mono{adb shell getprop init.svc.bootanim} which indicates that the emulator is no longer in the boot animation, and thus have started fully. However, since the emulator in the plugin has the \mono{-no-boot-anim} flag, the emulator has no boot animation. This is to improve loading times, but it also means that the new check for the boot animation will return true immediately, as there is no boot animation. This results in the plugin specifying that the emulator is ready too early, which can lead to potential errors when working with the emulator.
-
-At first this change did not affect us, since building times when building submodules were sufficiently long for the emulator to have started fully regardless. However, as we improve building times with binary dependencies, we start getting no test found errors because of the not yet started emulator. We submit a bug report for the plugin\footnote{\url{https://issues.jenkins-ci.org/browse/JENKINS-27702}} and a pull request removing the \mono{-no-boot-anim} flag for the compiler\footnote{\url{https://github.com/jenkinsci/android-emulator-plugin/pull/49}}. Removing the \mono{-no-boot-anim} flag will result in slightly longer loading times for the emulator, but is necessary to detect that the emulator has started fully.
-
-\section{Non-Emulator Testing}
+\section{Non-Emulator Testing}\label{sec:non-emulator_testing}
 As presented in the previous section, it takes a long time for the Android emulator to start. In addition, the emulator takes memory and CPU-time from the actual build process, which is likely to make the build slower. We look at how to test Android applications and libraries sufficiently without using an emulator. Overall, we consider two ways of doing this: Testing on the Java Virtual Machine (JVM) and on a physical device (connected by USB).
 
 \subsection{Testing on the Java Virtual Machine}
