@@ -53,15 +53,15 @@
   \FXRegisterAuthor{kim}{notsameaskim}{\color{blue}Kim}
   
   % Dummy line.
-  \newcommand{\dummy}{\textcolor{javared}{Lorem ipsum dolor sit amet, consectetur adipiscing elit.}}
+  \newcommand{\dummy}{\todo{Lorem ipsum dolor sit amet, consectetur adipiscing elit.}}
 
 % Document structure.
   % Sprints.
-  \newcounter{sprintcounter}\addtocounter{sprintcounter}{1}
+  \newcounter{sprintcounter}%\addtocounter{sprintcounter}{1}
   \newcommand{\sprint}[1]{%
+    \stepcounter{sprintcounter}
     \part*{Sprint \arabic{sprintcounter}\\\vspace{1cm}\textnormal{\textsf{#1}}}
     \addcontentsline{toc}{part}{Sprint \arabic{sprintcounter}: #1}
-    \stepcounter{sprintcounter}
   }
   
   % Chapter grouping.
