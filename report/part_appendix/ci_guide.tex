@@ -1,3 +1,23 @@
 \chapter{Continuous Integration Guideline}\label{app:ci_guide}
-% http://www.martinfowler.com/articles/continuousIntegration.html
-% Integrate often: http://www.extremeprogramming.org/rules/integrateoften.html
+The objective of this guide is to describe how to use continuous integration (compared to for example feature branches) and why we do it in the Giraf project. First, we present a number of guidelines. These are followed by clarification and argumentation about why they are useful.
+
+To do continuous integration, follow these guidelines:
+\begin{itemize}
+  \item Integrate with the master branch at least daily.
+  \item Write automated test for your code.
+  \item It is OK to integrate features which do not yet work (but disable them with boolean flags or throw \mono{NotImplementedException}).
+  \item Everything on the master branch must compile and pass all tests.
+  \item Test locally before integrating.
+  \item Failing builds must be resolved as fast as possible.
+\end{itemize}
+
+\section{Why Continuous Integration}
+There are several reasons that we use continuous integration:
+\begin{description}
+  \item[To reduce large, error-prone merges] The more frequent developers integrate with the master branch, the smaller merges are needed. Large merges can be confusing and prone to errors.
+  \item[To find errors fast] By integrating at least daily, incompatibilities will be found fast and new code is quickly tested. Code that is not working should be integrated as well, but disabled so that it is not executed. As such, Lint errors will still be detected and it will break if no longer compatible. Public methods which are not working should throw a \mono{NotImplementedException} to ensure that it is not called from other parts before it works.
+  \item[To avoid breaking the build before a sprint-end] If every feature is developed on a branch, they tend to be merged few days before the sprint-end. Because the features are developed on independent branches, they may not be compatibile.
+  \item[To improve overall code quality] Continuous integration automates and presents statistics about the code quality, such as test coverage, lint problems etc.\ This, however, requires that all code is on the master branch.
+  \item[To automate the build pipeline] For continuous integration to work, automation is required. Tests and code quality measures must be automatic.
+  \item[To be able to provide the customer the latest version of the software] When using continuous integration, we are always certain that we have a stable version to give the customer. The master branch always results in a stable, tested, and working build.
+\end{description}
