@@ -144,7 +144,7 @@ Because of the new way of managing dependencies, all developers have to change t
 
 To learn the developers how to use the new dependency management, we demonstrate the workflow we present here during the multi project meeting. We also write a guide which they can use for future reference.\todo{Add to appendix?}
 
-\subsection{Release Management and Versioning}
+\subsection{Release Management and Versioning}\label{subsec:release-management}
 With the introduction of artifacts, we now distinguish release versions from pre-release versions. In addition, a release can be a \emph{major}, \emph{minor}, or \emph{patch} release. The developers need some guidelines to know when to release the different kind of releases. Rather than inventing our own convention, we rely on the Semantic Versioning 2.0.0 specification \parencite{semver2015}, which has been adopted in several Apache projects \parencite{apacheapr,apacheisis,apacheaccumulo}. Because the versioning is clearly specified, we expect to avoid potential problems caused by libraries breaking backward compatibility. In summary, the Semantic Versioning 2.0.0 specification states that the version name is of the form \mono{major.minor.patch}, each of which being a non-negative integer. For example, version \mono{2.5.1} has major version 2, minor version 5, and patch version 1. The individual numbers are increased as new versions are released. To summarize the Semantic Versioning 2.0.0 specification, the numbers are increased according to the following:
 \begin{description}
   \item[Major] When changes without backward compatibility are introduced, it should be released as a new major version. The minor and patch numbers are reset to 0.
