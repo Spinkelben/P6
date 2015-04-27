@@ -1,2 +1,56 @@
-\chapter{Monkey Testing}
+\chapter{Making Monkey Testing Work}
+\dummy
+
+\section{Dummy Database Inserter}
+\begin{javacode}[caption=Dummy database inserter MainActivity,label=lst:dummy_db_ins_main_activity]
+public class MainActivity extends Activity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        new DataInserter(this).execute();
+    }
+
+    private static class DataInserter extends AsyncTask<Void, Void, Void> {
+        private Activity context;
+
+        public DataInserter(Activity context) {
+            this.context = context;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            new Helper(context).CreateDummyData();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            // Force exit app (so we can detect it)
+            context.finish();
+            System.exit(0);
+        }
+    }
+}
+\end{javacode}
+
+Having installed the dummy database inserter app onto a device, it must be started before running any monkey test. It is vital that the monkey test does not start before the dummy data has been inserted. Otherwise the database will not be populated with usable data.
+
+We therefore make a script, seen in \listingref{lst:start_wait_dummy_db_inserter}, that starts the dummy database inserter app and waits for it to finish. It does so by first starting the app in line 1. It then runs a while loop (lines 5--9) that uses \mono{adb shell ps} to list all processes running on the Android device, and then piping that to \mono{grep} to check for the specific app. The loop runs for as long as the output is not empty. The loop sleeps so as to not use too much CPU.
+
+\begin{lstlisting}[language=bash,showstringspaces=false,caption=Start and wait for dummy database inserter,label=lst:start_wait_dummy_db_inserter]
+/srv/android-sdk-linux//platform-tools/adb shell am start -n dk.aau.cs.giraf.dummydbinserter/dk.aau.cs.giraf.dummydbinserter.MainActivity
+
+IS_RUNNING="$(/srv/android-sdk-linux//platform-tools/adb shell ps | grep dk.aau.cs.giraf.dummydbinserter)"
+
+while [ "$IS_RUNNING" ]
+do
+    IS_RUNNING="$(/srv/android-sdk-linux//platform-tools/adb shell ps | grep dk.aau.cs.giraf.dummydbinserter)"
+    sleep 2
+done
+
+echo "finished dummy insertion"
+\end{lstlisting}
+
+\section{Adapting Giraf Apps for Monkey Testing}
 \dummy
