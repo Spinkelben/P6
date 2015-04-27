@@ -33,7 +33,15 @@ verification
     \draw[->, dashed] (git-cloud) -- node[anchor=south] {Trigger build} (jenkins-cloud);
     \draw[->, dashed] (jenkins-cloud) -- node[anchor=south] {Release artifact} (art-cloud);
     
-    %\node[draw, minimum height=1cm, minimum width=3cm] (dev machine) at (0, 4) {Dev machine};
+    \node[draw, minimum height=1cm, minimum width=3cm, below=1cm of jenkins-cloud] (devmachine) {Dev machine};
+    \node[draw, minimum height=1cm, minimum width=3cm, below=1cm of devmachine] (localrepo) {Local repository};
+    
+    \draw[->] ([xshift=-0.8cm]localrepo.north) -- node[anchor=east] {Gradle GetDeps} ([xshift=-0.8cm]devmachine.south);
+    \draw[->] ([xshift=0.8cm]devmachine.south) -- node[anchor=west] {PublishToMavenLocal} ([xshift=0.8cm]localrepo.north);
+    
+    \draw[->] (devmachine) -- node[anchor=east, yshift=-5pt] {Git push} (git-cloud);
+    \draw[->] (art-cloud) -- node[anchor=west, yshift=-5pt] {Gradle GetDeps} (devmachine);
+    
   \end{tikzpicture}
   \caption{}%
   \label{}%
