@@ -2,7 +2,9 @@
 \dummy
 
 \section{Dummy Database Inserter}
-\begin{javacode}[caption=Dummy database inserter MainActivity,label=lst:dummy_db_ins_main_activity]
+To make sure that the local database contains data before starting the monkey test, we create a new Android application which inserts dummy data into the database. The application is very simple and the main part is shown in \listingref{lst:dummy_db_ins_main_activity}. It starts a thread which inserts the data using a method provided by the database library project. When inserted, the application closes. We detect when the applications has closed to know when the data has been inserted. In line 26, we call \mono{System.exit(0)} which ensures that the application is completely closed (killed), as it otherwise would just be in an idle state.
+
+\begin{javacode}[caption=Dummy database inserter \mono{MainActivity},label=lst:dummy_db_ins_main_activity]
 public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
