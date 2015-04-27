@@ -174,8 +174,33 @@ dependencies {
 \subsection{Local Development}
 Developers must be able to test their changes in the dependent projects locally without committing their changes, as part of continuous integration \parencite{fowlerCI}. Our solution is to publish the dependency on a local Maven repository on every development machine. To test the dependency in another project, the dependent project points to the local repository rather than that on the common repository. Conveniently, the Maven plugin for Gradle has support for publishing and referring to local repositories. The build task \mono{publishToMavenLocal} publishes an artifact to the local repository.
 
-\todo{Eventually show diagram}
-% DIAGRAM:  http://stackoverflow.com/questions/11891890/should-artifactory-not-be-used-to-capture-the-build-artifacts-that-jenkins-produ
+\figureref{fig:dependency_overview} shows an overview of the dependency management workflow, from local development to releasing artifacts on Artifactory.
+
+\begin{figure}%
+  \centering
+  \tikzsetnextfilename{version_management}
+  \begin{tikzpicture}
+    \path (0,0)
+      node[cloud, cloud puffs=14.2, cloud ignores aspect, minimum width=2.8cm, minimum height=1.3cm, align=center, draw, anchor=west] (git-cloud) at (0, 0) {Git repository}
+      -- (\textwidth/2,0) node[cloud, cloud puffs=13.6, cloud ignores aspect, minimum width=2.3cm, minimum height=1.3cm, align=center, draw] (jenkins-cloud) {Jenkins}
+      -- (\textwidth-1mm,0) node[cloud, cloud puffs=14.8, cloud ignores aspect, minimum width=2.6cm, minimum height=1.3cm, align=center, draw, anchor=east] (art-cloud) {Artifactory};
+
+    \draw[->, dashed] (git-cloud) -- node[anchor=south] {Trigger build} (jenkins-cloud);
+    \draw[->, dashed] (jenkins-cloud) -- node[anchor=south] {Release artifact} (art-cloud);
+
+    \node[draw, minimum height=1cm, minimum width=3cm, below=1cm of jenkins-cloud] (devmachine) {Dev machine};
+    \node[draw, minimum height=1cm, minimum width=3cm, below=1cm of devmachine] (localrepo) {Local repository};
+
+    \draw[->] ([xshift=-0.8cm]localrepo.north) -- node[anchor=east] {Gradle \mono{GetDeps}} ([xshift=-0.8cm]devmachine.south);
+    \draw[->] ([xshift=0.8cm]devmachine.south) -- node[anchor=west] {Gradle \mono{PublishToMavenLocal}} ([xshift=0.8cm]localrepo.north);
+
+    \draw[->] (devmachine) -- node[anchor=east, yshift=-5pt] {Git push} (git-cloud);
+    \draw[->] (art-cloud) -- node[anchor=west, yshift=-5pt] {Gradle \mono{GetDeps}} (devmachine);
+
+  \end{tikzpicture}
+  \caption{Overview of dependency management workflow. A cloud represents a server application. Filled arrows represent actions initiated by the developer, and dashed lines represent actions initiated by a server applications. The direction of arrows indicate in which direction data (source code or binary data) is transmitted.}%
+  \label{fig:dependency_overview}%
+\end{figure}
 
 \section{Configuring the Projects to Publish}\label{sec:conf_project_to_publish}
 \todo{Ligger jeg rigtigt?}
