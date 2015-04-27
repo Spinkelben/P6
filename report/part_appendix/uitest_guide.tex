@@ -1,0 +1,73 @@
+\chapter{UI Test Guide}\label{app:uitestguide}
+UI tests can test various UI actions and that those actions result in the correct result. For example, a test can click on a button and assert that the correct view opens.
+
+An introduction on how to do UI testing can be found \href{https://developer.android.com/training/testing/ui-testing/espresso-testing.html\#setup}{here}\footnote{\url{https://developer.android.com/training/testing/ui-testing/espresso-testing.html\#setup}}.
+
+As the introduction mentions, it is important to add the following to \mono{build.gradle} of the app being tested:
+
+\begin{gradlecode}[]
+android {
+    defaultConfig {
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner" 
+    }
+    packagingOptions {
+        exclude 'LICENSE.txt'
+    }
+}
+
+dependencies {
+    androidTestCompile 'com.android.support.test:testing-support-lib:0.1'
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.0'
+}
+\end{gradlecode}
+
+Due to the various Giraf apps requiring extra information when starting and a database, some extra work has to be done. To demonstrate this, an example UI test for Launcher can be found in:
+
+\begin{lstlisting}[breakatwhitespace=false, numbers=none]
+launcher/launcher-app/src/androidTest/java/dk/aau/cs/giraf/launcher/test/HomeActivityUITest.java
+\end{lstlisting}
+
+The test class extends the \mono{ActivityInstrumentationTestCase2} class. The activity that one wishes to test must be in the \mono{<>}. The following snippet tests the \mono{HomeActivity}.
+
+\begin{javacode}
+public class HomeActivityUITest
+        extends ActivityInstrumentationTestCase2<HomeActivity>
+\end{javacode}
+
+The method \mono{setUp} is run before each test. In this case it creates an intent with a guardian id to start the \mono{HomeActivity} of the launcher. To do this a helper is created that creates some dummy data.
+\begin{javacode}
+@Before
+public void setUp() throws Exception {
+    super.setUp();
+    injectInstrumentation(InstrumentationRegistry.getInstrumentation());
+
+    Intent intent = new Intent();
+    intent.putExtra(Constants.GUARDIAN_ID, 1);
+    setActivityIntent(intent);
+
+    Helper h = new Helper(getInstrumentation().getTargetContext().getApplicationContext());
+    h.CreateDummyData();
+
+    mActivity = getActivity();
+}
+\end{javacode}
+
+When each test has finished the database is cleared.
+\begin{javacode}
+@After
+public void tearDown() throws Exception {
+    super.tearDown();
+    Helper h = new Helper(getInstrumentation().getTargetContext().getApplicationContext());
+    h.clearTables();
+}
+\end{javacode}
+
+The actual test itself clicks on the settings button on the home screen and checks that the window opens.
+\begin{javacode}[breakatwhitespace=false]
+public void testSettingsButton() {
+    onView(withId(R.id.settings_button)).perform(click());
+    onView(withId(R.id.settingsListFragment)).check(ViewAssertions.matches(isDisplayed()));
+}
+\end{javacode}
+
+The test can then be run by running the \mono{connectedCheck} target.
