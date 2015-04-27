@@ -53,4 +53,54 @@ echo "finished dummy insertion"
 \end{lstlisting}
 
 \section{Adapting Giraf Apps for Monkey Testing}
-\dummy
+
+\begin{javacode}[caption=User manager MainActivity sign in original,label=lst:main_activity_original]
+public class MainActivity extends FragmentActivity {
+  // ...
+
+  protected void onCreate(Bundle savedInstanceState) {
+    // ...
+
+    Bundle extras = getIntent().getExtras();
+    getProfileFromExtras(extras);
+    checkIfValidProfile();
+
+    // ...
+  }
+
+  private void getProfileFromExtras(Bundle extras) {
+    // ...
+    } else if (extras.containsKey(EXTRAS_PROFILE_CURRENT_GUARDIAN_ID)) {
+      signInWithGuardianId(extras.getInt(EXTRAS_PROFILE_CURRENT_GUARDIAN_ID));
+    } // ...
+  }
+
+  // ...
+}
+\end{javacode}
+
+\begin{javacode}[caption=User manager MainActivity with monkey test,label=lst:main_activity_monkey_test]
+public class MainActivity extends FragmentActivity {
+  // ...
+
+  protected void onCreate(Bundle savedInstanceState) {
+    // ...
+
+    if (ActivityManager.isUserAMonkey()) {
+      Helper h = new Helper(this);
+      
+      signInWithGuardianId(h.profilesHelper.getGuardians().get(0).getId());
+    }
+    else {
+      Bundle extras = getIntent().getExtras();
+      getProfileFromExtras(extras);
+    }
+    
+    checkIfValidProfile();
+
+    // ...
+    }
+
+  // ...
+}
+\end{javacode}
