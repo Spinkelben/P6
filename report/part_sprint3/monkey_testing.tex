@@ -59,6 +59,8 @@ Each Giraf application requires that it is started from the launcher, so that th
 
 We circumvent this by detecting whether an app was started by a monkey test, if so we pull log in information from the database. The process various by each. We show how to implement the change for the \emph{user manager} MainActivity app.
 
+The original code can be seen in \listingref{lst:main_activity_original}. When the MainActivity is created, it 
+
 \begin{javacode}[caption=User manager MainActivity sign in original,label=lst:main_activity_original]
 public class MainActivity extends FragmentActivity {
   // ...
