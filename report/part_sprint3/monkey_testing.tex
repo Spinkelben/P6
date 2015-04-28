@@ -55,6 +55,9 @@ echo "finished dummy insertion"
 \end{lstlisting}
 
 \section{Adapting Giraf Apps for Monkey Testing}
+Each Giraf application requires that it is started from the launcher, so that they get log in information. This prevents us from running monkey tests on the apps, as the monkey test will run the MainActivity of the app directly, resulting in crashes or app closure (depending on the specific apps).
+
+We circumvent this by detecting whether an app was started by a monkey test, if so we pull log in information from the database. The process various by each. We show how to implement the change for the \emph{user manager} MainActivity app.
 
 \begin{javacode}[caption=User manager MainActivity sign in original,label=lst:main_activity_original]
 public class MainActivity extends FragmentActivity {
