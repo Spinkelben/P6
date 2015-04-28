@@ -241,9 +241,6 @@ In addition to this, we automate release versioning to some degree. Developers n
   \node[above=of master-1, yshift=0cm] (master) {\phantom{g}Master\phantom{g}};
   \node[above=of dummy, yshift=0cm] (local) {\phantom{g}Local\phantom{g}};
   \node[simple, draw opacity=0, fill opacity=0, right=of dummy] (dummy3) {A};
-  \tikzmath{
-    \shiftwidth=\widthof{Version}*0.5;
-  }
   \node[right=of local, xshift=-0.55cm] (version) {\phantom{g}Version\phantom{g}};
   \node[right=of local, xshift=3.6cm] (commitmsg) {Commit Message};
   
