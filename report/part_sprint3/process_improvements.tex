@@ -1,4 +1,9 @@
 \chapter{Process Improvements}
+\dummy
+
+\section{Specification of Development Method}
+\dummy
+
 \begin{description}
   \item[Knowledge-Acquisition] \todo{Andreas writes:}
   How does this differ from a user story? \cite{rubin2012essential} describes that they can be formulated like a user story, e.g.\ \emph{as a developer I want to figure out which db system is best: sqlite or postgres}, and can include \emph{conditions of satisfaction} (e.g.\ \emph{decide what db system to use}). The product owner must be able to see the value in this, which might not be immediately obvious. \cite{rubin2012essential} mentions that it can be important to do knowledge acquisition, as the developers might otherwise be blocked. It is of course also important for a user story to be estimable, but this can be hard when you know nothing about the subject. \cite{cohn2004} mentions that this an be solved by doing what in XP is called a \emph{spike}. You make a task to investigate the subject just enough to be able to make further estimations. This task is always timeboxed.
@@ -10,13 +15,16 @@
   Again suppose that technical work is different to user stories. How are they treated differently? One could argue that much of what we have done is technical work, yet we have treated these as user stories just fine.
 \end{description}
 
-\section{Specification of Development Method}
-\dummy
-
 \section{Specification of Continuous Integration}
-During sprint 2 we noticed only a few groups integrated their work into the master branch of each repository, resulting in little continuous integration. In addition groups expressed a desire to know when to release the various versions of their libraries to Artifactory. The user story specifying how to do continuous integration was prioritized highly by the groups in GUI and DB, and therefore we make this.
+We have commited ourselves to solve a user story proposed by the developers, which states that they want a guide about continuous integration. We observe that many developers \emph{want} continuous integration (it was a high priority user story in sprint 1), but do not really understand how to use it. In the sprints up to now, we have observed developers working on features on isolated branches for several weeks without integrating it with the master branch. Likewise, only a single group has written automated tests for their code. This is a big concern, because agile development and continuous integration highly depends on automated testing. In sprint 1, we wrote a sample test for each project to make it easy for developers to start writing tests. In sprint 2, we added a code coverage measure to each project. We find, however, that this has not resulted in more tests written. Therefore, it seems not be enough to simply write how to do. For this continuous integration guide, we try to argue more about why to do as we propose in order to convince developers that they should indeed follow the guidelines.
 
-The CI guide has been released on Redmine, and is include in \appendixref{app:ci_guide}. Instructions on when to release to Artifactory has been added to the Redmine guide on dependencies. The instructions appears as specified in \sectionref{subsec:release-management}.
+The CI guide has been released on the Redmine wiki, and is included in \appendixref{app:ci_guide}. Instructions on when to release to Artifactory has been added to the Redmine guide on dependencies. The instructions appears as specified in \sectionref{subsec:release-management}.
+
+% Men vi holder den simpel, da vi ønsker at folk læser den.
+
+\todo{Write introduction about why we write this guide} duvall2007
+
+% CI used as "continuous compilation" (Duvall, Matyas and Glover)
 
 \section{Guide on Making Android UI Tests}
 To create awareness of the opportunity for groups to have UI tests in the apps, we write a short guide on how to do this, as requested by the multi-project groups. This includes both running UI tests locally as well as in Jenkins upon each build. We do not want to spend much time on doing this, since a great amount of material is already available on the Internet. Therefore, we only find the appropriate material as well as comment on special considerations for our project. These special considerations include how to setup the database with dummy data, and faking login credentials.
