@@ -1,5 +1,5 @@
 \chapter{Making Monkey Testing Work}
-\dummy
+To make monkey testing work, we make a simple app that inserts dummy database into a database. In addition all Giraf apps have to modified so that they accept a monkey test and uses the dummy data inserted into the database.
 
 \section{Dummy Database Inserter}
 To make sure that the local database contains data before starting the monkey test, we create a new Android application which inserts dummy data into the database. The application is very simple and the main part is shown in \listingref{lst:dummy_db_ins_main_activity}. It starts a thread which inserts the data using a method provided by the database library project. When inserted, the application closes. We detect when the applications has closed to know when the data has been inserted. In line 26, we call \mono{System.exit(0)} which ensures that the application is completely closed (killed), as it otherwise would just be in an idle state.
@@ -57,9 +57,11 @@ echo "finished dummy insertion"
 \section{Adapting Giraf Apps for Monkey Testing}
 Each Giraf application requires that it is started from the launcher, so that they get log in information. This prevents us from running monkey tests on the apps, as the monkey test will run the MainActivity of the app directly, resulting in crashes or app closure (depending on the specific apps).
 
-We circumvent this by detecting whether an app was started by a monkey test, if so we pull log in information from the database. The process various by each. We show how to implement the change for the \emph{user manager} MainActivity app.
+We circumvent this by detecting whether an app was started by a monkey test, if so we pull log in information from the database. The process various by each app. We show how to implement the change for the \emph{user manager} app in the activity \mono{MainActivity}.
 
-The original code can be seen in \listingref{lst:main_activity_original}. When the MainActivity is created, it 
+The original code can be seen in \listingref{lst:main_activity_original}. When the MainActivity is created, it gets the given log in information (line 7). This information is then passed onto the \mono{getProfileFromExtras()} that gets a profile from this information. Line 14--19 shows a snippet of this method. It calls the \mono{signInWithGuardianId()} with the ID of a guardian.
+
+In the modified version of user manager that supports monkey testing, seen in \listingref{lst:main_activity_monkey_test}, we add an if statement (line 7) that checks if the app was started by a monkey test. If it was we make a new \emph{Helper} (line 8), which is a database helper that enables us to get all guardians and select the ID of the first guardian (line 10). Instead of calling \mono{getProfileFromExtras()} we call \mono{signInWithGuardianId()} directly. If the app was not started by a monkey test we proceed as normal (line 12--15).
 
 \begin{javacode}[caption=User manager MainActivity sign in original,label=lst:main_activity_original]
 public class MainActivity extends FragmentActivity {
