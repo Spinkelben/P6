@@ -215,32 +215,45 @@ In addition to this, we automate release versioning to some degree. Developers n
 \begin{figure}
   \centering
   \tikzsetnextfilename{git_library_versions}
-  \begin{tikzpicture}[
+  \begin{tikzpicture}[node distance=.4cm,
   simple/.style={draw, circle, minimum size=0.5cm}]
 
   %Commit nodes
-  \node[simple] (master-1) at (0,5) {A};
-  \node[simple] (local-1) at (2,4) {B};
-  \node[simple] (local-2) at (2,3) {C};
-  \node[simple] (local-3) at (2,2) {D};
-  \node[simple] (local-4) at (2,1) {E};
-  \node[simple] (master-2) at (0,0) {F};
-
-  %Titles
-  \node(master) [above=of master-1, minimum size=0.5cm, yshift=-1cm] {\mono{master}};
-  %\path \let \p1 = (1,1), \p2 = (2,2) in node at (1, 1) {\mono{local}};
-  %\node(local) [right=of master] {\mono{Local}};
-  %\node(version-title) [right=of local] {\mono{Version}};
-  %\node(commit-title) [right=of version-title] {\mono{Commit message}};
-
+  \node[simple] (master-1) at (0,0) {A};
+  \node[simple, draw opacity=0, fill opacity=0, right=of master-1, xshift=0.3cm] (dummy) {A};
+  \node[simple, below=of dummy] (local-1) {B};
+  \node[simple, below=of local-1] (local-2) {C};
+  \node[simple, below=of local-2] (local-3) {D};
+  \node[simple, below=of local-3] (local-4) {E};
+  \node[simple, draw opacity=0, fill opacity=0, below=of local-4] (dummy2) {A};
+  \node[simple, left=of dummy2, xshift=-0.3cm] (master-2) {F};
+  
   %Versions
-  \node(major-version) [right=of local-3] {\mono{1.2.4}};
-  \node(init-version) [right=of master-1, xshift=2cm] {\mono{1.2.3}};
-  \node(old-snap)  [right=of local-2] {\mono{1.2.4-SNAPSHOT}};
-  \node(new-snap)  [right=of local-4] {\mono{1.2.5-SNAPSHOT}};
+  \node[right=of local-3] (major-version) {\mono{1.2.4}};
+  \node[right=of dummy] (init-version) {\mono{1.2.3}};
+  \node[right=of local-2] (old-snap) {\mono{1.2.4-SNAPSHOT}};
+  \node[right=of local-4] (new-snap) {\mono{1.2.5-SNAPSHOT}};
 
   %Patch node
-  \node(patch-note) [right=of major-version] {\mono{@patch}};
+  \node(patch-note) [right=of local-3, xshift=4cm] {\mono{@patch}};
+
+  %Titles
+  \node[above=of master-1, yshift=0cm] (master) {\phantom{g}Master\phantom{g}};
+  \node[above=of dummy, yshift=0cm] (local) {\phantom{g}Local\phantom{g}};
+  \node[simple, draw opacity=0, fill opacity=0, right=of dummy] (dummy3) {A};
+  \tikzmath{
+    \shiftwidth=\widthof{Version}*0.5;
+  }
+  \node[right=of local, xshift=-0.55cm] (version) {\phantom{g}Version\phantom{g}};
+  \node[right=of local, xshift=3.6cm] (commitmsg) {Commit Message};
+  
+  \draw[->] (local-1) -- (master-1);
+  \draw[->] (local-2) -- (local-1);
+  \draw[->] (local-3) -- (local-2);
+  \draw[->] (local-4) -- (local-3);
+  \draw[->] (master-2) -- (local-4);
+  \draw[->] (master-2) -- (master-1);
+
   \end{tikzpicture}
 \caption{Finish figure and add caption}\label{fig:git_library_versions}
 \end{figure}
