@@ -101,7 +101,7 @@ The inherited project has no build automation. As a part of the automated build 
 \end{tikzpicture}
 \caption{The pre-tested commit strategy}\label{fig:commit_stratagy_b}
 \end{subfigure}
-\caption{Different branching strategies. A circles represents a commit and an arrow represents a reference to a commit.}\label{fig:commit_stratagy}
+\caption[Different branching strategies]{Different branching strategies. A circles represents a commit and an arrow represents a reference to a commit.}\label{fig:commit_stratagy}
 \end{figure}
 
 As the name \emph{continuous integration} suggests, code should be integrated into the mainline (or \emph{master branch}) of the project frequently \parencite{fowlerCI}. According to Martin Fowler, frequent merges ensure that merges generally will be small and easy to perform \parencite{fowlerFeatureBranch}. The master branch must be stable and always in a release-ready state. If it breaks, it should be the team's first priority to fix it. A consequence of this is that the whole team is affected when a developer introduces an error, which has a negative influence on the overall productivity.
@@ -170,7 +170,7 @@ In this first sprint, we set up automating the lint check in Jenkins to be perfo
 
 \begin{figure}[htbp]
     \includegraphics[width=\textwidth]{graphics/jenkins-overview.pdf}
-    \caption{Screen shot of a section of the build overview screen, which shows the lint warning column}
+    \caption{Screenshot of a section of the build overview screen, which shows the lint warning column}
     \label{fig:jenkins-overview}
 \end{figure}
 
