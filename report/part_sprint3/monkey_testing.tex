@@ -55,13 +55,13 @@ echo "finished dummy insertion"
 \end{lstlisting}
 
 \section{Adapting Giraf Apps for Monkey Testing}
-Each Giraf application expects that it is started from the launcher, so that information about the current user is passed to the app. This prevents us from running monkey tests on the apps, as the monkey test will run the MainActivity of the app without providing this information, resulting in crashes or app closure (depending on the specific apps).
+Each Giraf application expects that it is started from the launcher, so that information about the current user is passed to the app. This prevents us from running monkey tests on the apps, as the monkey test will start the app without providing this information, resulting in crashes or app closure (depending on the specific apps).
 
-We circumvent this by detecting whether an app was started by a monkey test, if so we pull log in information from the database. The process various by each app. We show how to implement the change for the \emph{user manager} app in the activity \mono{MainActivity}.
+We circumvent this by detecting whether an app was started by a monkey test; if so, we pull log-in information from the database. The process varies by each app. We show how to implement the change for the \emph{user manager} app in the activity \mono{MainActivity}.
 
-The original code can be seen in \listingref{lst:main_activity_original}. When the MainActivity is created, it gets the given log in information (line 7). This information is then passed onto the \mono{getProfileFromExtras()} that gets a profile from this information. Line 14--19 shows a snippet of this method. It calls the \mono{signInWithGuardianId()} with the ID of a guardian.
+The original code can be seen in \listingref{lst:main_activity_original}. When the MainActivity is created, it gets the log-in information provided by the launcher (line 7). This information is then passed onto the \mono{getProfileFromExtras()} that gets a profile from this information. Line 14--19 shows a snippet of this method. It calls the \mono{signInWithGuardianId()} with the ID of a guardian.
 
-In the modified version of user manager that supports monkey testing, seen in \listingref{lst:main_activity_monkey_test}, we add an if statement (line 7) that checks if the app was started by a monkey test. If it was we make a new \emph{Helper} (line 8), which is a database helper that enables us to get all guardians and select the ID of the first guardian (line 10). Instead of calling \mono{getProfileFromExtras()} we call \mono{signInWithGuardianId()} directly. If the app was not started by a monkey test we proceed as normal (line 12--15).
+In the modified version of user manager that supports monkey testing, seen in \listingref{lst:main_activity_monkey_test}, we add an if statement (line 7) that checks if the app was started by a monkey test. If it was, we make a new \emph{Helper} (line 8), which is a database helper that enables us to get all guardians and select the ID of the first guardian (line 10). Instead of calling \mono{getProfileFromExtras()} we call \mono{signInWithGuardianId()} directly. If the app was not started by a monkey test we proceed as normal (lines 12--15).
 
 \begin{javacode}[caption=User manager MainActivity sign in original,label=lst:main_activity_original]
 public class MainActivity extends FragmentActivity {
@@ -97,14 +97,14 @@ public class MainActivity extends FragmentActivity {
 
     if (ActivityManager.isUserAMonkey()) {
       Helper h = new Helper(this);
-      
+
       signInWithGuardianId(h.profilesHelper.getGuardians().get(0).getId());
     }
     else {
       Bundle extras = getIntent().getExtras();
       getProfileFromExtras(extras);
     }
-    
+
     checkIfValidProfile();
 
     // ...
@@ -116,4 +116,4 @@ public class MainActivity extends FragmentActivity {
 
 In this manner, we circumvent the expectations of the apps when running monkey tests. We create jobs on Jenkins which run monkey tests on all apps every night.
 
-We did not have time to set up automatic notification when ever a monkey test fails. 
+We did not have time to set up automatic notifications to developers whenever a monkey test fails.
