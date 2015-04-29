@@ -1,5 +1,5 @@
 \chapter{Making Monkey Testing Work}
-To make monkey testing work, we make a simple app that inserts dummy database into a database. In addition all Giraf apps have to modified so that they accept a monkey test and uses the dummy data inserted into the database.
+To make monkey testing work, we make a simple app that inserts dummy data into the local database. In addition all Giraf apps have to modified so that they accept a monkey test and uses the dummy data inserted into the database.
 
 \section{Dummy Database Inserter}
 To make sure that the local database contains data before starting the monkey test, we create a new Android application which inserts dummy data into the database. The application is very simple and the main part is shown in \listingref{lst:dummy_db_ins_main_activity}. It starts a thread which inserts the data using a method provided by the database library project. When inserted, the application closes. We detect when the applications has closed to know when the data has been inserted. In line 26, we call \mono{System.exit(0)} which ensures that the application is completely closed (killed), as it otherwise would just be in an idle state.
@@ -55,7 +55,7 @@ echo "finished dummy insertion"
 \end{lstlisting}
 
 \section{Adapting Giraf Apps for Monkey Testing}
-Each Giraf application requires that it is started from the launcher, so that they get log in information. This prevents us from running monkey tests on the apps, as the monkey test will run the MainActivity of the app directly, resulting in crashes or app closure (depending on the specific apps).
+Each Giraf application expects that it is started from the launcher, so that information about the current user is passed to the app. This prevents us from running monkey tests on the apps, as the monkey test will run the MainActivity of the app without providing this information, resulting in crashes or app closure (depending on the specific apps).
 
 We circumvent this by detecting whether an app was started by a monkey test, if so we pull log in information from the database. The process various by each app. We show how to implement the change for the \emph{user manager} app in the activity \mono{MainActivity}.
 
@@ -113,3 +113,5 @@ public class MainActivity extends FragmentActivity {
   // ...
 }
 \end{javacode}
+
+In this manner, we circumvent the expectations of the apps when running monkey tests. We create jobs on Jenkins which run monkey tests on all apps every night.
