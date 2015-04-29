@@ -70,9 +70,6 @@
   % Typographic tweaks.
   \usepackage[babel]{microtype} % Enables kerning. Load after fonts.
   \usepackage{textcomp} % Uses the glyphs present in the fonts, rather than LaTeX workarounds for old fonts.
-  %\usepackage[htt]{hyphenat} % Lets texttt hyphenate.
-
-  {{\ttfamily \hyphenchar\the\font=`\-}%
 
   % Parts style.
   \setkomafont{part}{\normalfont\Huge\fontseries{k}\sffamily\color{partcolor}}
@@ -140,6 +137,8 @@
     % Box colors.
     \definecolor{clframe}{gray}{0.75}
     \definecolor{clshade}{gray}{0.95}
+    
+    \definecolor{clcodeshade}{gray}{0.93}
 
     % Graphs.
     \definecolor{color1}{cmyk}{100,50,0,0} % blue
@@ -337,6 +336,7 @@
   \usepackage{lastpage}
   \usepackage{multicol}
   \usepackage{xspace}
+  \usepackage{soul}
   \usepackage{dirtree}
   \usepackage[super]{nth}
 % TOC.
