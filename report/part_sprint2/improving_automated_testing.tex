@@ -1,13 +1,11 @@
 \chapter{Improving Automated Build}
-For this sprint we have chosen to work on four user stories that should improve automated testing. However first, we refactor the structure of jobs in Jenkins to ease our further configuration needs. We work on making automated monkey testing work, making a test that automatically checks if apps are compatible, and provide code coverage metrics for the other groups. Finally, we automatically upload successful builds to Google Play.
-
-\todo{This paragraph above is practically the same as chapter organization below?}
+For this sprint we have chosen to work on four user stories that should improve automated building.
 
 \begin{chapterorganization}
-  \item in \sectionref{sec:jenkins_restruct} we explain how we restructure jobs in Jenkins;
+  \item in \sectionref{sec:jenkins_restruct} we explain how we restructure jobs in Jenkins to ease further configuration needs;
   \item in \sectionref{sec:monkey_testing_s2} we describe our work towards making monkey testing work;
-  \item in \sectionref{sec:s3_appinstallationtest} we set up a test case that installs all apps on the same device, since this has been an issue;
-  \item in \sectionref{sec:s3_linecoverage} enable generation of a code coverage report and set up showing lines of code covered in Jenkins;
+  \item in \sectionref{sec:s3_appinstallationtest} we set up a test case that installs all apps on the same device to check if apps are compatible, since this has been an issue;
+  \item in \sectionref{sec:s3_linecoverage} we enable generation of a code coverage report and set up showing lines of code covered in Jenkins;
   \item in \sectionref{sec:upload_google_play} we automatically upload successful builds to the Google Play alpha channel.
 \end{chapterorganization}
 
