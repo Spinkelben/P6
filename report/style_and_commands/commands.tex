@@ -72,12 +72,13 @@
   \newcommand{\sprint}[1]{%
     \clearpage{}
     \stepcounter{sprintcounter}
-    \part*{Sprint \arabic{sprintcounter}\\\vspace{1cm}\textnormal{\textsf{#1}}}
-    \addcontentsline{toc}{part}{Sprint \arabic{sprintcounter}: #1}
+    \part*{Sprint \arabic{sprintcounter}}
+    \addcontentsline{toc}{part}{Sprint \arabic{sprintcounter}}
   }
   
   % Chapter grouping.
   \newcommand{\chaptergroup}[1]{
+    \clearpage{}
     \part*{#1}
     \addcontentsline{toc}{part}{#1}
   }

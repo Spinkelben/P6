@@ -1,7 +1,17 @@
-\chapter{Improving Automated Testing}
-For this sprint we have chosen to work on three user stories that should improve automated testing. We work on making automated monkey testing work, making a test that automatically checks if apps are compatible and provide code coverage metrics for the other groups. In addition we refactor the structure of Jenkins to easy our work when doing further configurations of jobs on Jenkins.
+\chapter{Improving Automated Building}
+For this sprint we have chosen to work on four user stories that should improve automated testing. However first, we refactor the structure of jobs in Jenkins to ease our further configuration needs. We work on making automated monkey testing work, making a test that automatically checks if apps are compatible, and provide code coverage metrics for the other groups. Finally, we automatically upload successful builds to Google Play.
 
-\section{Restructuring Jenkins}
+\todo{This paragraph above is practically the same as chapter organization below?}
+
+\begin{chapterorganization}
+  \item in \sectionref{sec:jenkins_restruct} we explain how we restructure jobs in Jenkins;
+  \item in \sectionref{sec:monkey_testing_s2} we describe our work towards making monkey testing work;
+  \item in \sectionref{sec:s3_appinstallationtest} we set up a test case that installs all apps on the same device, since this has been an issue;
+  \item in \sectionref{sec:s3_linecoverage} enable generation of a code coverage report and set up showing lines of code covered in Jenkins;
+  \item in \sectionref{sec:upload_google_play} we automatically upload successful builds to the Google Play alpha channel.
+\end{chapterorganization}
+
+\section{Restructuring Jenkins}\label{sec:jenkins_restruct}
 The setup of Jenkins used in sprint 1 was tedious to work with since all jobs were configured independently. If a change had to be made to several jobs, we would have to manually configure the change in each job. Not only did this take a considerable amount of time, but it was also prone to human errors during the process. In this sprint, we have to make small modifications to all jobs several times. This would be very tedious, so we have decided make job configurations easier to manage, even though it is not connected directly to a story. We consider it refactoring.
 
 The jobs on Jenkins are generally very similar in their configuration. We can benefit from having a base configuration, which the jobs only modify. There exists a Jenkins plug-in for this, called inheritance-plugin \parencite{jenkins-inheritance}. With this plug-in installed, whenever we decide to make a change to e.g.\ the build system, it will not be necessary to change this in each job. Instead, the change can be made on the base job, and all relevant jobs will inherit this change. This also ensures that jobs follow a consistent pipeline and thus do not differ in from job to job.
@@ -77,7 +87,7 @@ We have modeled this as a diagram in \figureref{fig:jenkins_inherit}.
 \label{fig:jenkins_inherit}%
 \end{figure}
 
-\section{Monkey Testing}
+\section{Monkey Testing}\label{sec:monkey_testing_s2}
 During sprint 1 we encountered some difficulties related to monkey testing. In order to monkey test we need to install the apps on an Android device, but we did not have these easily available. As described in \chapterref{sec:upload_google_play} the signed APKs for each app is now stored on the ftp sever. As the ftp server is hosted on the same machine as Jenkins, we can directly access the APKs from the directory. To install we simply need to identify the newest build of each app, as, for now, the old builds are kept as well.  
 
 To install a specific app to an Android device, we use the script seen in \listingref{lst:find_newest_apk}, parsing to it the application id of the app. All APKs containing the given application id is then found. This result is piped to \code{sed 's|.*b||' |'s|\_release\_aligned.apk||' } that removes everything but the build number of the files. \code{awk '\$0>x\{x=\$0\};END\{print x\}'} then finds the maximum build number. Finally the newest APK for the given application id is found.
@@ -91,7 +101,7 @@ When the app has been installed on the device, we run a monkey test on it using 
 
 The \mono{monkey} command does not support sending extra information when starting apps. We did not anticipate this obstacle and did therefore not manage to implement monkey testing for apps fully.
 
-\section{App Installation Test Case}
+\section{App Installation Test Case}\label{sec:s3_appinstallationtest}
 To ensure that all apps of the multi-project are compatible a test on Jenkins is run nightly that installs all apps on a single device. At the end of sprint 1 the GUI groups had issues installing a combination of apps on a single device --- this test case should avoid such an issue in the future.
 
 To do this we find the newest version of all available APKs on the server. These APKs are the same that are uploaded to Google Play. The script seen in \listingref{lst:find_all_newest_apks} finds the application id for each available app by finding all files in the directory containing APKs. It then pipes these files to \code{sed 's|.*/||'} which removes the path of the file. This is then piped to \code{sed 's|\_v.*||'} that removes everything following the package id. The output of that is then sorted and all duplicates are removed using \code{sort | uniq}. The sort is necessary as \mono{uniq} only removes duplicate lines that are adjacent. 
@@ -128,7 +138,7 @@ done
 
 If the installation of any app fails on the device, the Jenkins job will fail.
 
-\section{Code Coverage Reports}
+\section{Code Coverage Reports}\label{sec:s3_linecoverage}
 We have a user story which states that Jenkins should provide code coverage metrics for every project. This user story was generated by a group which was writing test of a database project and wanted a measure of their progress. Their main request is for a percentage of lines of code covered. A tool for code coverage report must at least provide this metric, but other more detailed metrics will also be nice to have. In version 0.10 of the \emph{New Android SDK Build System} \parencite{new-build-android}, support for the JaCoCo \parencite{jacoco-home} Java Code Coverage Library was included. It meets all of our demands for metrics and is nicely integrated into the Android and Gradle build system. To make JaCoCo generate a report all one needs to do is to add the code shown in \listingref{lst:Jacoco} to the \mono{build.gradle} file of the project.
 
 \begin{gradlecode}[caption=Gradle script for enabling JaCoCo,label=lst:Jacoco]
