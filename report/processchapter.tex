@@ -1,0 +1,27 @@
+% Emit warnings on deprecated things.
+\RequirePackage[l2tabu, orthodox]{nag}
+
+\documentclass{scrreprt}
+
+% Load custom packages+settings and commands.
+\usepackage{style_and_commands/style}
+\input{style_and_commands/commands}
+
+% Set custom settings
+  % Set true for PDF version ready for print. False for screen version.
+  \settoggle{printversion}{false}
+
+\begin{document}
+
+% Main content.
+\input{part_introduction/swdev_method}
+
+% Bibliography.
+\cleardoublepage
+\phantomsection\addcontentsline{toc}{chapter}{Bibliography}
+\label{bibliography}
+\printbibliography{}
+\clearpage{}
+\ohead{{\MakeUppercase\leftmark}\rightmark}
+
+\end{document}
