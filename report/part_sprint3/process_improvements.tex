@@ -2,10 +2,12 @@
 In this sprint, we work on specifying the development method for the multi-project, continuous integration and a guide on how to make Android UI tests.
 
 \begin{chapterorganization}
-  \item In \dummy;
+  \item In \sectionref{sec:processspecs} we review our development method, and make our specification available to all groups;
+  \item In \sectionref{sec:specsCI} we create a guide for the other groups on how to use continuous integration;
+  \item In \sectionref{sec:uitestguide} we describe the creation of a guide to performing UI testing.
 \end{chapterorganization}
 
-\section{Specification of Development Method}
+\section{Specification of Development Method}\label{sec:processspecs}
 While we have specified much of the development method in our report, there is currently only a very sparse specification available for the multi-project groups on the Redmine wiki. We therefore publish our specification in \chapterref{chap:sw_dev_method} (excluding \sectionref{sec:swmethod_ourgroup}) for the multi-project to consult.
 
 In connection with specifying the development method, \group{1} approaches us with some feedback on the development method. They have made an analysis of some aspects of the multi-project where they feel the development method is not appropriate \cite{processanalysis}\todo{Hvordan refererer vi til dette?}. The main points are: \todo{Jeg synes der mangler lidt mere argumentation i følgende liste:}
@@ -34,12 +36,12 @@ We make the following changes to the development method for the final sprint in 
   \item[New Backlog Items] We add technical work and knowledge acquisition items to the backlog to make it easy to formulate and work on those items.
 \end{description}
 
-\section{Specification of Continuous Integration}
+\section{Specification of Continuous Integration}\label{sec:specsCI}
 We have committed ourselves to solve a user story proposed by the developers, which states that they want a guide about continuous integration. We observe that many developers \emph{want} continuous integration (it was a high priority user story in sprint 1), but do not really understand how to use it. In the sprints up to now, we have observed developers working on features on isolated branches for several weeks without integrating it with the master branch. Likewise, only a single group has written automated tests for their code. This is a big concern, because agile development and continuous integration highly depends on automated testing. In sprint 1, we wrote a sample test for each project to make it easy for developers to start writing tests. In sprint 2, we added a code coverage measure to each project. We find, however, that this has not resulted in more tests written. Therefore, it seems not be enough to simply write how to do. For this continuous integration guide, we try to argue more about why to do as we propose in order to convince developers that they should indeed follow the guidelines.
 
 The CI guide has been released on the Redmine wiki, and is included in \appendixref{app:ci_guide}. Instructions on when to release to Artifactory has been added to the Redmine guide on dependencies. The instructions appears as specified in \sectionref{subsec:release-management}.
 
-\section{Guide on Making Android UI Tests}
+\section{Guide on Making Android UI Tests}\label{sec:uitestguide}
 To create awareness of the opportunity for groups to have UI tests in the apps, we write a short guide on how to do this, as requested by the multi-project groups. This includes both running UI tests locally as well as in Jenkins upon each build. We do not want to spend much time on doing this, since a great amount of material is already available on the Internet. Therefore, we only find the appropriate material as well as comment on special considerations for our project. These special considerations include how to setup the database with dummy data, and faking login credentials.
 
 The Android UI test guide can be seen in \appendixref{app:uitestguide}.
