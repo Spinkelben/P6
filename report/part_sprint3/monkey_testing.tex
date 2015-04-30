@@ -1,6 +1,10 @@
 \chapter{Making Monkey Testing Work}
 To make monkey testing work, we make a simple app that inserts dummy data into the local database. In addition, all Giraf apps have to be modified so that they accept a monkey test and use the dummy data inserted into the database.
 
+\begin{chapterorganization}
+  \item In \dummy;
+\end{chapterorganization}
+
 \section{Dummy Database Inserter}
 To make sure that the local database contains data before starting the monkey test, we create a new Android application which inserts dummy data into the database. The application is very simple and the main part is shown in \listingref{lst:dummy_db_ins_main_activity}. It starts a thread which inserts the data using a method provided by the database library project. When inserted, the application closes. We detect when the applications has closed to know when the data has been inserted. In line 26, we call \code{System.exit(0)} which ensures that the application is completely closed (killed), as it otherwise would just be in an idle state.
 

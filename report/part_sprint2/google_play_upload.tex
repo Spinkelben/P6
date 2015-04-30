@@ -1,4 +1,4 @@
-\chapter{Upload of Apps to Google Play}\label{sec:upload_google_play}
+\section{Upload of Apps to Google Play}\label{sec:upload_google_play}
 Jenkins compiles and builds the Giraf projects but does nothing with the generated APKs. One of the user stories selected in this sprint is \us{automatic upload of alpha releases to Google Play}.
 
 Before the APKs can be published to Google Play, they need to be signed with a signature. The Android plugin for Gradle has functionality for automatic signing of APKs, and we will use this to sign. A keystore file is used to sign, and we are not interested in everybody having this file as it serves as a proof of identification. We save the file on the server, which means that it becomes impossible to build release versions of the apps locally using the Giraf keystore. When uploading a new app to Google Play, the version code of the new app must be greater than the version code of the app already in the app store. Incrementing the version code is not done per default, so we need to set up the build to increase the version code every time an app is successfully built. 
