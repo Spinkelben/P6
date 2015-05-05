@@ -1,0 +1,31 @@
+\chapter{Monkey debug}
+
+At the moment, the monkey tests are run on release versions of the apps. This is problematic as we intent to switch the release version to use a live production database. Obviously we do not want the monkey tests to insert dummy data into the production database. It could even accidentally delete or modify some customers data if we allow it to test on the production database. We therefore need to make the monkey test the debug version of the apps instead, as the debug versions uses the test database. This has not been a problem previously as the tablets have not been syncing their local changes up to the central server, but that is about to change.
+
+To make installation easier we decide to put the compiled debug apps on the FTP server. We use a \code{bash} script to move the apk files. \listingref{lst:move_debug_apk} contains the script. \ref{move_d:package} finds the package name of any compiled debug apks, it is quite obtruse, but brakes down as follows: The package name is contained in the start of the name of the apk file so we use the \code{find} command to search for file names which end in ``\_debug\_aligned.apk''. We then pipe the result to \code{grep} and use a rather long regular expression to match anything before and including the package name. The result of the match is stored in the variable \code{PACKAGE\_W\_PATH}. In Line \ref{move_d:empty-check} we check if an apk which matches the naming scheme was found. If the resulting match is empty we exit otherwise, we remove the path from the variable \code{PACKAGE\_W\_PATH} and uses the package name to remove the old apk from the FTP folder before we move the new apk to the FTP folder.
+\begin{lstlisting}[language=bash,showstringspaces=false,caption=Script that moves the debug apk to the ftp server,label=lst:move_debug_apk]
+#!/bin/bash
+
+FTP_DIR="/srv/ftp/debug_apks/"
+PACKAGE_W_PATH=$(find . -type f -name "*_debug_aligned.apk" -print | grep ".+(?=_v[0-9]+\.[0-9]+b[0-9]+_debug_aligned\.apk)" -Po) (*@\label{move_d:package}@*)
+echo "FTP dir: "$FTP_DIR
+
+if [ -z "$PACKAGE_W_PATH" ]; (*@\label{move_d:empty-check}@*)
+then
+    echo "No file found"
+    echo "Package with path: "$PACKAGE_W_PATH
+    exit 1
+else
+    PACKAGE=$(basename $PACKAGE_W_PATH);
+    echo "Package: $PACKAGE";
+    echo "Remove old files: $FTP_DIR$PACKAGE"*.apk;
+    rm "$FTP_DIR$PACKAGE"*.apk;
+    find . -type f -name "*_debug_aligned.apk" -print -exec mv {} "$FTP_DIR" \;
+    exit 0
+fi
+
+
+\end{lstlisting}
+We then add the execution of the script as a post build task on all app jobs on Jenkins. 
+\todo{Explain what needed to be changed on the monkey jenins job.}
+Now the monkey tests are run on debug versions instead of release versions.
