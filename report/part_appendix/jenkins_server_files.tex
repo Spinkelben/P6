@@ -1,0 +1,57 @@
+\chapter{Jenkins Structure}\label{app:jenkins_structure}
+\dummy
+
+\section{Jenkins Structure}
+
+\subsection{Projects}
+\begin{itemize}
+  \item How to create/configure projects
+  \begin{itemize}
+    \item Source Code Management
+    \item Build triggers
+    \item Build environments (android emulator)
+    \item Build steps
+    \item Post-build actions
+  \end{itemize}
+  \item What abstract projects do we have and what are they used for?
+  \item Project versions
+  \item Lint trend
+  \item Test result trend
+\end{itemize}
+
+\subsection{Managing Jenkins}
+\begin{itemize}
+  \item Updating Jenkins from server
+  \item Plugins
+  \item Configure Global Security (who can do what on Jenkins)
+  \item Configure System
+\end{itemize}
+
+\subsection{Miscellaneous}
+\begin{itemize}
+  \item Shelved projects
+\end{itemize}
+
+\section{Jenkins Files on Server}
+\dummy
+
+\begin{figure}
+  \dirtree{%
+.1 /srv/jenkins/.
+.2 google\_play\_keys/.
+.3 google\_play\_api\_key.p12.
+.3 keystore.properties.
+.3 MainKeyStore.keystore.
+.2 jobs/.
+.3 launcher/.
+.4 builds/.
+.4 workspace/.
+.4 \ldots.
+.3 \ldots.
+.2 project\_version\_codes/.
+.3 libversion.
+.3 versionCodes.properties.
+.2 \ldots.
+}
+\caption{Jenkins file structure on server} \label{fig:jenkins_file_structure}
+\end{figure}
