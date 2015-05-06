@@ -1,3 +1,4 @@
+%!TEX root = ../report.tex
 \chapter{Sprint Planning}\label{chap:s2_sprintplanning}
 This is the first sprint in which each subproject holds a separate sprint planning meeting. We attended the public parts of all sprint planning meetings, and of course also the internal part of the sprint planning meeting of our subproject. Our help was requested for the \db sprint planning process.
 
@@ -13,12 +14,14 @@ This is the first sprint in which each subproject holds a separate sprint planni
 While we attended the first part of the \db sprint planning meeting as customers, we were asked to attend the second part as well, which is normally reserved for only the \db groups. We were asked since the initial part of the sprint planning meeting did no go so well --- too much time was spent discussing irrelevant things, since the product backlog was ``too close'' to external user needs, rather than internal user needs. In addition the \db POs were not entirely confident in running the later part of the meeting.
 
 At the beginning of the second part of the meeting, we clarified how the remaining part was going to go. During the meeting we provided a few suggestions as to how to proceed. We did not influence the user stories they picked for their release backlog. Finally we gave them some feedback on the overall meeting. We concluded that it was mostly the backlog and the fact that the \db groups had not had such a meeting before that the meeting did not go smoothly.
+\kimnote{I think that you should go into detail of how you planned their meeting and how your plan made sure that there was no irrelevant discussions and that the backlog was at at fitting abstraction level .}
+
 
 \section{\bdtitle Sprint Planning}\label{sec:S2_bd}
 At the \bd sprint planning we chose to work on the following user stories in this sprint. They are labeled with a number in parentheses for reference.
 
 \begin{description}
-  \item[Auto Upload Alpha and Beta Releases of Apps (1)] Apps should automatically be uploaded to Google Play when they build successfully to an alpha channel. They should be able to be uploaded to a beta channel when the decision is made.
+  \item[Auto Upload Alpha and Beta Releases of Apps (1)] Apps should automatically be uploaded to Google Play when they build successfully to an alpha channel. They should be able to be uploaded to a beta channel when the decision is made. \kimnote{What decision? }
   \item[Faster Build (2)] Builds are slow. Builds should be sped up --- by how much is not specified.
   \item[Set up Monkey Testing (3)] Monkey testing for each app should be run automatically.
   \item[Test Case Installation (4)] A test that automatically installs all apps on a single device. At the end of sprint 1 the GUI groups had issues installing some apps on a device when other apps were already installed due to some conflict. To avoid this situation in future sprints, the GUI groups requested a test to catch such errors.
@@ -70,3 +73,4 @@ The task \emph{make Jenkins job for beta releases} was also rejected during the 
 \caption[Sprint 2 backlog]{Sprint backlog for sprint 2, excluding report tasks. The tasks are listed in no particular order.}
 \label{tab:sprint2_tasks}
 \end{table}
+\kimnote{What does estimations with parenthesis mean? e.g. 6 (1)? }
