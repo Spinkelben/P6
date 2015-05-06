@@ -1,39 +1,80 @@
 \chapter{Jenkins Structure}\label{app:jenkins_structure}
-\dummy
+Here we describe the main points of interest of Jenkins.
 
-\section{Jenkins Structure}
+\section{Projects}
+Jenkins runs a number of \emph{projects} that do various tasks. Most of these projects are \emph{inheritance projects}, while some are \emph{freestyle} projects. New projects can be created by the \emph{New Item} button on the left.
 
-\subsection{Projects}
+For a project, mainly the following categories are configured:
+
+\begin{description}
+  \item[Source Code Management] What source code management system is used. For the multi-project Git is used. The repository to pull code from can be configured, as well as what branches to build.
+  \item[Build Triggers] When a build is triggered. Some projects are build periodically, like monkey tests, whereas apps and libraries are build whenever a push is made to their respective repositories.
+
+  A Git hook activated a build. The method for apps and libraries differ. Apps have the \emph{Poll SCM} option ticked, which means that any project that has this option ticked will be run whenever a push is made to the repository defined in the project. The option will have a warning stating that no schedules will be run, but this is not correct. Libraries have no option in build triggers ticked, as the projects are started through the Git hook by another method.
+  \item[Build Environment] This is where the Android emulator is configured.
+  \item[Build] This category contains any actual build steps. This might include executing a Gradle script or executing shell.
+  \item[Post-Build Actions] Any tasks that must be done after the main build steps, such as publishing test reports or sending email notifications on build failure.
+\end{description}
+
+\subsection{Abstract Projects}
+There is a number of abstract projects that are inherited to ease project configurations. The abstracts projects are:
+
+\begin{description}
+  \item[Android App Inheritable] The main inheritable project for apps. Inherits a number of other projects to form the basis of apps. All app projects inherits from this project.
+  \item[Android Lib Inheritable] The same as the Android App Inheritable project, just for libraries.
+  \item[gradle\_lib\_inheritable] The base project for Gradle libraries.
+  \item[Job failure email + log rotation] Configures emails for job failure and discards old artifacts. Does not configure the emails for monkey tests.
+  \item[monkey\_test\_baseline] The base project for monkey tests. Configures the email for monkey tests.
+  \item[Move APKs to ftp] Moves release and debug APKs from a successful build to the ftp server.
+  \item[Move Credentials] The credentials for the local db are not managed by Git. This project moves the file stored on the server to the project workspace.
+  \item[Publish APK] Publishes release APKs of a successful build to Google Play.
+  \item[Publish CodeCoverage] Publishes code coverage results.
+  \item[Publish Lib] Uploads successfully built libraries to Artifactory.
+  \item[Publish lint and test reports] Publishes lint and test reports.
+  \item[Run Checks] Runs tests on an Android device.
+  \item[Run emulator] Configures the emulator that is run before each project is build.
+\end{description}
+
+\subsection{Reports}
+When clicking on a project the lint and test results can be seen on the right. Clicking on a specific build will also give a code coverage reports.
+
+\subsection{Project Versions}
+\todo{Jeg har lade mig fortælle at Michael vil være rigtig god til at skrive dette afsnit}
+
+\subsection{Shelved Projects}
+A project can be shelved meaning that it is disabled and zipped with its build history. When unshelving a project it is vital that there is no other project with the same name, as that project will be overwritten with no warning.
+
+\section{Managing Jenkins}
+In the \emph{Manage Jenkins} page there are various managements options. At the top Jenkins will notify if there is an update available (which must be downloaded and installed manually) and if there are any major concerns.
+
+Many items can be configured in the \emph{configure system} page. Here the number of executers (number of concurrent builds) can be set. It is set to 1, as there can be issues if it is set to more than that. It is also here that email text is configured. The \emph{default content} field looks as if it has a lot of random characters, but this is the Jenkins logo in ASCII art.
+
+In the \emph{configure global security} page the authorization of users can be managed. A user is automatically created when accessing Jenkins with one's student email as the user name. We advice to have a select few people have access to everything, and anonymous users to only have access to:
+
 \begin{itemize}
-  \item How to create/configure projects
-  \begin{itemize}
-    \item Source Code Management
-    \item Build triggers
-    \item Build environments (android emulator)
-    \item Build steps
-    \item Post-build actions
-  \end{itemize}
-  \item What abstract projects do we have and what are they used for?
-  \item Project versions
-  \item Lint trend
-  \item Test result trend
+  \item Overall read
+  \item Job discover
+  \item Job read
+  \item Job workspace
+  \item View read
 \end{itemize}
 
-\subsection{Managing Jenkins}
-\begin{itemize}
-  \item Updating Jenkins from server
-  \item Plugins
-  \item Configure Global Security (who can do what on Jenkins)
-  \item Configure System
-\end{itemize}
+This way people cannot simply start project manually, which can interrupt continuous integration.
 
-\subsection{Miscellaneous}
-\begin{itemize}
-  \item Shelved projects
-\end{itemize}
+Finally Jenkins has a number of plugins to increase functionality. These can be managed in the \emph{manage plugins} page. Be sure to regularly update plugins.
 
 \section{Jenkins Files on Server}
-\dummy
+Jenkins has a number of files on the server that are of interest. These can be seen in \figureref{fig:jenkins_file_structure}.
+
+\begin{description}
+  \item[google\_play\_api\_key.p12] The credentials for the Gradle Play Published plugin so that apps can be automatically uploaded to Google Play.
+  \item[keystore.properties] Contains credentials for signing APKs.
+  \item[MainKeyStore.keystore] The keystore file for signing APKs.
+  \item[libversion] Specifies the next version of each library. The version is automatically handled by a Git hook. Contains the repository to for the library which must be manually added, as well as the project name on Jenkins (written jobname). If a project on Jenkins is renamed this must be changed. It is important to add a new entry if additional libraries are made.
+  \item[versionCodes.properties] Contains the next version code for each Giraf app. This file is automatically handled.
+\end{description}
+
+In addition the \mono{jobs/} directory contains each project on Jenkins. In \figureref{fig:jenkins_file_structure} the launcher project is shown. Each project contains the latests builds etc. It also contains the \mono{workspace} directory that has the source code etc.\ of the project.
 
 \begin{figure}
   \dirtree{%
