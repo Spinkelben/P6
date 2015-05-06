@@ -1,4 +1,4 @@
-\chapter{Monkey Debug}
+\chapter{Running Monkey Tests on Debug Apps}
 At the moment, the monkey tests are run on release versions of the apps. This is problematic as the \db groups are working on switching the release version a live production database. Obviously we do not want the monkey tests to insert dummy data into the production database. It could even accidentally delete or modify some customers data if we allow it to test on the production database. We therefore need to make the monkey test the debug version of the apps instead, as the debug versions should automatically use a development database. This has not been a problem previously as the tablets have not been syncing their local changes up to the central server, but that is about to change.
 
 To make installation easy we put the compiled debug apps on the FTP server. We use a \code{bash} script to move the APK files. \listingref{lst:move_debug_apk} contains the script. Line \ref{move_d:package} finds the package name of any compiled debug APKs by the following steps:
