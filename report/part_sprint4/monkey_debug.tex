@@ -3,11 +3,11 @@ At the moment, the monkey tests are run on release versions of the apps. This is
 
 To make installation easy we put the compiled debug apps on the FTP server. We use a \code{bash} script to move the APK files. \listingref{lst:move_debug_apk} contains the script. Line \ref{move_d:package} finds the package name of any compiled debug APKs by the following steps:
 
-\begin{itemize}
+\begin{enumerate}
   \item The package name is contained in the start of the name of the APK file. We use the \code{find} command to search for file names which end in ``\_debug\_aligned.apk''.
   \item We then pipe the result to \code{grep} and use a regular expression to match anything up to and including the package name. The \code{P} options specifies the regular expression syntax. The \code{o} options makes it so that only the match is shown.
   \item The result of the match is stored in the variable \code{PACKAGE\_W\_PATH}
-\end{itemize}
+\end{enumerate}
 
 In line \ref{move_d:empty-check} we check if an APK matching the naming scheme was found, by checking if \code{PACKAGE\_W\_PATH} is empty (the \code{z} option). If the resulting match is empty we exit, otherwise, we remove the path from the variable \code{PACKAGE\_W\_PATH} and use the package name to remove the old apk from the FTP folder before we move the new APK to the FTP folder (line \ref{move_d:move_start}--\ref{move_d:move_end}). We need the package name of the app to remove the old build of the debug version, as we do not want to store more than one debug build of each app.
 
