@@ -1,12 +1,15 @@
 \chapter{Jenkins Priority Queue}
+We have committed ourselves to setup a prioritized build queue on Jenkins, such that building libraries has a higher priority than building apps. The reason for this is that developers often waits for new libraries to be published to Artifactory, but seldom wait for a release of an application on Google Play.
 
+To solve this user story, we install a Jenkins plugin\parencite{jenkins-priority-plugin} which allows for a prioritized build queue. This plugin allows to assign each Jenkins project a priority from 1 to 5 (where 1 is the highest priority). We now select a scheduling algorithm which manages the way in which jobs are ordered.
 
 \subsection{Scheduling Algorithms}
+By introducing a priority queue, a number of potential problems arise. There is a risk of starvation, which means that high priority jobs take all resources such that jobs of lower priority are never run. The overall objective is to increase the average throughput of high priority jobs without making the low priority jobs starve.
 
-% TODO: beskriv krav: ingen starvation men vægtet
-
+The Jenkins plugin comes with three different scheduling algorithms:
 \begin{description}
   \item[Absolute] The queue is strictly ordered by priority. The highest priority job is greedily selected every time a new job is to be executed.
-  \item[Fair Queuing] The first job from each priority group is executed in round-robin scheduling. This way, each priority get equal execution time.
-  \item[Weighted Fair Queuing]
+  \item[Fair Queuing] The first job from each priority group is executed with round-robin scheduling. This way, each priority get equal execution time.
+  \item[Weighted Fair Queuing] Each priority gets a fraction of the total throughput. The higher priority, the larger fraction. \todo{Describe this a bit more}
 \end{description}
+The Absolute scheduling algorithm clearly improves the throughput of high priority jobs. However, there is a risk of starving jobs. The Fair Queuing algorithm, on the other hand, does not risk starving jobs. However, it also does not necessarily increase the throughput of high priority tasks. The Weighted Fair Queuing algorithm distributes the resources among the different jobs based on their priorities. The throughput of high priority jobs is increased, and the throughput of low priority tasks is decreased. Because of this, we use the Weighted Fair Queuing algorithm to make libraries build faster than apps on Jenkins.
