@@ -5,5 +5,6 @@ mget *
 SCRIPTEND
 
 for f in *.apk ; do
+    adb uninstall ${f%'.apk'};
     adb install -r "$f" ;
 done
