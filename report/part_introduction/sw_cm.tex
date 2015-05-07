@@ -1,3 +1,4 @@
+%!TEX root = ../report.tex
 \chapter{Software Configuration Management Plan}\label{chap:sw_intro_cm}
 Software configuration management is an important part of any large software project. Configuration management can be defined as \emph{the discipline of identifying the configuration of a system at distinct points in time for the purpose of systematically controlling changes to the configuration and maintaining the integrity and traceability of the configuration throughout the system life cycle} \parencite[ch.6, p.6-1]{swebok}. The large size of the multi-project requires some form of software configuration management to handle and track the changes in the software. It can ease the workflow of developers and assure the quality of the product \parencite[ch.6]{swebok}.
 
@@ -37,7 +38,7 @@ Continuous integration is used to tie together the items under configuration man
 We use the following tools to manage the configuration items identified:
 
 \begin{description}
-  \item[Git] Git is used as the version control as mentioned previously. This was set up by previous years, and we continue to use their setup. \group{8} manages Git.
+  \item[Git] Git is used as the version control as mentioned previously. This was set up by previous years, and we continue to use their setup. \group{8} manages Git. \kimnote{This is the first time that you mention a group by number, the number reference is not understandable for outsiders. I think you should just call the group its role. E.g. Group 8 becomes Group Git.}
   \item[Jenkins] Jenkins is used to automatically build and test applications. Jenkins is detailed in \sectionref{sec:jenkins}. Jenkins is used for all applications throughout the multi-project, except for the iOS applications. We manage Jenkins.
   \item[Artifactory] The Artifactory tool is a Maven repository that stores various versions of binaries of the libraries in the multi-project. Artifactory is described in more detail in \sectionref{sec:dependency_repository}.
   \item[Doxygen] We use Doxygen to generate source code documentation. The use of Doxygen is described further in \sectionref{sec:automated_documentation_gen}. Doxygen is managed by us, but the documentation itself is managed by the developers and \group{5} who issue guidelines on the documentation.

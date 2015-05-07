@@ -1,3 +1,4 @@
+%!TEX root = ../report.tex
 \chapter{Improving Automated Build}
 For this sprint we have chosen to work on four user stories that should improve automated building.
 
@@ -14,7 +15,7 @@ The setup of Jenkins used in sprint 1 was tedious to work with since all jobs we
 
 The jobs on Jenkins are generally very similar in their configuration. We can benefit from having a base configuration, which the jobs only modify. There exists a Jenkins plug-in for this, called inheritance-plugin \parencite{jenkins-inheritance}. With this plug-in installed, whenever we decide to make a change to e.g.\ the build system, it will not be necessary to change this in each job. Instead, the change can be made on the base job, and all relevant jobs will inherit this change. This also ensures that jobs follow a consistent pipeline and thus do not differ in from job to job.
 
-The plug-in requires the jobs to be of a special \emph{inheritable} type. We therefore have to covert the existing jobs to inheritable jobs to take advantage of this. As it is impossible to convert a existing job to the inheritable type, we have to re-create all the jobs again. This is not that big of a deal, as the time to setup will be considerably shorter when taking advantage of the inheritable job type. When the old jobs are removed the build history will be lost. This is a minor nuisance but we consider it a small price to pay, compared to the advantages. When deciding how to structure the build, we see two general categories that are sufficiently distinct: Android apps and Android libraries. We create an abstract job for each of these. They do overlap somewhat in functionality, which means we have to create an abstract job for each job task. As such we create abstract jobs for e.g.\ \emph{run Gradle}, \emph{run unit tests}, \emph{find and move APKs}, and \emph{publish lint report}. The abstract jobs \emph{Android app} and \emph{Android library} inherit from the small abstract tasks that are relevant.
+The plug-in requires the jobs to be of a special \emph{inheritable} type. We therefore have to covert the existing jobs to inheritable jobs to take advantage of this. As it is impossible to convert a existing job to the inheritable type, we have to re-create all the jobs again. This is not that big of a deal, as the time to setup will be considerably shorter when taking advantage of the inheritable job type. When the old jobs are removed the build history will be lost. This is a minor nuisance but we consider it a small price to pay, compared to the advantages. When deciding how to structure the build, we see two general categories that are sufficiently distinct: Android apps and Android libraries. We create an abstract job for each of these. They do overlap somewhat in functionality, which means we have to create an abstract job for each job task. As such we create abstract jobs for e.g.\ \emph{run Gradle}, \emph{run unit tests}, \emph{find and move APKs}, and \emph{publish lint report} \kimnote{Disse navne skulle fremgå af figuren}. The abstract jobs \emph{Android app} and \emph{Android library} inherit from the small abstract tasks that are relevant.
 
 We have modeled this as a diagram in \figureref{fig:jenkins_inherit}.
 
@@ -86,9 +87,9 @@ We have modeled this as a diagram in \figureref{fig:jenkins_inherit}.
 \end{figure}
 
 \section{Monkey Testing}\label{sec:monkey_testing_s2}
-During sprint 1 we encountered some difficulties related to monkey testing. In order to monkey test we need to install the apps on an Android device, but we did not have these easily available. As described in \chapterref{sec:upload_google_play} the signed APKs for each app is now stored on the ftp sever. As the ftp server is hosted on the same machine as Jenkins, we can directly access the APKs from the directory. To install we simply need to identify the newest build of each app, as, for now, the old builds are kept as well.  
+During sprint 1 we encountered some difficulties related to monkey testing. In order to monkey test we need to install the apps on an Android device, but we did not have these easily available\kimnote{rephrase, make it clear that you talk about the apps that need to be monkey tested.}. As described in \chapterref{sec:upload_google_play} the signed APKs for each app is now stored on the ftp sever. As the ftp server is hosted on the same machine as Jenkins, we can directly access the APKs from the directory. To install we simply need to identify the newest build of each app, as, for now, the old builds are kept as well.  
 
-To install a specific app to an Android device, we use the script seen in \listingref{lst:find_newest_apk}, parsing to it the application id of the app. All APKs containing the given application id is then found. This result is piped to \code{sed 's|.*b||' |'s|\_release\_aligned.apk||' } that removes everything but the build number of the files. \code{awk '\$0>x\{x=\$0\};END\{print x\}'} then finds the maximum build number. Finally the newest APK for the given application id is found.
+To install a specific app to an Android device, we use the script seen in \listingref{lst:find_newest_apk}, parsing to it the application id of the app. All APKs containing the given application id is then found. This result is piped to \code{sed 's|.*b||' |'s|\_release\_aligned.apk||' }\kimnote{consider changing the separation symbol in sed such that it is not the same as pipe.} that removes everything but the build number of the files. \code{awk '\$0>x\{x=\$0\};END\{print x\}'} then finds the maximum build number. Finally the newest APK for the given application id is found.
 
 \begin{lstlisting}[language=bash,showstringspaces=false,caption=Script that finds the newest build number for a particular application id,label=lst:find_newest_apk]
 NEWEST_BUILD="$(find /srv/ftp/newest_apks/ -name "$1*release_aligned.apk" | sed 's|.*b||' | sed 's|_release_aligned.apk||' | awk '$0>x{x=$0};END{print x}')"
@@ -116,7 +117,7 @@ do
 done
 \end{lstlisting}
 
-When the newest available APK for each app has been found, they are installed on an Android device. Line 3 tries to install an APK and stores the output in \mono{INSTALL\_OUTPUT}. The output is stored, as \mono{adb install} gives an error code of 0, even if it fails. We therefore have to read the output to check if an error occurred so that Jenkins will report the job as a failure. This is done at line 6 where we check that the output contains the string \mono{success}. The \mono{-i} option makes \mono{grep} case insensitive. At line 9--10 we exit with 1 if the output does not contain \mono{success}.
+When the newest available APK for each app has been found, they are installed on an Android device. Line 3 tries to install an APK and stores the output in \mono{INSTALL\_OUTPUT}\kimnote{remember to reference install\_apks\_on\_android\_device}. The output is stored, as \mono{adb install} gives an error code of 0, even if it fails. We therefore have to read the output to check if an error occurred so that Jenkins will report the job as a failure. This is done at line 6 where we check that the output contains the string \mono{success}. The \mono{-i} option makes \mono{grep} case insensitive. At line 9--10 we exit with 1 if the output does not contain \mono{success}.
 
 \begin{lstlisting}[language=bash,showstringspaces=false,caption=Script that installs the given APKs to an Android device,label=lst:install_apks_on_android_device]
 for a in $@
@@ -151,6 +152,7 @@ android {
     }
 }
 \end{gradlecode}{}
+\kimnote{Config files are not very interesting, this also applies to maven configs. Only add them if you did something smart or complex. I suggest that you remove them from your report.}
 
 Now we generate code coverage reports for debug builds locally and in Jenkins. We would like to also publish the code coverage results in Jenkins. There exists a Jenkins plugin \parencite{jacoco-jenkins-plugin} for this purpose. This plugin is easy to setup, provides detailed coverage statistics, and an overview with the percentage of lines of code covered. We use this plugin for publishing the code coverage metrics in Jenkins. An example of this can be seen in \figureref{fig:jenkins-overview-coco}
 

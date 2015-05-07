@@ -1,16 +1,74 @@
 \chapter{Sprint Planning}\label{chap:s4_sprintplanning}
+This sprint planning proceed ordinarily as specified by the development method. We first have a sprint planning in the subproject followed by sprint planning in the group.
+
+\begin{chapterorganization}
+  \item in \sectionref{sec:S4_bd} we describe the user stories we commit ourselves to during the \bd sprint planning meeting.
+  \item in \sectionref{sec:S4_group} we describe the sprint planning in our group and lists our tasks with reference to a user story.
+\end{chapterorganization}
 
 \section{\bdtitle Sprint Planning}\label{sec:S4_bd}
-During the \bd sprint planning we choose to work on the following user stories in this sprint. They are labeled with a number in parentheses for reference.
-
-\todo{Tilføj conditions of satisfaction}
+During the \bd sprint planning we choose to work on the following user stories in this sprint. They are labeled with a number in parentheses for reference. Each user story now has a number of \emph{conditions of satisfaction}, as mentioned in \sectionref{sec:processspecs}.
 
 \begin{description}
   \item[Job Prioritization on Jenkins (1)] Developers have specified a desire for some jobs to have a higher priority than other jobs. For example developers would like libraries to run before apps.
+  \begin{itemize}
+    \item \todo{Conditions of satisfaction}
+  \end{itemize}
   \item[Monkey Test on Debug Versions of Apps (2)] With the \db groups working on implementing database sync, they are making a test database available. Monkey tests currently use a development database that might be wiped accidentally. To ensure this does not happen monkey tests should run on debug APKs rather than release APKs.
+  \begin{itemize}
+    \item \todo{Conditions of satisfaction}
+  \end{itemize}
   \item[Decrease Build Times on Jenkins Further (3)] When the queue on Jenkins is long, jobs can take a very long time to build. As we discussed in \sectionref{sec:non-emulator_testing}, the build times can be further reduces by working on the emulator.
+  \begin{itemize}
+    \item \todo{Conditions of satisfaction}
+  \end{itemize}
   \item[Easy Download and Installation of all Apps (4)] In the previous sprint developers were not always using the latest versions of all apps, which lead to issues at the sprint end. The developers therefore want an easy way to download and install the newest version of all apps on their devices.
-  \item[Document Jenkins Structure for Next Semester (5)] To make it easy for the next semester to start working with Jenkins, documentation of the Jenkins structure used is needed.
+  \begin{itemize}
+    \item \todo{Conditions of satisfaction}
+  \end{itemize}
+  \item[Document Jenkins Structure for Next Semester (5)] To make it easy for the next semes\-ter to start working with Jenkins, documentation of the Jenkins structure used is needed.
+  \begin{itemize}
+    \item \todo{Conditions of satisfaction}
+  \end{itemize}
 \end{description}
 
 \section{Group Sprint Planning}\label{sec:S4_group}
+At our internal sprint planning we divide the chosen user stories into tasks and estimate them. For this sprint, we have a total of 70 half days of work. \tableref{tab:sprint4_tasks} shows the tasks we have committed to solve for this sprint. Tasks with a plus (+) are tasks that have been added during the sprint as they were discovered.
+
+\begin{table}%
+  \centering
+  \begin{tabular}{p{0.6\textwidth}rr}
+    \toprule
+    \textbf{Task} & \textbf{User Story} & \textbf{Estimation} \\
+    \midrule
+    Investigate conditions of satisfaction for our user stories & na & 2 \\
+    Make a program to download and install the newest version of each app & 4 & 2 \\
+    Make it so that the Android emulator is only started when no other devices are connected & 3 & 6 \\
+    Connect to all Android devices wirelessly & 3 & 2 \\
+    Connect Android devices permanently to the Internet (renamet til: set up router) & 3 & 2 \\
+    Put debug APKs onto the ftp & 2 & 1 \\
+    Make monkey tests use debug APKs & 2 & 1 \\
+    Install Jenkins Prioritization Plugin & 1 & 1 \\
+    Choose schedule for prioritization plugin & 1 & 2 \\
+    Identify areas for Jenkins documentation (spike) & 5 & 2 \\
+    Write about Jenkins files on server (from spike) & 5 & 2 \\
+    Write about Jenkins structure (from spike) & 5 & 2 \\
+    Investigate method to decrease emulator usage time (spike) & 3 & 1 \\
+    % \midrule
+    % \textbf{Down-prioritized tasks} & & \\
+    % \midrule
+    % \midrule
+    % \textbf{Missed tasks} & & \\
+    % \midrule
+    % \textbf{Rejected tasks} & & \\
+    % \midrule
+    \midrule
+    \textbf{Original total} & & y \\
+    \textbf{Total} & & x \\
+    \bottomrule
+  \end{tabular}
+\caption[Sprint 4 backlog]{Sprint backlog for sprint 4, excluding report tasks. The tasks are listed in no particular order.}
+\label{tab:sprint4_tasks}
+\end{table}
+
+\todo{I dette sprint skal vi også skrive frontmatter, backmatter, introduktion og konklusion}
