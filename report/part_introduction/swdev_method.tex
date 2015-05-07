@@ -16,11 +16,11 @@ One of the great challenges this semester is to coordinate the development proce
 \end{abbreviations}
 
 \section{Multi-Project Organization Method}\label{sec:project_overview}
-The multi-project consists of 14 groups. Two groups of two and the remaining groups consists of four people each\kimnote{Det er ikke rigtigt mere, der er nu to en mans grupper, ikke fordi det betyder noget.}.  All groups collaborate on building the Giraf applications. The groups are organized into three subprojects: \emph{Graphical User Interface} (\gui), \emph{databases} (\db), and \emph{build and deployment} (\bd) by recommendation of the semester coordinator.
+The multi-project consists of 15 groups. All groups collaborate on building the Giraf applications. The groups are organized into three subprojects: \emph{Graphical User Interface} (\gui), \emph{databases} (\db), and \emph{build and deployment} (\bd) by recommendation of the semester coordinator.
 
 The \gui groups deal with bugs and implementing new features in the front-end apps. The \db groups manage and maintain the database. The \bd groups control the tools supporting the building and testing environment as well as the deployment of the apps.
 
-The multi-project groups work with an iterative development method, and the semester is divided into four iterations. No groups have any prior experience with the code base at the start of the project, nor with the requirements of the users\kimnote{Betyder det at i har krav til jeres brugere? Forklar}. Therefore there are many uncertainties associated with the multi-project. This makes the application of an agile method suited for the project. Suppose the multi-project is organized in a traditional method. Then the multi-project groups will spend much time initially analyzing the current code base and future requirements, rather than actually work on making the code base work (a prime wish for the external customer). These requirements may change over time, which makes it difficult to deliver what the users want.
+The multi-project groups work with an iterative development method, and the semester is divided into four iterations. No groups have any prior experience with the code base at the start of the project, nor with the requirements of the external customers. Therefore there are many uncertainties associated with the multi-project. This makes the application of an agile method suited for the project. Suppose the multi-project is organized in a traditional method. Then the multi-project groups will spend much time initially analyzing the current code base and future requirements, rather than actually work on making the code base work (a prime wish for the external customer). These requirements may change over time, which makes it difficult to deliver what the users want.
 
 The agile method used for the project is Scrum, and the groups are organized as Scrum of Scrums. Scrum of Scrums divide the developers into several layers of Scrum teams \parencite{scrum_of_scrums2015}. \figureref{fig:multi_project_organization} shows the structure of the multi-project organization, which consists of three levels:
 
@@ -119,10 +119,9 @@ Two roles from Scrum are used in the multi-project:
 
 \begin{description}
   \item[Scrum Master] On the multi-project level, we are responsible for the development method. This means that we act as Scrum masters on the multi-project level. On the subproject level, one person is charge of the meetings --- they make sure that the Scrum meetings on this level are held. On the group level, each group is free to do what they see fit.
-  \item[Product Owner] The product owner (PO) is responsible for maintaining contact with the customers and being their representatives. It can be difficult to have a single PO with an external customer as customer in the multi-project. Therefore, the \bd and \db groups often do not have the external customer as their direct customer. Rather, these groups help the \gui groups achieve their goal by building solutions for them. The external customer is often not interested in the implementation details of build and database interfaces.\todo{Tilføj kommune IT-mand}
+  \item[Product Owner] The product owner (PO) is responsible for maintaining contact with the customers and being their representatives. It can be difficult to have a single PO with an external customer as customer in the multi-project. Therefore, the \bd and \db groups often do not have the external customer as their direct customer. Rather, these groups help the \gui groups achieve their goal by building solutions for them. The external customer is often not interested in the implementation details of build and database interfaces.
 
-As such, we decided during sprint 1 that there are three POs in the multi-project, one for each subproject. The customer for the \gui PO is the external customer, whereas the customers for the \db and \bd POs are the groups of the other subprojects, as illustrated in \figureref{fig:po_illu}.
-
+  As such, we decided during sprint 1 that there are three POs in the multi-project, one for each subproject. The customer for the \gui PO is the external customer, whereas the customers for the \db and \bd POs are the groups of the other subprojects, as illustrated in \figureref{fig:po_illu}.
 \end{description}
 
 \begin{figure}%
