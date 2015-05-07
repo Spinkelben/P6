@@ -109,8 +109,10 @@ Foreach ($item in $list) {
     # Uninstall old versions and install new version    
     if ($adb) {
         $packagename = [io.path]::GetFileNameWithoutExtension($filename)
+        Write-Host "Trying to uninstall $packagename..."
         & $adb 'uninstall' "$packagename"
+        Write-Host "Trying to install $filename..."
         & $adb 'install' '-r' "$localitem"
     }
 }
-Write-Host "Found and downloaded $count files."
+Write-Host "Found, downloaded, and installed $count files."
