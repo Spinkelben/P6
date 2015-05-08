@@ -81,6 +81,9 @@ In addition the \mono{jobs/} directory contains each project on Jenkins. In \fig
 \begin{figure}
   \dirtree{%
 .1 /srv/jenkins/.
+.2 credentials/.
+.3 artifactory.properies.
+.3 DatabaseCredentials.java.
 .2 google\_play\_keys/.
 .3 google\_play\_api\_key.p12.
 .3 keystore.properties.
@@ -94,9 +97,6 @@ In addition the \mono{jobs/} directory contains each project on Jenkins. In \fig
 .2 project\_version\_codes/.
 .3 libversion.
 .3 versionCodes.properties.
-.2 credentials/.
-.3 artifactory.properies.
-.3 DatabaseCredentials.java.
 .2 \ldots.
 }
 \caption{Jenkins file structure on server} \label{fig:jenkins_file_structure}
