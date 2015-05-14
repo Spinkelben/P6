@@ -39,3 +39,18 @@ start adbd
 To disable it again, the port property is simply set to \code{-1} instead of the port. However, doing this requires root permission on the device. We therefore require devices to be rooted in order to be part of the tablet pool.
 
 To make it easy for developers to enable and disable wireless ADB (and by that add a device to the tablet pool), we develop an Android app to do this. By making it easy to join the tablet pool, we expect that developers are likely to use this feature when they do not use the device.
+
+\section{Adapting Jenkins to Use Physical Devices}
+
+\begin{itemize}
+	\item Update emulator plugin
+	\item New jobflow:
+	\begin{itemize}
+		\item disconnect
+		\item connect
+		\item uninstall
+		\item run build
+		\item uninstall
+		\item disconnect
+	\end{itemize}
+\end{itemize}
