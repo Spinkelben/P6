@@ -11,7 +11,7 @@ The Jenkins plugin comes with three different scheduling algorithms:
 \begin{description}
   \item[Absolute] The queue is strictly ordered by priority. The highest priority job is greedily selected every time a new job is to be executed.
   \item[Fair Queuing] The first job from each priority group is executed with round-robin scheduling. This way, each priority get equal execution time.
-  \item[Weighted Fair Queuing] Each priority gets a fraction of the total throughput. The higher priority, the larger the fraction. \todo{Describe this a bit more}
+  \item[Weighted Fair Queuing] Each priority gets a fraction of the total throughput. The higher priority, the larger the fraction. For example, jobs with priority 1 gets $\frac{1}{2}$ of the total througput, and priority 2 gets $\frac{1}{4}$ and so on.
 \end{description}
 
 The absolute scheduling algorithm clearly improves the throughput of high priority jobs. However, there is a risk of starving jobs. The fair queuing algorithm, on the other hand, does not risk starving jobs. However, it also does not necessarily increase the throughput of high priority tasks. The weighted fair queuing algorithm distributes the resources among the different jobs based on their priorities. The throughput of high priority jobs is increased, and the throughput of low priority tasks is decreased. Because of this, we use the weighted fair queuing algorithm to make library jobs build faster than other jobs on Jenkins.
