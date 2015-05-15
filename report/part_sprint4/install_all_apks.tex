@@ -1,8 +1,9 @@
+%!TEX root = ../report.tex
 \chapter{Easy App Download and Installation}
 The user story \us{Easy Download and Installation of all Apps} describes that developers want to be able to easily install the the most recent versions of all apps on their devices. To solve this problem, we develop a script which downloads the most recent apps from the FTP server. The solution must work on both Unix systems and Windows without any additional software.
 
 \section{Keeping Track of Newest Apps}
-When new applications are built on Jenkins, we upload them to the Giraf FTP server. To keep the download script simple, we extend this upload functionality to also create a symbolic link to the newest version in a \mono{newest\_releases/} directory. This directory contains only one link per app, and thus allows us avoid finding the newest release in a directory containing all releases. Now, we can simply download all files in this directory to have the most recent versions of all apps.
+When new applications are built on Jenkins, we upload them to the Giraf FTP server. To keep the download script simple, we extend this upload functionality to also create a symbolic link to the newest version in a \mono{newest\_releases/} directory. This directory contains only one link per app, and thus allows us avoid finding the newest release in a directory containing all releases\kimnote{It sounds like that you do not want to find the newest version. You mean to write that you avoid having to search for the newest version.}. Now, we can simply download all files in this directory to have the most recent versions of all apps.
 
 \section{Downloading and Installing Apps}
 Because we keep track of the newest apps on the build server, only little work is to be done in the download script. Because of this, we allow ourselves to develop two different scripts: A bash script for Unix and a Powershell script for Windows. These scripts first connect to the FTP server and downloads the apps. Afterwards, it reinstalls each app on a connected device.
