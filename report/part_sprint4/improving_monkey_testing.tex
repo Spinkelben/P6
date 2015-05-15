@@ -1,0 +1,127 @@
+\chapter{Improving Monkey Testing}
+\dummy
+
+\section{Running Monkey Tests on Debug Apps}
+At the moment, monkey tests are run on release versions of the apps. This is problematic as the \db{} groups work on automatic synchronization between devices and the production database. Obviously we do not want the monkey tests to insert dummy data into the production database. It could accidentally delete or modify customer data if we allow it to test on the production database. We therefore need to make the monkey test the debug version of the apps instead, as the debug versions automatically use a development database. This corresponds to user story 3.
+
+Prior to running a monkey test, the application to test has to be installed on the device. To make this installation easy, we put the newest version of each compiled debug application on the FTP server. We use a bash script to move the APK files from a specific project, shown in \listingref{lst:move_debug_apk}. The overall purpose of the script is to first delete the old version of the application from the FTP directory and then move the new one into the FTP directory. The application file is named using the scheme \code{[package name]\_v[version name]b[build number]\_debug\_aligned.apk}. To know which file corresponds to a specific application, we need the package name of the application. Part of this is found in line \ref{move_d:package} by performing the following steps:
+
+\begin{enumerate}
+  \item The package name is contained in the start of the name of the APK file. We use the \code{find} command to search for file names in the project directory which end in \mono{\_debug\_aligned.apk}.
+  \item Afterwards, we pipe the file names to the \code{grep} command and use a regular expression to match anything up to and including the package name. The \code{P} option specifies the Perl regular expression syntax. The \code{o} options makes it so that only the matching part of the input string is printed. For example, \mono{grep} with the input \code{applications/dk.aau.cs.giraf.launcher\_v2.4b2\_debug\_aligned.apk} prints \code{applications/dk.aau.cs.giraf.launcher} (notice that the last part is the package name).
+  \item The result of the match is stored in the variable \code{PACKAGE\_W\_PATH}
+\end{enumerate}
+
+In line \ref{move_d:empty-check} we check if an APK matching the naming scheme was found, by checking if \code{PACKAGE\_W\_PATH} is empty (the \code{z} option). If the resulting match is empty we exit, otherwise, we remove the path from the variable \code{PACKAGE\_W\_PATH} so we have only the package name left. We use this package name to remove the old apk from the FTP folder before we move the new APK to the FTP folder (lines \ref{move_d:move_start}--\ref{move_d:move_end}).
+
+\begin{lstlisting}[language=bash,showstringspaces=false,caption=Script that moves the debug APK to the ftp server,label=lst:move_debug_apk]
+#!/bin/bash
+
+FTP_DIR="/srv/ftp/debug_apks/"
+PACKAGE_W_PATH=$(find . -type f -name "*_debug_aligned.apk" -print | grep ".+(?=_v.+b[0-9]+_debug_aligned\.apk)" -Po) (*@\label{move_d:package}@*)
+echo "FTP dir: "$FTP_DIR
+
+if [ -z "$PACKAGE_W_PATH" ] (*@\label{move_d:empty-check}@*)
+then
+    echo "No file found"
+    exit 1
+else
+    PACKAGE=$(basename $PACKAGE_W_PATH); (*@\label{move_d:move_start}@*)
+    echo "Package: $PACKAGE"
+    echo "Remove old files: $FTP_DIR$PACKAGE"*.apk
+    rm "$FTP_DIR$PACKAGE"*.apk
+    find . -type f -name "*_debug_aligned.apk" -print -exec mv {} "$FTP_DIR" \;
+    exit 0 (*@\label{move_d:move_end}@*)
+fi
+\end{lstlisting}
+
+We add the execution of the move script as a post-build task on all app jobs on Jenkins. We also update the monkey jobs to use the debug versions instead of the release versions. Hence, the user story is solved.
+
+\section{Running Monkey Tests in Parallel}
+With the addition of being able to run tests on multiple physical devices, we need to update monkey tests so that they run in parallel on all connected devices. To do this we first update our script that installs APKs on a device so that it does so in parallel on all connected devices. We do the same for the script that runs the dummy database insertion app. Finally to run the monkey tests in parallel we make a new script, as the Jenkins plugin does not support this feature. We choose not to extend the Jenkins plugin with this feature, as it is faster for us to make a script.
+
+\begin{description}
+    \item[Modified Installation Script] The modified script can be seen in \listingref{lst:install_apks_parallel}. The script loops on the given APKs to install (lines \ref{install_apks_parallel:loop_start}--\ref{install_apks_parallel:loop_end}). We use the GNU parallel program \parencite{Tange2011a} on line \ref{install_apks_parallel:parallel_loop} to install in parallel. It takes a command to execute, in this case \code{install \{1\} \$\{p\}\textbackslash; exit \$?} followed by three colons specifying the arguments. Thus the \code{install} function is called with elements of \code{\$SERIAL\_NUMBER} specified by the \code{\{1\}} following \code{install} in parallel. The \code{\$SERIAL\_NUMBER} variable contains the serial number of all connected devices. We put the \code{exit \$?} after the call to the install function in the parallel loop, as it will otherwise not correctly return the exit code. The installation itself works as before. It has been put into the \code{install} function (lines \ref{install_apks_parallel:install_func_start}--\ref{install_apks_parallel:install_func_end}).\todo{Det kan være at vi fjerner det her, hvis vi beskriver uninstallation scriptet tidligere, da det er samme princip}
+
+    \begin{lstlisting}[language=bash,caption=Script that install APKs on all connected devices in parallel,label=lst:install_apks_parallel]
+    #!/bin/bash
+    install() { (*@\label{install_apks_parallel:install_func_start}@*)
+        INSTALL_OUTPUT="$($ANDROID_HOME/platform-tools/adb -s $1 install $2)"
+        echo $INSTALL_OUTPUT
+
+        IS_SUCCESS="$(echo "$INSTALL_OUTPUT" | grep -i success)"
+
+        if ! [ "$IS_SUCCESS" ]
+        then
+            echo "Error installing $2"
+            exit 1
+        fi
+    } (*@\label{install_apks_parallel:install_func_end}@*)
+    export -f install (*@\label{install_apks_parallel:install_func_export}@*)
+
+    # Exit if no APKs are given
+    if [ $# -eq 0 ]
+    then
+        echo "No APKs found"
+        exit 1
+    fi
+
+    SERIAL_NUMBER="$(/srv/scripts/get_serial_numbers.sh)"
+
+    for p in $@ (*@\label{install_apks_parallel:loop_start}@*)
+    do
+        parallel install {1} ${p}\; exit $? ::: $SERIAL_NUMBER (*@\label{install_apks_parallel:parallel_loop}@*)
+    done (*@\label{install_apks_parallel:loop_end}@*)
+    \end{lstlisting}
+    \item[Modified Dummy Database Insertion Script] The modification to this script is similar to that of the installation script modification. The script can be seen in \appendixref{app:start_wait_db_inserter_parallel}.
+    \item[Run Monkey Test Script] \dummy The script can be seen in \listingref{lst:run_monkey_parallel}.
+
+    \begin{lstlisting}[language=bash,caption=Script that runs monkey tests on all connected devices in parallel,label=lst:run_monkey_parallel]
+    #!/bin/bash
+    BASE_OUTPUT_NAME=${JOB_NAME}_b${BUILD_NUMBER}
+
+    run_monkey() {
+        PACKAGE=$2
+        BASE_OUTPUT_NAME=$3
+        SEED=1
+        NO_EVENTS=1000
+        DELAY=10 # in ms
+
+        $ANDROID_HOME/platform-tools/adb -s $1 shell monkey -v -v -s $SEED --throttle $DELAY -p $PACKAGE $NO_EVENTS > ${BASE_OUTPUT_NAME}_$1.log.tmp
+        $ANDROID_HOME/platform-tools/adb -s $1 shell screencap -p | sed 's/\r$//' > ${BASE_OUTPUT_NAME}_$1.png
+
+        # Get device information
+        $ANDROID_HOME/platform-tools/adb -s $1 shell getprop | grep -E "product|sdk|serial" | grep -v ro.boot | cat - ${BASE_OUTPUT_NAME}_$1.log.tmp > ${BASE_OUTPUT_NAME}_$1.log
+
+        rm ${BASE_OUTPUT_NAME}_$1.log.tmp
+    }
+    export -f run_monkey
+
+    SERIAL_NUMBER="$(/srv/scripts/get_serial_numbers.sh)"
+
+    if [ "$SERIAL_NUMBER" ]
+    then
+        parallel run_monkey {1} $1 $BASE_OUTPUT_NAME ::: $SERIAL_NUMBER
+
+        MONKEY_FAILED=false
+        for s in $SERIAL_NUMBER
+        do
+            MONKEY_FINISHED="$(tail -1 ${BASE_OUTPUT_NAME}_${s}.log | grep -i "monkey finished")"
+
+            if ! [ "$MONKEY_FINISHED" ]
+            then
+                echo "Monkey test on $s appears to have crashed"
+                MONKEY_FAILED=true
+            fi
+        done
+
+        if [ "$MONKEY_FAILED" = true ]
+        then
+            exit 1
+        fi
+    else
+        echo "No device found"
+        exit 1
+    fi
+    \end{lstlisting}
+\end{description}
