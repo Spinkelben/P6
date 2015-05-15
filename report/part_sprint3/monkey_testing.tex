@@ -44,8 +44,9 @@ public class MainActivity extends Activity {
 
 Having installed the dummy database inserter app onto a device, it must be started before running any monkey test. It is vital that the monkey test does not start before the dummy data has been inserted. Otherwise the database will not be populated with usable data.
 
-We therefore make a script, seen in \listingref{lst:start_wait_dummy_db_inserter}, that starts the dummy database inserter app and waits for it to finish. It does so by first starting the app in line 1. It then runs a while loop (lines 5--9) that uses \code{adb shell ps} to list all processes running on the Android device, and then piping that to \code{grep} to check for the specific app. The loop runs for as long as the output is not empty. The loop sleeps in order to not use too much CPU\@.
-\kimnote{This is called busy waiting and is someting that should be avoided (It is an antipattern). However the might not be a better way to do in your case (because you use bash), but you need to describe why you do it this way. It is not hard to find material about busy waiting. This is another great discussion that we might have at the exam. :)}
+We therefore make a script, seen in \listingref{lst:start_wait_dummy_db_inserter}, that starts the dummy database inserter app and waits for it to finish by \emph{busy waiting}. It does so by first starting the app in line 1. It then runs a while loop (lines 5--9) that uses \code{adb shell ps} to list all processes running on the Android device, and then piping that to \code{grep} to check for the specific app. The loop runs for as long as the output is not empty.
+
+Busy waiting is generally to be avoided, as it wastes CPU time \parencite[ch.2]{tanenbaum2007}. An alternative would be to block the process and have the tablet notify the process that it has finished. However, this is difficult and time consuming to implement. To avoid too much waste, we insert a sleep of two seconds, thus blocking the process and freeing up CPU time.\todo{Vigtigt: Læs denne paragraf}
 
 \begin{lstlisting}[language=bash,showstringspaces=false,caption=Start and wait for dummy database inserter,label=lst:start_wait_dummy_db_inserter]
 /srv/android-sdk-linux//platform-tools/adb shell am start -n dk.aau.cs.giraf.dummydbinserter/dk.aau.cs.giraf.dummydbinserter.MainActivity
@@ -62,7 +63,7 @@ echo "finished dummy insertion"
 \end{lstlisting}
 
 \section{Adapting Giraf Apps for Monkey Testing}\label{sec:adapting_apps_for_monkey_testing}
-Each Giraf application expects being started from the launcher, so that information about the current user is passed to the app. This prevents us from running monkey tests on the apps, as the monkey test will start the app without providing this information, resulting in crashes or failure to start. We circumvent this by detecting whether an app was started by a monkey test; if so, we pull log-in information from the database. The process varies by each app\kimnote{rephrase}. We show how to implement the change for the \emph{user manager} app in the activity \mono{MainActivity}.
+Each Giraf application expects being started from the launcher, so that information about the current user is passed to the app. This prevents us from running monkey tests on the apps, as the monkey test will start the app without providing this information, resulting in crashes or failure to start. We circumvent this by detecting whether an app was started by a monkey test; if so, we pull log-in information from the database. The process varies for each app. We show how to implement the change for the \emph{user manager} app in the activity \mono{MainActivity}.
 
 The original code can be seen in \listingref{lst:main_activity_original}. When \mono{MainActivity} is created, it gets the log-in information provided by the launcher (line 7). This information is then passed onto \mono{getProfileFromExtras()} that gets a profile from this information. Line 14--19 shows a snippet of this method. It calls \mono{signInWithGuardianId()} with the ID of a guardian.
 
@@ -121,4 +122,4 @@ public class MainActivity extends FragmentActivity {
 
 In this manner, we circumvent the expectations of the apps when running monkey tests. We create jobs on Jenkins which run monkey tests on all apps every night.
 
-We did not have time to set up automatic notifications to developers whenever a monkey test fails. \kimnote{Based on your experience with people not using CI is it then not very important to inform people about errors? When a new team of students over takes this project will monkey tests then be forgotten?}
+We did not have time to set up automatic notifications to developers whenever a monkey test fails. While this is unfortunate, it was not part of the monkey test user story. In any case it is an important feature to have so that developers are informed of errors in apps automatically, rather then seeking the information themselves. We add this as a user story to the product backlog.
