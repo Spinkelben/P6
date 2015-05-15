@@ -50,7 +50,7 @@ To make it easy for developers to enable and disable wireless ADB (and by that a
 We need to connect to the physical devices before the emulator plugin runs, so that it will not start any emulator. When we have connected to the devices all Giraf apps on those devices must be uninstalled so they do not interfere with anything. Finally we make a script to disconnect any connected devices once a build has finished. Following is a description of the three scripts:
 
 \begin{description}
-  \item[Connection Script] To connect to all devices connected to the router we get the information on the devices page of the router. We first check the connection on line \ref{connect_devices:check_connection} by supplying the \code{i} option so that \code{curl} returns the HTTP header. We then \code{grep 200} to check that there is a connection (code 200 means a successful connection). We then check the error code of that command on line \ref{connect_devices:if_start}. If it is \code{0} then a connection was established. We then get the ports of all devices connected to the router on line \ref{connect_devices:get_ports}. Finally we simply iterate through those ports and connect to them via ADB (lines \ref{connect_devices:connection_loop_start}--\ref{connect_devices:connection_loop_end}).
+  \item[Connection Script] To connect to all devices connected to the router we get the information on the devices page of the router. The script can be seen in \listingref{lst:connect_devices}. We first check the connection on line \ref{connect_devices:check_connection} by supplying the \code{i} option so that \code{curl} returns the HTTP header. We then \code{grep 200} to check that there is a connection (code 200 means a successful connection). We then check the error code of that command on line \ref{connect_devices:if_start}. If it is \code{0} then a connection was established. We then get the ports of all devices connected to the router on line \ref{connect_devices:get_ports}. Finally we simply iterate through those ports and connect to them via ADB (lines \ref{connect_devices:connection_loop_start}--\ref{connect_devices:connection_loop_end}).
 
   \begin{lstlisting}[language=bash,caption=Script that connects to devices,label=lst:connect_devices]
   URL="http://172.25.11.91/cgi-bin/devices"
@@ -73,7 +73,7 @@ We need to connect to the physical devices before the emulator plugin runs, so t
   i = 1
   \end{lstlisting}
 
-  \begin{lstlisting}[language=bash,caption=Script that gets serial numbers of all connected devices,label=lst:get_serial_numbers]
+  \begin{lstlisting}[language=bash,caption=Script that gets the serial numbers of all connected devices,label=lst:get_serial_numbers]
   i = 1
   \end{lstlisting}
   \item[Disconnection Script] \dummy
