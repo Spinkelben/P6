@@ -182,7 +182,19 @@ public class BootReceiver extends BroadcastReceiver {
 
 
 \section{Adapting Jenkins to Use Physical Devices}
-Currently we use a Jenkins plugin called Android Emulator Plugin \parencite{jenkins-emulator-plugin} to run an emulator during each build. When one or more tablets are available for testing, we do not want to start an emulator. The plugin cannot be configured to start an emulator only if there are no devices attached. The Android Emulator Plugin runs as pre and post build steps. The emulator is started before the build, and the cleanup is performed after the build. This makes it hard to configure Jenkins to start the emulator only if there are no physical devices available. Therefore we decide to modify the Android Emulator Plugin to perform a check before starting an emulator. We modify the plugin such that it provides an option to check if there are physical devices available, and only to start an emulator if there are no physical devices already connected. We have submitted a pull request with the changes\footnote{\url{https://github.com/jenkinsci/android-emulator-plugin/pull/50}}. The maintainer of the plugin can choose to merge the request into the main branch of the plugin. This would be an advantage for us, as we the do not have to maintain our fork of the plugin. \listingref{lst:deviceCheck} contains the main addition to the plugin; the method which checks for connected devices. \todo{Mere beskrivelse af koden}
+Currently we use a Jenkins plugin called Android Emulator Plugin \parencite{jenkins-emulator-plugin} to run an emulator during each build. When one or more tablets are available for testing, we do not want to start an emulator. The plugin cannot be configured to start an emulator only if there are no devices attached. The Android Emulator Plugin runs as pre and post build steps. The emulator is started before the build, and the cleanup is performed after the build. This makes it hard to configure Jenkins to start the emulator only if there are no physical devices available. Therefore we decide to modify the Android Emulator Plugin to perform a check before starting an emulator. We modify the plugin such that it provides an option to check if there are physical devices available, and only to start an emulator if there are no physical devices already connected. We have submitted a pull request with the changes\footnote{\url{https://github.com/jenkinsci/android-emulator-plugin/pull/50}}. The maintainer of the plugin can choose to merge the request into the main branch of the plugin. This would be an advantage for us, as we the do not have to maintain our fork of the plugin. \listingref{lst:deviceCheck} contains the main addition to the plugin; the method which checks for connected devices. The main part of the method is preparing for the call in Line \ref{line:runTool}, and parsing the output afterwards. The call is to a method which sends a command to a tool provided by the Android SDK. The call corresponds to writing ``adb -d devices'' in the terminal, if adb is in the path. The parameters to the call are:
+\begin{itemize}
+    \item A \code{Launcher} which is an abstraction of an asynchronous process call, which blocks the calling thread until the operation is completed.
+    \item An environment of variables which the process is run in. The most important variable is the \code{ANDROID\_ADB\_SERVER\_PORT} variable, as it decides which port ADB uses.
+    \item An \code{OutputStream} for standard output. This is where the result of the command is saved.
+    \item An \code{OutputStream} for errors.
+    \item An \code{AndroidSDK} which contains information about and methods relating to the installed Android SDK.
+    \item The tool to run. An Enum with information about the tools provided by the SDK.
+    \item The actual command to send to the tool, formatted as a string. In this case it is "-d devices"
+    \item The \code{FilePath} to the workspace if relevant. In this case it is not, so we just send a null value.	
+\end{itemize}
+
+
 
 \begin{javacode}[caption=The devicesConnected method which checks for connected devices.,label=lst:deviceCheck]
 private boolean devicesConnected(AndroidEmulatorContext emu, PrintStream logger, int adbPort, AbstractBuild<?,?> build) 
@@ -198,7 +210,7 @@ throws IOException, InterruptedException {
         buildEnv.put("LD_LIBRARY_PATH", String.format("%s/tools/lib", emu.sdk().getSdkRoot()));
     }
     //Run the command ADB -d devices
-    Utils.runAndroidTool(emu.launcher(), buildEnv, deviceList, logger, emu.sdk(), Tool.ADB, "-d devices", null);
+    Utils.runAndroidTool(emu.launcher(), buildEnv, deviceList, logger, emu.sdk(), Tool.ADB, "-d devices", null);(*@\label{line:runTool}@*)
     String deviceOutput = deviceList.toString();
     ArrayList<String> deviceNames = getDeviceNames(deviceOutput, logger);
     if (deviceNames == null || deviceNames.isEmpty()) {
@@ -209,5 +221,5 @@ throws IOException, InterruptedException {
     }
 }
 \end{javacode}
-With this change, Jenkins will only start an emulator instance if there are no devices attached. This shortens the build time significantly. 
+After the call, the standard output is converted to a string, and the method \code{getDeviceNames} converts the string into a list of device names. If the list is populated, the there are devices connected and the method returns true. The methods \code{devicesConnected} are called during the emulator startup method, after the build environment is set up, but before the emulator has been started. With this addition to the plugin, Jenkins will only start an emulator instance if there are no devices attached. This shortens the build time significantly. 
 
