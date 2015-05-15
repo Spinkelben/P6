@@ -26,23 +26,23 @@
     \hyphenchar\font=`\-% allowing hyphenation
   }
   \newcommand{\mono}[1]{\texttt{\justify {#1}}}
-  
+
   % Code mono
   \newcommand{\code}[1]{\sethlcolor{clcodeshade}\hl{\texttt{\justify{#1}}}} % Yes, this line is identical to the one in \mono, however the soul-package is fragile, and cannot see into another command.
   \soulregister{\justify}{1}
 
   % Chapter introductions.
   \newcommand{\chapterintro}[1]{#1}
-  
+
   % Group X.
   \newcommand{\group}[1]{Group #1}
-  
+
   % User story.
   \newcommand{\us}[1]{\emph{#1}}
-  
+
   % Project names
   \newcommand{\gproject}[1]{#1}
-  
+
   % Subproject names
   \newcommand{\gui}{GUI\@\xspace} \newcommand{\guititle}{GUI\xspace}
   \newcommand{\db}{DB\@\xspace} \newcommand{\dbtitle}{DB\xspace}
@@ -56,13 +56,13 @@
 
   % Margin text.
   \newcommand{\margintext}[1]{\marginline{\textsf{\footnotesize #1}}}
-  
+
   %\newcommand{\code}[1]{#1}
-  
+
   % Todo.
   \newcommand{\todo}[1]{\fxnote{#1}}
   \FXRegisterAuthor{kim}{notsameaskim}{\color{blue}Kim}
-  
+
   % Dummy line.
   \newcommand{\dummy}{\todo{Lorem ipsum dolor sit amet, consectetur adipiscing elit.}}
 
@@ -77,29 +77,29 @@
     %\phantomsection
     %\clearpage{}
   }
-  
+
   % Chapter grouping.
   \newcommand{\chaptergroup}[1]{
     \clearpage{}
     \part*{#1}
     \addcontentsline{toc}{part}{#1}
   }
-  
+
   % Document organization.
   \newenvironment{documentorganization}
     {\vspace{.5cm}\noindent\textbf{Report Organization}\quad The remainder of this report is organized in the following fashion:\begin{itemize}}
     {\end{itemize}}
-  
+
   % Chapter organization.
   \newenvironment{chapterorganization}
     {\vspace{.5cm}\noindent\textbf{Chapter Organization}\quad The remainder of this chapter is organized in the following fashion:\begin{itemize}}
     {\end{itemize}}
-    
+
    % Abbreviation.
   \newenvironment{abbreviations}
     {\vspace{.5cm}\noindent\textbf{Chapter Abbreviations}\quad This chapter introduces the following abbreviations:\begin{addmargin}[\leftmargin]{0em}\begin{multicols}{2}\begin{description}[noitemsep, style=sameline]}
     {\end{description}\end{multicols}\end{addmargin}}
-    
+
     % Dates.
     \newenvironment{dates}
     {\vspace{.5cm}\noindent\textbf{Project Dates}\quad \dummy:\begin{addmargin}[\leftmargin]{0em}\begin{multicols}{2}\begin{description}[noitemsep, style=sameline]}
@@ -116,7 +116,7 @@
       %\rule{\textwidth}{0.005in}
     \end{figure}
   }
-  
+
   % Scaled figure.
   \newcommand{\figscaled}[4]{
     \begin{figure}[tbp]
@@ -125,7 +125,7 @@
       \caption[#2]{#3}\label{fig:#1}
     \end{figure}
   }
-  
+
   % Figure with custom width.
   \newcommand{\figcustomwidth}[4]{
     \begin{figure}[tbp]

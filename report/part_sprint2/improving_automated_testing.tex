@@ -15,7 +15,7 @@ The setup of Jenkins used in sprint 1 was tedious to work with since all jobs we
 
 The jobs on Jenkins are generally very similar in their configuration. We can benefit from having a base configuration, which the jobs only modify. There exists a Jenkins plug-in for this, called inheritance-plugin \parencite{jenkins-inheritance}. With this plug-in installed, whenever we decide to make a change to e.g.\ the build system, it will not be necessary to change this in each job. Instead, the change can be made on the base job, and all relevant jobs will inherit this change. This also ensures that jobs follow a consistent pipeline and thus do not differ in from job to job.
 
-The plug-in requires the jobs to be of a special \emph{inheritable} type. We therefore have to covert the existing jobs to inheritable jobs to take advantage of this. As it is impossible to convert a existing job to the inheritable type, we have to re-create all the jobs again. This is not that big of a deal, as the time to setup will be considerably shorter when taking advantage of the inheritable job type. When the old jobs are removed the build history will be lost. This is a minor nuisance but we consider it a small price to pay, compared to the advantages. When deciding how to structure the build, we see two general categories that are sufficiently distinct: Android apps and Android libraries. We create an abstract job for each of these. They do overlap somewhat in functionality, which means we have to create an abstract job for each job task. As such we create abstract jobs for e.g.\ \emph{run Gradle}, \emph{run unit tests}, \emph{find and move APKs}, and \emph{publish lint report} \kimnote{Disse navne skulle fremgå af figuren}. The abstract jobs \emph{Android app} and \emph{Android library} inherit from the small abstract tasks that are relevant.
+The plug-in requires the jobs to be of a special \emph{inheritable} type. We therefore have to covert the existing jobs to inheritable jobs to take advantage of this. As it is impossible to convert a existing job to the inheritable type, we have to re-create all the jobs again. This is not that big of a deal, as the time to setup will be considerably shorter when taking advantage of the inheritable job type. When the old jobs are removed the build history will be lost. This is a minor nuisance but we consider it a small price to pay, compared to the advantages. When deciding how to structure the build, we see two general categories that are sufficiently distinct: \emph{Android Apps} and \emph{Android Libraries}. We create an abstract job for each of these. They do overlap somewhat in functionality, which means we have to create an abstract job for each job task. As such we create abstract jobs for e.g.\ \emph{Email}, \emph{Emulator}, and \emph{CoCo} (code coverage). The abstract jobs Android App and Android Library inherit from the small abstract tasks that are relevant.
 
 We have modeled this as a diagram in \figureref{fig:jenkins_inherit}.
 
@@ -40,8 +40,8 @@ We have modeled this as a diagram in \figureref{fig:jenkins_inherit}.
   
   \begin{scope}[yshift=-2cm]
     \matrix[column sep=1.5cm]{
-      \node[simplefixed] (appInh) {App Inheritable}; &
-      \node[simplefixed] (libInh) {Lib Inheritable}; \\
+      \node[simplefixed] (appInh) {Android App}; &
+      \node[simplefixed] (libInh) {Android Library}; \\
     };
   \end{scope}
   
@@ -87,12 +87,12 @@ We have modeled this as a diagram in \figureref{fig:jenkins_inherit}.
 \end{figure}
 
 \section{Monkey Testing}\label{sec:monkey_testing_s2}
-During sprint 1 we encountered some difficulties related to monkey testing. In order to monkey test we need to install the apps on an Android device, but we did not have these easily available\kimnote{rephrase, make it clear that you talk about the apps that need to be monkey tested.}. As described in \chapterref{sec:upload_google_play} the signed APKs for each app is now stored on the ftp sever. As the ftp server is hosted on the same machine as Jenkins, we can directly access the APKs from the directory. To install we simply need to identify the newest build of each app, as, for now, the old builds are kept as well.  
+During sprint 1 we encountered some difficulties related to monkey testing. In order to monkey test apps we need to install those apps on an Android device, but we did not have these easily available. As described in \chapterref{sec:upload_google_play} the signed APKs for each app is now stored on the FTP sever. As the FTP server is hosted on the same machine as Jenkins, we can directly access the APKs from the directory. To install we simply need to identify the newest build of each app, as, for now, the old builds are kept as well.  
 
-To install a specific app to an Android device, we use the script seen in \listingref{lst:find_newest_apk}, parsing to it the application id of the app. All APKs containing the given application id is then found. This result is piped to \code{sed 's|.*b||' |'s|\_release\_aligned.apk||' }\kimnote{consider changing the separation symbol in sed such that it is not the same as pipe.} that removes everything but the build number of the files. \code{awk '\$0>x\{x=\$0\};END\{print x\}'} then finds the maximum build number. Finally the newest APK for the given application id is found.
+To install a specific app to an Android device, we use the script seen in \listingref{lst:find_newest_apk}, parsing to it the application id of the app. All APKs containing the given application id is then found. This result is piped to \code{sed 's/.*b//' | sed 's/\_release\_aligned.apk//'} that removes everything but the build number of the files. \code{awk '\$0>x\{x=\$0\};END\{print x\}'} \parencite{stackoverflow-max-number2012} then finds the maximum build number. Finally the newest APK for the given application id is found.
 
 \begin{lstlisting}[language=bash,showstringspaces=false,caption=Script that finds the newest build number for a particular application id,label=lst:find_newest_apk]
-NEWEST_BUILD="$(find /srv/ftp/newest_apks/ -name "$1*release_aligned.apk" | sed 's|.*b||' | sed 's|_release_aligned.apk||' | awk '$0>x{x=$0};END{print x}')"
+NEWEST_BUILD="$(find /srv/ftp/newest_apks/ -name "$1*release_aligned.apk" | sed 's/.*b//' | sed 's/_release_aligned.apk//' | awk '$0>x{x=$0};END{print x}')"
 find /srv/ftp/newest_apks/ -name "$1*b${NEWEST_BUILD}_release_aligned.apk"
 \end{lstlisting}
 
@@ -103,13 +103,12 @@ The \mono{monkey} command does not support sending extra information when starti
 \section{App Installation Test Case}\label{sec:s3_appinstallationtest}
 To ensure that all apps of the multi-project are compatible a test on Jenkins is run nightly that installs all apps on a single device. At the end of sprint 1 the GUI groups had issues installing a combination of apps on a single device --- this test case should avoid such an issue in the future.
 
-To do this we find the newest version of all available APKs on the server. These APKs are the same that are uploaded to Google Play. The script seen in \listingref{lst:find_all_newest_apks} finds the application id for each available app by finding all files in the directory containing APKs. It then pipes these files to \code{sed 's|.*/||'} which removes the path of the file. This is then piped to \code{sed 's|\_v.*||'} that removes everything following the package id. The output of that is then sorted and all duplicates are removed using \code{sort | uniq}. The sort is necessary as \mono{uniq} only removes duplicate lines that are adjacent. 
+To do this we find the newest version of all available APKs on the server. These APKs are the same that are uploaded to Google Play. The script seen in \listingref{lst:find_all_newest_apks} finds the application id for each available app by finding all files in the directory containing APKs. It then pipes these files to \code{sed 's:.*/::'} which removes the path of the file. This is then piped to \code{sed 's/\_v.*//'} that removes everything following the package id. The output of that is then sorted and all duplicates are removed using \code{sort | uniq}. The sort is necessary as \mono{uniq} only removes duplicate lines that are adjacent. 
 
 The application names are then send to \mono{find\_newest\_apk.sh}, as seen previously in \listingref{lst:find_newest_apk}.
 
 \begin{lstlisting}[language=bash,showstringspaces=false,caption=Script that finds the newest available APK for all apps,label=lst:find_all_newest_apks]
-PACKAGE_NAMES="$(find /srv/ftp/newest_apks/ -name "*release_aligned.apk" | sed 's|.*/||' | sed 's|_v.*||' | sort | uniq)"
-
+PACKAGE_NAMES="$(find /srv/ftp/newest_apks/ -name "*release_aligned.apk" | sed 's:.*/::' | sed 's/_v.*//' | sort | uniq)"
 
 for p in $PACKAGE_NAMES
 do
@@ -117,7 +116,7 @@ do
 done
 \end{lstlisting}
 
-When the newest available APK for each app has been found, they are installed on an Android device. Line 3 tries to install an APK and stores the output in \mono{INSTALL\_OUTPUT}\kimnote{remember to reference install\_apks\_on\_android\_device}. The output is stored, as \mono{adb install} gives an error code of 0, even if it fails. We therefore have to read the output to check if an error occurred so that Jenkins will report the job as a failure. This is done at line 6 where we check that the output contains the string \mono{success}. The \mono{-i} option makes \mono{grep} case insensitive. At line 9--10 we exit with 1 if the output does not contain \mono{success}.
+When the newest available APK for each app has been found, they are installed on an Android device. This script is seen in \listingref{lst:install_apks_on_android_device}. Line 3 tries to install an APK and stores the output in \code{INSTALL\_OUTPUT}. The output is stored, as \code{adb install} gives an error code of \code{0}, even if it fails. We therefore have to read the output to check if an error occurred so that Jenkins will report the job as a failure. This is done at line 6 where we check that the output contains the string \code{success}. The \code{i} option makes \code{grep} case insensitive. At line 9--10 the script exits with \code{1} if the output does not contain \code{success}.
 
 \begin{lstlisting}[language=bash,showstringspaces=false,caption=Script that installs the given APKs to an Android device,label=lst:install_apks_on_android_device]
 for a in $@
@@ -138,21 +137,7 @@ done
 If the installation of any app fails on the device, the Jenkins job will fail.
 
 \section{Code Coverage Reports}\label{sec:s3_linecoverage}
-We have a user story which states that Jenkins should provide code coverage metrics for every project. This user story was generated by a group which was writing test of a database project and wanted a measure of their progress. Their main request is for a percentage of lines of code covered. A tool for code coverage report must at least provide this metric, but other more detailed metrics will also be nice to have. In version 0.10 of the \emph{New Android SDK Build System} \parencite{new-build-android}, support for the JaCoCo \parencite{jacoco-home} Java Code Coverage Library was included. It meets all of our demands for metrics and is nicely integrated into the Android and Gradle build system. To make JaCoCo generate a report all one needs to do is to add the code shown in \listingref{lst:Jacoco} to the \mono{build.gradle} file of the project.
-
-\begin{gradlecode}[caption=Gradle script for enabling JaCoCo,label=lst:Jacoco]
-dependencies {
-    mavenCentral()
-}
-android {
-    buildTypes {
-        debug {
-            testCoverageEnabled true
-        }
-    }
-}
-\end{gradlecode}{}
-\kimnote{Config files are not very interesting, this also applies to maven configs. Only add them if you did something smart or complex. I suggest that you remove them from your report.}
+We have a user story which states that Jenkins should provide code coverage metrics for every project. This user story was generated by a group which was writing test of a database project and wanted a measure of their progress. Their main request is for a percentage of lines of code covered. A tool for code coverage report must at least provide this metric, but other more detailed metrics will also be nice to have. In version 0.10 of the \emph{New Android SDK Build System} \parencite{new-build-android}, support for the JaCoCo \parencite{jacoco-home} Java Code Coverage Library was included. It meets all of our demands for metrics and is nicely integrated into the Android and Gradle build system. To make JaCoCo generate a report all one needs to do is to add some simply code to the \mono{build.gradle} file of the project.
 
 Now we generate code coverage reports for debug builds locally and in Jenkins. We would like to also publish the code coverage results in Jenkins. There exists a Jenkins plugin \parencite{jacoco-jenkins-plugin} for this purpose. This plugin is easy to setup, provides detailed coverage statistics, and an overview with the percentage of lines of code covered. We use this plugin for publishing the code coverage metrics in Jenkins. An example of this can be seen in \figureref{fig:jenkins-overview-coco}
 
@@ -161,3 +146,36 @@ Now we generate code coverage reports for debug builds locally and in Jenkins. W
     \caption{Screenshot of a section of the build overview screen which shows the code coverage column}
     \label{fig:jenkins-overview-coco}
 \end{figure}
+
+\section{Upload of Apps to Google Play}\label{sec:upload_google_play}
+Jenkins compiles and builds the Giraf projects but does nothing with the generated APKs. One of the user stories selected in this sprint is \us{automatic upload of alpha releases to Google Play}.
+
+Before the APKs can be published to Google Play, they need to be signed with a signature. The Android plugin for Gradle has functionality for automatic signing of APKs, and we will use this to sign. A keystore file is used to sign, and we are not interested in everybody having this file as it serves as a proof of identification. We save the file on the server, which means that it becomes impossible to build release versions of the apps locally using the Giraf keystore. When uploading a new app to Google Play, the version code of the new app must be greater than the version code of the app already in the app store. Incrementing the version code is not done per default, so we need to set up the build to increase the version code every time an app is successfully built. 
+
+We have written a Gradle plugin handling this with the major part of this seen in \listingref{lst:gradle_versioncode}. The plugin keeps a properties file with the current version code for all apps. Upon executing the \mono{increaseVersionCode} Gradle task, it reads the version code (line 8) from the properties file and increments it (line 12). Then it writes it to the app manifest file (line 13), such that the build following will use the new version code. Finally, it updates the property file with the new version code (line 15), such that the next build will use this version code. If no current version code is found in the properties file (line 21), we assume the app is new and starts at version code \mono{1}, and as such we do not increment it (line 10).
+\begin{gradlecode}[caption=Part of our Gradle plugin for updating version code,label=lst:gradle_versioncode]
+project.task('increaseVersionCode') << {
+    // [...]
+    // Check to see if properties file exists.
+    if (project.file(versionCodesFilePath).exists() != true) {
+        throw new GradleException("No version code file found. Only Jenkins should run this task")
+    }
+    // [...]
+    def newVersion = getVersionCode(project, applicationId)
+    def versionCode = newVersion['value']
+    if (!newVersion['created']) {
+        // Increment version code if not new
+        versionCode++
+        // Write incremented version code to manifest
+        // [...]
+        // Write incremented version code back to properties file
+        // [...]
+    }
+}
+
+def getVersionCode(project, applicationId) {
+    // Reads the version code from the properties file. Returns 1 if the version code does not exist.
+}
+\end{gradlecode}
+ 
+Now that the APKs have been signed, they need to be uploaded to Google Play. This can be done in two ways: Via a Jenkins plugin \parencite{jenkins-play-plugin} or through Gradle \parencite{gradle-play-plugin}. The Jenkins plugin is easy to use, but requires that the exact name and location of the of the APK to upload is known. The Gradle plugin knows this already, since the information is already present in the Gradle build environment. Therefore we use Gradle to publish to Google Play via a Google Play API\@. After the APKs have been uploaded, they are moved to the ftp server which is hosted on the same machine as Jenkins in the directory \mono{/srv/ftp/}. This way the APKs are also available outside of the Google Play store.
