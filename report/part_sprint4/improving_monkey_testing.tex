@@ -1,7 +1,12 @@
 \chapter{Improving Monkey Testing}
-\dummy
+We make some changes to the way monkey tests are performed this sprint.
 
-\section{Running Monkey Tests on Debug Apps}
+\begin{chapterorganization}
+  \item in \sectionref{sec:monkey_test_debug_app} we make monkey tests run on debug apps rather than release apps;
+  \item in \sectionref{sec:monkey_in_parallel} we update monkey tests to be able to run in parallel on all connected devices, because of the addition of physical devices being used by Jenkins now.
+\end{chapterorganization}
+
+\section{Running Monkey Tests on Debug Apps}\label{sec:monkey_test_debug_app}
 At the moment, monkey tests are run on release versions of the apps. This is problematic as the \db{} groups work on automatic synchronization between devices and the production database. Obviously we do not want the monkey tests to insert dummy data into the production database. It could accidentally delete or modify customer data if we allow it to test on the production database. We therefore need to make the monkey test the debug version of the apps instead, as the debug versions automatically use a development database. This corresponds to user story 3.
 
 Prior to running a monkey test, the application to test has to be installed on the device. To make this installation easy, we put the newest version of each compiled debug application on the FTP server. We use a bash script to move the APK files from a specific project, shown in \listingref{lst:move_debug_apk}. The overall purpose of the script is to first delete the old version of the application from the FTP directory and then move the new one into the FTP directory. The application file is named using the scheme \code{[package name]\_v[version name]b[build number]\_debug\_aligned.apk}. To know which file corresponds to a specific application, we need the package name of the application. Part of this is found in line \ref{move_d:package} by performing the following steps:
@@ -37,7 +42,7 @@ fi
 
 We add the execution of the move script as a post-build task on all app jobs on Jenkins. We also update the monkey jobs to use the debug versions instead of the release versions. Hence, the user story is solved.
 
-\section{Running Monkey Tests in Parallel}
+\section{Running Monkey Tests in Parallel}\label{sec:monkey_in_parallel}
 With the addition of being able to run tests on multiple physical devices, we need to update monkey tests so that they run in parallel on all connected devices. To do this we first update our script that installs APKs on a device so that it does so in parallel on all connected devices. We do the same for the script that runs the dummy database insertion app. Finally to run the monkey tests in parallel we make a new script, as the Jenkins plugin does not support this feature. We choose not to extend the Jenkins plugin with this feature, as it is faster for us to make a script.
 
 \begin{description}
