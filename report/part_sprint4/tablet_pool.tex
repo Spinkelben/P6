@@ -21,26 +21,6 @@ Script is called in a cron job. Because stability and if it crashes it will be e
 \section{Creating Route from Server to Tablet}
 Testing the above setup revealed that the server and our router is separated on the network. The only traffic we can get through is ping. We went to IT Services at Aalborg University and got our router moved to the same network as the server. \todo{Skriv dette pænere og mere fyldestgørende?}
 
-\section{Wireless ADB App}
-The Android Debug Bridge\footnote{Android SDK tool which manages communication between a computer and a device.} (ADB) tool supports device communication over Wi-Fi out-of-the-box\parencite{AndroidADB}. This is very convenient for us, because the interface for communication between computer and device is the same no matter if the devices are connected by wire or not. To connect a device wirelessly to a computer, the following steps are to be performed:
-\begin{enumerate}
-  \item Connect the device to the computer using USB
-  \item Run \code{adb tcpip <port>} to enable Wi-Fi debugging
-  \item Disconnect the devices
-  \item Run \code{adb connect <ip>:<port>} to connect to the device with the specified ip and port
-\end{enumerate}
-There is one problem with this, though: We do not have physical access to the server and can not attach a device using USB\@. Therefore, we need a way to avoid this step. We can do that by setting at specific property in an Android configuration file \parencite{stackoverflow-adb-tcp}. Wireless ADB is enabled by executing the following commands in the Android shell:
-\begin{lstlisting}
-su
-setprop service.adb.tcp.port <port>
-stop adbd
-start adbd
-\end{lstlisting}
-To disable it again, the port property is simply set to \code{-1} instead of the port. However, doing this requires root permission on the device. We therefore require devices to be rooted in order to be part of the tablet pool. The expected port in the ADB tool is $5555$, so we use that on the device.
-
-To make it easy for developers to enable and disable wireless ADB (and by that add a device to the tablet pool), we develop an Android app to do this, shown in \figureref{fig:jenkins_wireless_screenshot}. By making it easy to join the tablet pool, we expect that developers are likely to use this feature when they do not use the device.
-\fig{jenkins_wireless_screenshot}{Adb app}{Wireless ADB app}
-
 \section{Adapting Jenkins to Use Physical Devices}
 
 \begin{itemize}
@@ -94,8 +74,27 @@ The overall flow of a job is now:
   \item Disconnect devices
 \end{enumerate}
 
-We start by disconnecting devices to make sure the connections are up to date. If a device somehow loses Internet connection, it will not appear to have been disconnected unless we specifically disconnect it. After having disconnected any devices we then connect to all devices. When a connection has been established, we uninstall all installed Giraf apps. While we do this after the build itself, we must also do it initially. This is because groups might install Giraf apps on their devices while disconnected from the test network, and then connect their tablets to the test network later. We also do not want to leave any apps on the devices if groups want to use their tablets after they have been tested on. When we have performed the build and uninstalled any Giraf apps we disconnect the devices.
+\section{Wireless ADB App}
+The Android Debug Bridge\footnote{Android SDK tool which manages communication between a computer and a device.} (ADB) tool supports device communication over Wi-Fi out-of-the-box\parencite{AndroidADB}. This is very convenient for us, because the interface for communication between computer and device is the same no matter if the devices are connected by wire or not. To connect a device wirelessly to a computer, the following steps are to be performed:
+\begin{enumerate}
+  \item Connect the device to the computer using USB
+  \item Run \code{adb tcpip <port>} to enable Wi-Fi debugging
+  \item Disconnect the devices
+  \item Run \code{adb connect <ip>:<port>} to connect to the device with the specified ip and port
+\end{enumerate}
+There is one problem with this, though: We do not have physical access to the server and cannot attach a device using USB\@. Therefore, we need a way to avoid this step. We can do that by setting at specific property in an Android configuration file \parencite{stackoverflow-adb-tcp}. Wireless ADB is enabled by executing the following commands in the Android shell:
+\begin{lstlisting}
+su
+setprop service.adb.tcp.port <port>
+stop adbd
+start adbd
+\end{lstlisting}
+To disable it again, the port property is simply set to \code{-1} instead of the port. However, doing this requires root permission on the device. We therefore require devices to be rooted in order to be part of the tablet pool. The expected port in the ADB tool is $5555$, so we use that on the device.
 
+To make it easy for developers to enable and disable wireless ADB (and by that add a device to the tablet pool), we develop an Android app to do this, shown in \figureref{fig:jenkins_wireless_screenshot}. By making it easy to join the tablet pool, we expect that developers are likely to use this feature when they do not use the device.
+\fig{jenkins_wireless_screenshot}{Adb app}{Wireless ADB app}
+
+We start by disconnecting devices to make sure the connections are up to date. If a device somehow loses Internet connection, it will not appear to have been disconnected unless we specifically disconnect it. After having disconnected any devices we then connect to all devices. When a connection has been established, we uninstall all installed Giraf apps. While we do this after the build itself, we must also do it initially. This is because groups might install Giraf apps on their devices while disconnected from the test network, and then connect their tablets to the test network later. We also do not want to leave any apps on the devices if groups want to use their tablets after they have been tested on. When we have performed the build and uninstalled any Giraf apps we disconnect the devices.
 
 \subsection{Android App Implementation}
 To run the shell script in the app, we execute the code shown in \listingref{lst:android_app_shell}. When we execute \code{su} (line 5), the device shows a dialog which asks the user for root permission. After accepting, every subsequent \code{su} call will be executed without need for permission. The method returns the exit code of the command so it can be handled accordingly by the caller.
