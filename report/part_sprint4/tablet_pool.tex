@@ -47,15 +47,40 @@ To make it easy for developers to enable and disable wireless ADB (and by that a
 \end{itemize}
 
 \section{Adapting Job Flow on Jenkins}
+We need to connect to the physical devices before the emulator plugin runs, so that it will not start any emulator. When we have connected to the devices all Giraf apps on those devices must be uninstalled so the do not interfere with anything. Finally we make a script to disconnect any connected devices once a build has finished. Following is a description of the three scripts:
 
-\begin{itemize}
-  \item New jobflow:
-  \begin{itemize}
-    \item disconnect
-    \item connect
-    \item uninstall
-    \item run build
-    \item uninstall
-    \item disconnect
-  \end{itemize}
-\end{itemize}
+\begin{description}
+  \item[Connection Script] To connect to all devices connected to the router we get the information on the devices page of the router. We first check the connection on line \ref{connect_devices:check_connection} by supplying the \code{i} option so that \code{curl} returns the HTTP header. We then \code{grep 200} to check that there is a connection (code 200 means a successful connection). We then check the error code of that command on line \ref{connect_devices:if_start}. If it is \code{0} then a connection was established. We then get the ports of all devices connected to the router on line \ref{connect_devices:get_ports}. Then we simply iterate through those ports and connect to them via ADB (lines \ref{connect_devices:connection_loop_start}--\ref{connect_devices:connection_loop_end}).
+
+  \begin{lstlisting}[language=bash,caption=Script that connects to devices,label=lst:connect_devices]
+  URL="http://172.25.11.91/cgi-bin/devices"
+
+  curl --connect-timeout 10 -i --silent $URL | head -1 | grep 200 > /dev/null (*@\label{connect_devices:check_connection}@*)
+
+  if [ "$?" -eq "0" ] (*@\label{connect_devices:if_start}@*)
+  then
+      DEVICE_PORTS="$(curl --silent $URL)" (*@\label{connect_devices:get_ports}@*)
+      for d in $DEVICE_PORTS (*@\label{connect_devices:connection_loop_start}@*)
+      do
+          $ANDROID_HOME/platform-tools/adb connect 172.25.11.91:$d
+      done (*@\label{connect_devices:connection_loop_end}@*)
+  else
+      echo "No connection found"
+  fi
+  \end{lstlisting}
+  \item[Uninstallation Script] \dummy
+  \item[Disconnection Script] \dummy
+\end{description}
+
+The overall flow of a job is now:
+
+\begin{enumerate}
+  \item Disconnect devices
+  \item Connect to devices
+  \item Uninstall apps
+  \item Run build
+  \item Uninstall apps
+  \item Disconnect devices
+\end{enumerate}
+
+We start by disconnecting devices to make sure the connections are up to date. If a device somehow loses Internet connection, it will not appear to have been disconnected unless we specifically disconnect it. After having disconnected any devices we then connect to all devices. When a connection has been established, we uninstall all installed Giraf apps. While we also do this after the build itself, we must also do it initially. This is because groups might install Giraf apps on their devices while disconnected from the test network, and then connect their tablets to the test network later. We also do not want to leave any apps on the devices if groups want to use their tablets after they have been tested on. When we have performed the build and uninstalled any Giraf apps we disconnect the devices.
