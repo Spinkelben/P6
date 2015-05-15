@@ -45,15 +45,42 @@ We need to connect to the physical devices before the emulator plugin runs, so t
   \end{lstlisting}
   \item[Uninstallation Script] \dummy
   \begin{lstlisting}[language=bash,caption=Script that uninstalls all installed Giraf apps on all devices,label=lst:uninstall_apks]
-  i = 1
+  SERIAL_NUMBER="$(/srv/scripts/get_serial_numbers.sh)"
+
+  uninstall() {
+    # Find all installed giraf apps on this device
+    PACKAGE_NAMES="$($ANDROID_HOME/platform-tools/adb -s $1 shell pm list packages -f | grep dk.aau.cs.giraf | sed 's/.*apk=//' | tr -d '\n')"
+
+    for p in $PACKAGE_NAMES
+    do
+        echo "Uninstalling $p on $1"
+        $ANDROID_HOME/platform-tools/adb -s $1 uninstall $p
+    done
+  }
+  export -f uninstall
+
+  # Only uninstall if there is a device
+  if [ "$SERIAL_NUMBER" ]
+  then
+      parallel uninstall ::: $SERIAL_NUMBER
+  else
+      echo "No device found. Not uninstalling."
+  fi
   \end{lstlisting}
+
+  The script to get the serial numbers of connected devices can be seen in \listingref{lst:get_serial_numbers}.
 
   \begin{lstlisting}[language=bash,caption=Script that gets the serial numbers of all connected devices,label=lst:get_serial_numbers]
   i = 1
   \end{lstlisting}
-  \item[Disconnection Script] \dummy
+  \item[Disconnection Script] To disconnect all connected devices we simply get the serial number of all connected devices on line \ref{disconnect_devices:get_serial_numbers}. We then run a loop that disconnects those serial numbers (lines \ref{disconnect_devices:loop_start}--\ref{disconnect_devices:loop_end}).
   \begin{lstlisting}[language=bash,caption=Script that disconnects all connected devices,label=lst:disconnect_devices]
-  i = 1
+  SERIAL_NUMBER="$(/srv/scripts/get_serial_numbers.sh)" (*@\label{disconnect_devices:get_serial_numbers}@*)
+
+  for s in $SERIAL_NUMBER (*@\label{disconnect_devices:loop_start}@*)
+  do
+      $ANDROID_HOME/platform-tools/adb disconnect $s
+  done (*@\label{disconnect_devices:loop_end}@*)
   \end{lstlisting}
 \end{description}
 
@@ -69,7 +96,7 @@ The overall flow of a job is now:
 \end{enumerate}
 
 \section{Wireless ADB App}
-The Android Debug Bridge\footnote{Android SDK tool which manages communication between a computer and a device.} (ADB) tool supports device communication over Wi-Fi out-of-the-box\parencite{AndroidADB}. This is very convenient for us, because the interface for communication between computer and device is the same no matter if the devices are connected by wire or not. To connect a device wirelessly to a computer, the following steps are to be performed:
+The Android Debug Bridge\footnote{Android SDK tool which manages communication between a computer and a device.} (ADB) tool supports device communication over Wi-Fi out-of-the-box \parencite{AndroidADB}. This is very convenient for us, because the interface for communication between computer and device is the same no matter if the devices are connected by wire or not. To connect a device wirelessly to a computer, the following steps are to be performed:
 \begin{enumerate}
   \item Connect the device to the computer using USB
   \item Run \code{adb tcpip <port>} to enable Wi-Fi debugging
@@ -86,7 +113,7 @@ start adbd
 To disable it again, the port property is simply set to \code{-1} instead of the port. However, doing this requires root permission on the device. We therefore require devices to be rooted in order to be part of the tablet pool. The expected port in the ADB tool is $5555$, so we use that on the device.
 
 To make it easy for developers to enable and disable wireless ADB (and by that add a device to the tablet pool), we develop an Android app to do this, shown in \figureref{fig:jenkins_wireless_screenshot}. By making it easy to join the tablet pool, we expect that developers are likely to use this feature when they do not use the device.
-\fig{jenkins_wireless_screenshot}{Adb app}{Wireless ADB app}
+\figcustomwidth{jenkins_wireless_screenshot}{Adb app}{Wireless ADB app}{\textwidth}
 
 \subsection{Android App Implementation}
 To run the shell script in the app, we execute the code shown in \listingref{lst:android_app_shell}. When we execute \code{su} (line 5), the device shows a dialog which asks the user for root permission. After accepting, every subsequent \code{su} call will be executed without need for permission. The method returns the exit code of the command so it can be handled accordingly by the caller.
@@ -112,7 +139,7 @@ public static int enableWifiAdb() throws IOException, InterruptedException {
   }
 }
 \end{javacode}
-If the device of some reason is rebooted, we make sure that automatically enables wireless ADB when it is started. We do this by declaring a \code{BroadcastReceiver}, which is automatically triggered when the device is booted. The receiver is declared in the Android manifest file and implemented as shown in \listingref{lst:android_app_broadcast_receiver}. The \code{onReceive()} method (lines 3--8) is called when the broadcast is received. We set the state of wireless ADB according to the user's preference (lines 19--27). We also set a notification (lines 21 and 25) to show the ADB state to the user.
+If the device for some reason is rebooted, we make sure to automatically enable wireless ADB when the device is started. We do this by declaring a \code{BroadcastReceiver}, which is automatically triggered when the device is booted. The receiver is declared in the Android manifest file and implemented as shown in \listingref{lst:android_app_broadcast_receiver}. The \code{onReceive()} method (lines 3--8) is called when the broadcast is received. We set the state of wireless ADB according to the user's preference (lines 19--27). We also set a notification (lines 21 and 25) to show the ADB state to the user.
 
 \begin{javacode}[float,label=lst:android_app_broadcast_receiver,caption=Android boot broadcast receiver]
 public class BootReceiver extends BroadcastReceiver {
