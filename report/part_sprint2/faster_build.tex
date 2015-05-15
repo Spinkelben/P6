@@ -213,7 +213,7 @@ Because the credentals file is stored on the build server, it is also not possib
 \section{Automating Dependency Management}\label{sec:automating_vm}
 With the dependency workflow defined, we integrate it with continuous integration. As earlier mentioned, we want to automate as much as possible to ease the work of the developers. For dependency management, Gradle already does a lot for us: It automatically locates and downloads declared dependencies and creates tasks for publishing new ones to the artifact repository.
 
-In addition to this, we automate release versioning to some degree. Developers need not to declare the version of a library in its build file --- instead, they simply include the keywords \mono{@patch}, \mono{@minor}, or \mono{@major} in the commit message to release a patch, minor, or major version, respectively. This automatically takes care of increasing and resetting version numbers. For example, if the current version is \mono{1.2.3}, a \mono{@minor} keyword will release a new artifact with version \mono{1.3.0}. If no keyword is given, the release is assumed to be a pre-release, which causes the version name to be the \emph{next} patch release number with a \mono{-SNAPSHOT} postfix (e.g.\ \mono{1.2.4-SNAPSHOT} if the most recent release is \mono{1.2.3}). If multiple commits are pushed at the same time, we trigger only one pre-release build per release. For example, if it contains four commits with messages \mono{test1}, \mono{test2}, \mono{@patch}, \mono{test3}, respectively, two pre-releases (one before and one after the patch) and one patch are build. Similarly, if a push contains several commits without any release keyword, only one pre-release will be built. \figureref{fig:git_library_versions} illustrates this behavior. 
+In addition to this, we automate release versioning to some degree. Developers need not to declare the version of a library in its build file --- instead, they simply include the keywords \mono{@patch}, \mono{@minor}, or \mono{@major} in the commit message to release a patch, minor, or major version, respectively. This automatically takes care of increasing and resetting version numbers. For example, if the current version is \mono{1.2.3}, a \mono{@minor} keyword will release a new artifact with version \mono{1.3.0}. If no keyword is given, the release is assumed to be a pre-release, which causes the version name to be the \emph{next} patch release number with a \mono{-SNAPSHOT} postfix (e.g.\ \mono{1.2.4-SNAPSHOT} if the most recent release is \mono{1.2.3}). If multiple commits are pushed at the same time, we trigger only one pre-release build per release. For example, if it contains four commits with messages \mono{test1}, \mono{test2}, \mono{@patch}, \mono{test3}, respectively, two pre-releases (one before and one after the patch) and one patch are build. Similarly, if a push contains several commits without any release keyword, only one pre-release will be built. \figureref{fig:git_library_versions} illustrates this behavior.
 \begin{figure}
   \centering
   \tikzsetnextfilename{git_library_versions}
@@ -229,7 +229,7 @@ In addition to this, we automate release versioning to some degree. Developers n
   \node[simple, below=of local-3] (local-4) {E};
   \node[simple, draw opacity=0, fill opacity=0, below=of local-4] (dummy2) {A};
   \node[simple, left=of dummy2, xshift=-0.3cm] (master-2) {F};
-  
+
   %Versions
   \node[right=of local-3] (major-version) {\mono{1.2.4}};
   \node[right=of dummy] (init-version) {\mono{1.2.3}};
@@ -245,7 +245,7 @@ In addition to this, we automate release versioning to some degree. Developers n
   \node[simple, draw opacity=0, fill opacity=0, right=of dummy] (dummy3) {A};
   \node[right=of local, xshift=-0.55cm] (version) {\phantom{g}Version\phantom{g}};
   \node[right=of local, xshift=3.6cm] (commitmsg) {Keyword};
-  
+
   \draw[->] (local-1) -- (master-1);
   \draw[->] (local-2) -- (local-1);
   \draw[->] (local-3) -- (local-2);
@@ -256,7 +256,7 @@ In addition to this, we automate release versioning to some degree. Developers n
   \end{tikzpicture}
 \caption[Behavior of version codes for libraries]{Behavior of version codes for libraries. The circles represents commits. The Master and Local columns indicates if the commits are local, or pushed to the master branch. the Version column indicates the version number given to the commit. The keyword column represents keyword in the commit message, if any are present. }\label{fig:git_library_versions}
 \end{figure}
-The Git hook previously described is extended with functionality to manage this. We implement this automation in collaboration with the Git-responsible group. As part of the implementation phase, we refactor by changing the programming language from Bash to Python, because of the greater level of abstraction provided by Python compared to Bash. Part of the code is shown in \listingref{lst:git_hook_trigger_build}. This function is called for each commit message contained in the push. It first identifies the library corresponding to the repository pushed to (lines 13--14), and afterwards checks for keywords in the git message and formats the new version name (lines 18--33). Jenkins is then triggered with a HTTP POST request containing the Jenkins job name, the version name of the release, and the commit id of the release commit as arguments. Finally, the library versions are updated in a global library object and the version name is printed to the user. The full code can be seen in \appendixref{app:git_hook}. The most recent versions of the different libraries are stored in a file together with the names of their repositories and Jenkins jobs.
+The Git hook previously described is extended with functionality to manage this. We implement this automation in collaboration with the Git-responsible group. As part of the implementation phase, we refactor by changing the programming language from Bash to Python, because of the greater level of abstraction provided by Python compared to Bash. Part of the code is shown in \listingref{lst:git_hook_trigger_build}. This function is called for each commit message contained in the push. It first identifies the library corresponding to the repository pushed to (lines 13--14), and afterwards checks for keywords in the git message and formats the new version name (lines 18--33). Jenkins is then triggered with a HTTP POST request containing the Jenkins job name, the version name of the release, and the commit id of the release commit as arguments. Finally, the library versions are updated in a global library object and the version name is printed to the user. The full code can be seen in \appendixref{sec:app_git_hook_post}. The most recent versions of the different libraries are stored in a file together with the names of their repositories and Jenkins jobs.
 
 \begin{pythoncode}[caption=Part of the git hook responsible for setting library version names and triggering Jenkins,label=lst:git_hook_trigger_build]
 def trigger_build(commit_msg, commit_id, libraries, repo_name, publish_snapshot=False):
