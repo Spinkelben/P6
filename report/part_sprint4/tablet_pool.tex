@@ -102,7 +102,7 @@ The overall flow of a job is now:
 \end{enumerate}
 
 \section{Wireless ADB App}
-The Android Debug Bridge\footnote{Android SDK tool which manages communication between a computer and a device.} (ADB) tool supports device communication over Wi-Fi out-of-the-box\parencite{AndroidADB}. This is very convenient for us, because the interface for communication between computer and device is the same no matter if the devices are connected by wire or not. To connect a device wirelessly to a computer, the following steps are to be performed:
+The Android Debug Bridge\footnote{Android SDK tool which manages communication between a computer and a device.} (ADB) tool supports device communication over Wi-Fi out-of-the-box \parencite{AndroidADB}. This is very convenient for us, because the interface for communication between computer and device is the same no matter if the devices are connected by wire or not. To connect a device wirelessly to a computer, the following steps are to be performed:
 \begin{enumerate}
   \item Connect the device to the computer using USB
   \item Run \code{adb tcpip <port>} to enable Wi-Fi debugging
@@ -147,7 +147,7 @@ public static int enableWifiAdb() throws IOException, InterruptedException {
   }
 }
 \end{javacode}
-If the device of some reason is rebooted, we make sure that automatically enables wireless ADB when it is started. We do this by declaring a \code{BroadcastReceiver}, which is automatically triggered when the device is booted. The receiver is declared in the Android manifest file and implemented as shown in \listingref{lst:android_app_broadcast_receiver}. The \code{onReceive()} method (lines 3--8) is called when the broadcast is received. We set the state of wireless ADB according to the user's preference (lines 19--27). We also set a notification (lines 21 and 25) to show the ADB state to the user.
+If the device for some reason is rebooted, we make sure to automatically enable wireless ADB when the device is started. We do this by declaring a \code{BroadcastReceiver}, which is automatically triggered when the device is booted. The receiver is declared in the Android manifest file and implemented as shown in \listingref{lst:android_app_broadcast_receiver}. The \code{onReceive()} method (lines 3--8) is called when the broadcast is received. We set the state of wireless ADB according to the user's preference (lines 19--27). We also set a notification (lines 21 and 25) to show the ADB state to the user.
 
 \begin{javacode}[float,label=lst:android_app_broadcast_receiver,caption=Android boot broadcast receiver]
 public class BootReceiver extends BroadcastReceiver {
