@@ -10,7 +10,7 @@ For a project, mainly the following categories are configured:
   \item[Source Code Management] What source code management system is used. For the multi-project Git is used. The repository to pull code from can be configured, as well as what branches to build.
   \item[Build Triggers] When a build is triggered. Some projects are build periodically, like monkey tests, whereas apps and libraries are build whenever a push is made to their respective repositories.
 
-  A Git hook activated a build. The method for apps and libraries differ. Apps have the \emph{Poll SCM} option ticked, which means that any project that has this option ticked will be run whenever a push is made to the repository defined in the project. The option will have a warning stating that no schedules will be run, but this is not correct. Libraries have no option in build triggers ticked, as the projects are started through the Git hook by another method.
+  The method for apps and libraries differ. Apps have the \emph{Poll SCM} option ticked, which means that any project that has this option ticked will be run whenever a push is made to the repository defined in the project. The option will have a warning stating that no schedules will be run, but this is not correct. Libraries have no option in build triggers ticked, as the builds are started through the Git hook which sends a post request with build parameters.
   \item[Build Environment] This is where the Android emulator is configured.
   \item[Build] This category contains any actual build steps. This might include executing a Gradle script or executing shell.
   \item[Post-Build Actions] Any tasks that must be done after the main build steps, such as publishing test reports or sending email notifications on build failure.
