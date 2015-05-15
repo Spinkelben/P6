@@ -119,7 +119,7 @@ start adbd
 To disable it again, the port property is simply set to \code{-1} instead of the port. However, doing this requires root permission on the device. We therefore require devices to be rooted in order to be part of the tablet pool. The expected port in the ADB tool is $5555$, so we use that on the device.
 
 To make it easy for developers to enable and disable wireless ADB (and by that add a device to the tablet pool), we develop an Android app to do this, shown in \figureref{fig:jenkins_wireless_screenshot}. By making it easy to join the tablet pool, we expect that developers are likely to use this feature when they do not use the device.
-\fig{jenkins_wireless_screenshot}{Adb app}{Wireless ADB app}
+\figcustomwidth{jenkins_wireless_screenshot}{Adb app}{Wireless ADB app}{\textwidth}
 
 We start by disconnecting devices to make sure the connections are up to date. If a device somehow loses Internet connection, it will not appear to have been disconnected unless we specifically disconnect it. After having disconnected any devices we then connect to all devices. When a connection has been established, we uninstall all installed Giraf apps. While we do this after the build itself, we must also do it initially. This is because groups might install Giraf apps on their devices while disconnected from the test network, and then connect their tablets to the test network later. We also do not want to leave any apps on the devices if groups want to use their tablets after they have been tested on. When we have performed the build and uninstalled any Giraf apps we disconnect the devices.
 
