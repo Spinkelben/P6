@@ -70,15 +70,42 @@ We need to connect to the physical devices before the emulator plugin runs, so t
   \end{lstlisting}
   \item[Uninstallation Script] \dummy
   \begin{lstlisting}[language=bash,caption=Script that uninstalls all installed Giraf apps on all devices,label=lst:uninstall_apks]
-  i = 1
+  SERIAL_NUMBER="$(/srv/scripts/get_serial_numbers.sh)"
+
+  uninstall() {
+    # Find all installed giraf apps on this device
+    PACKAGE_NAMES="$($ANDROID_HOME/platform-tools/adb -s $1 shell pm list packages -f | grep dk.aau.cs.giraf | sed 's/.*apk=//' | tr -d '\n')"
+
+    for p in $PACKAGE_NAMES
+    do
+        echo "Uninstalling $p on $1"
+        $ANDROID_HOME/platform-tools/adb -s $1 uninstall $p
+    done
+  }
+  export -f uninstall
+
+  # Only uninstall if there is a device
+  if [ "$SERIAL_NUMBER" ]
+  then
+      parallel uninstall ::: $SERIAL_NUMBER
+  else
+      echo "No device found. Not uninstalling."
+  fi
   \end{lstlisting}
+
+  The script to get the serial numbers of connected devices can be seen in \listingref{lst:get_serial_numbers}.
 
   \begin{lstlisting}[language=bash,caption=Script that gets the serial numbers of all connected devices,label=lst:get_serial_numbers]
   i = 1
   \end{lstlisting}
-  \item[Disconnection Script] \dummy
+  \item[Disconnection Script] To disconnect all connected devices we simply get the serial number of all connected devices on line \ref{disconnect_devices:get_serial_numbers}. We then run a loop that disconnects those serial numbers (lines \ref{disconnect_devices:loop_start}--\ref{disconnect_devices:loop_end}).
   \begin{lstlisting}[language=bash,caption=Script that disconnects all connected devices,label=lst:disconnect_devices]
-  i = 1
+  SERIAL_NUMBER="$(/srv/scripts/get_serial_numbers.sh)" (*@\label{disconnect_devices:get_serial_numbers}@*)
+
+  for s in $SERIAL_NUMBER (*@\label{disconnect_devices:loop_start}@*)
+  do
+      $ANDROID_HOME/platform-tools/adb disconnect $s
+  done (*@\label{disconnect_devices:loop_end}@*)
   \end{lstlisting}
 \end{description}
 
