@@ -38,90 +38,90 @@ fi
 We add the execution of the move script as a post-build task on all app jobs on Jenkins. We also update the monkey jobs to use the debug versions instead of the release versions. Hence, the user story is solved.
 
 \section{Running Monkey Tests in Parallel}
-With the addition of being able to run tests on multiple physical devices, we need to update monkey tests so that they run in parallel on all connected devices. To do this we first update our script that installs APKs on a device so that it does so in parallel on all connected devices.
+With the addition of being able to run tests on multiple physical devices, we need to update monkey tests so that they run in parallel on all connected devices. To do this we first update our script that installs APKs on a device so that it does so in parallel on all connected devices. We do the same for the script that runs the dummy database insertion app. Finally to run the monkey tests in parallel we make a new script, as the Jenkins plugin does not support this feature. We choose not to extend the Jenkins plugin with this feature, as it is faster for us to make a script.
 
-The modified script can be seen in \listingref{lst:install_apks_parallel}. The script loops on the given APKs to install (lines \ref{install_apks_parallel:loop_start}--\ref{install_apks_parallel:loop_end}). We use the GNU parallel program \parencite{Tange2011a} on line \ref{install_apks_parallel:parallel_loop} to install in parallel. It takes a command to execute, in this case \code{install \{1\} \$\{p\}\textbackslash; exit \$?} followed by three colons specifying the arguments. Thus the \code{install} function is called with elements of \code{\$SERIAL\_NUMBER} specified by the \code{\{1\}} following \code{install} in parallel. The \code{\$SERIAL\_NUMBER} variable contains the serial number of all connected devices. We put the \code{exit \$?} after the call to the install function in the parallel loop, as it will otherwise not correctly return the exit code. The installation itself works as before. It has been put into the \code{install} function (lines \ref{install_apks_parallel:install_func_start}--\ref{install_apks_parallel:install_func_end}).\todo{Det kan være at vi fjerner det her, hvis vi beskriver uninstallation scriptet tidligere, da det er samme princip}
+\begin{description}
+    \item[Modified Installation Script] The modified script can be seen in \listingref{lst:install_apks_parallel}. The script loops on the given APKs to install (lines \ref{install_apks_parallel:loop_start}--\ref{install_apks_parallel:loop_end}). We use the GNU parallel program \parencite{Tange2011a} on line \ref{install_apks_parallel:parallel_loop} to install in parallel. It takes a command to execute, in this case \code{install \{1\} \$\{p\}\textbackslash; exit \$?} followed by three colons specifying the arguments. Thus the \code{install} function is called with elements of \code{\$SERIAL\_NUMBER} specified by the \code{\{1\}} following \code{install} in parallel. The \code{\$SERIAL\_NUMBER} variable contains the serial number of all connected devices. We put the \code{exit \$?} after the call to the install function in the parallel loop, as it will otherwise not correctly return the exit code. The installation itself works as before. It has been put into the \code{install} function (lines \ref{install_apks_parallel:install_func_start}--\ref{install_apks_parallel:install_func_end}).\todo{Det kan være at vi fjerner det her, hvis vi beskriver uninstallation scriptet tidligere, da det er samme princip}
 
-\begin{lstlisting}[language=bash,caption=Script that install APKs on all connected devices in parallel,label=lst:install_apks_parallel]
-#!/bin/bash
-install() { (*@\label{install_apks_parallel:install_func_start}@*)
-    INSTALL_OUTPUT="$($ANDROID_HOME/platform-tools/adb -s $1 install $2)"
-    echo $INSTALL_OUTPUT
+    \begin{lstlisting}[language=bash,caption=Script that install APKs on all connected devices in parallel,label=lst:install_apks_parallel]
+    #!/bin/bash
+    install() { (*@\label{install_apks_parallel:install_func_start}@*)
+        INSTALL_OUTPUT="$($ANDROID_HOME/platform-tools/adb -s $1 install $2)"
+        echo $INSTALL_OUTPUT
 
-    IS_SUCCESS="$(echo "$INSTALL_OUTPUT" | grep -i success)"
+        IS_SUCCESS="$(echo "$INSTALL_OUTPUT" | grep -i success)"
 
-    if ! [ "$IS_SUCCESS" ]
-    then
-        echo "Error installing $2"
-        exit 1
-    fi
-} (*@\label{install_apks_parallel:install_func_end}@*)
-export -f install (*@\label{install_apks_parallel:install_func_export}@*)
-
-# Exit if no APKs are given
-if [ $# -eq 0 ]
-then
-    echo "No APKs found"
-    exit 1
-fi
-
-SERIAL_NUMBER="$(/srv/scripts/get_serial_numbers.sh)"
-
-for p in $@ (*@\label{install_apks_parallel:loop_start}@*)
-do
-    parallel install {1} ${p}\; exit $? ::: $SERIAL_NUMBER (*@\label{install_apks_parallel:parallel_loop}@*)
-done (*@\label{install_apks_parallel:loop_end}@*)
-\end{lstlisting}
-
-We do the same for the script that starts and waits for the dummy database inserter app. The script can be seen in \appendixref{app:start_wait_db_inserter_parallel}.
-
-To run the monkey tests in parallel we make a new script, as the Jenkins plugin does not support this feature. We choose not to extend the Jenkins plugin with this feature, as it is faster for us to make a script. The script can be seen in \listingref{lst:run_monkey_parallel}.
-
-\begin{lstlisting}[language=bash,caption=Script that runs monkey tests on all connected devices in parallel,label=lst:run_monkey_parallel]
-#!/bin/bash
-BASE_OUTPUT_NAME=${JOB_NAME}_b${BUILD_NUMBER}
-
-run_monkey() {
-    PACKAGE=$2
-    BASE_OUTPUT_NAME=$3
-    SEED=1
-    NO_EVENTS=1000
-    DELAY=10 # in ms
-
-    $ANDROID_HOME/platform-tools/adb -s $1 shell monkey -v -v -s $SEED --throttle $DELAY -p $PACKAGE $NO_EVENTS > ${BASE_OUTPUT_NAME}_$1.log.tmp
-    $ANDROID_HOME/platform-tools/adb -s $1 shell screencap -p | sed 's/\r$//' > ${BASE_OUTPUT_NAME}_$1.png
-
-    # Get device information
-    $ANDROID_HOME/platform-tools/adb -s $1 shell getprop | grep -E "product|sdk|serial" | grep -v ro.boot | cat - ${BASE_OUTPUT_NAME}_$1.log.tmp > ${BASE_OUTPUT_NAME}_$1.log
-
-    rm ${BASE_OUTPUT_NAME}_$1.log.tmp
-}
-export -f run_monkey
-
-SERIAL_NUMBER="$(/srv/scripts/get_serial_numbers.sh)"
-
-if [ "$SERIAL_NUMBER" ]
-then
-    parallel run_monkey {1} $1 $BASE_OUTPUT_NAME ::: $SERIAL_NUMBER
-
-    MONKEY_FAILED=false
-    for s in $SERIAL_NUMBER
-    do
-        MONKEY_FINISHED="$(tail -1 ${BASE_OUTPUT_NAME}_${s}.log | grep -i "monkey finished")"
-
-        if ! [ "$MONKEY_FINISHED" ]
+        if ! [ "$IS_SUCCESS" ]
         then
-            echo "Monkey test on $s appears to have crashed"
-            MONKEY_FAILED=true
+            echo "Error installing $2"
+            exit 1
         fi
-    done
+    } (*@\label{install_apks_parallel:install_func_end}@*)
+    export -f install (*@\label{install_apks_parallel:install_func_export}@*)
 
-    if [ "$MONKEY_FAILED" = true ]
+    # Exit if no APKs are given
+    if [ $# -eq 0 ]
     then
+        echo "No APKs found"
         exit 1
     fi
-else
-    echo "No device found"
-    exit 1
-fi
-\end{lstlisting}
+
+    SERIAL_NUMBER="$(/srv/scripts/get_serial_numbers.sh)"
+
+    for p in $@ (*@\label{install_apks_parallel:loop_start}@*)
+    do
+        parallel install {1} ${p}\; exit $? ::: $SERIAL_NUMBER (*@\label{install_apks_parallel:parallel_loop}@*)
+    done (*@\label{install_apks_parallel:loop_end}@*)
+    \end{lstlisting}
+    \item[Modified Dummy Database Insertion Script] The modification to this script is similar to that of the installation script modification. The script can be seen in \appendixref{app:start_wait_db_inserter_parallel}.
+    \item[Run Monkey Test Script] \dummy The script can be seen in \listingref{lst:run_monkey_parallel}.
+
+    \begin{lstlisting}[language=bash,caption=Script that runs monkey tests on all connected devices in parallel,label=lst:run_monkey_parallel]
+    #!/bin/bash
+    BASE_OUTPUT_NAME=${JOB_NAME}_b${BUILD_NUMBER}
+
+    run_monkey() {
+        PACKAGE=$2
+        BASE_OUTPUT_NAME=$3
+        SEED=1
+        NO_EVENTS=1000
+        DELAY=10 # in ms
+
+        $ANDROID_HOME/platform-tools/adb -s $1 shell monkey -v -v -s $SEED --throttle $DELAY -p $PACKAGE $NO_EVENTS > ${BASE_OUTPUT_NAME}_$1.log.tmp
+        $ANDROID_HOME/platform-tools/adb -s $1 shell screencap -p | sed 's/\r$//' > ${BASE_OUTPUT_NAME}_$1.png
+
+        # Get device information
+        $ANDROID_HOME/platform-tools/adb -s $1 shell getprop | grep -E "product|sdk|serial" | grep -v ro.boot | cat - ${BASE_OUTPUT_NAME}_$1.log.tmp > ${BASE_OUTPUT_NAME}_$1.log
+
+        rm ${BASE_OUTPUT_NAME}_$1.log.tmp
+    }
+    export -f run_monkey
+
+    SERIAL_NUMBER="$(/srv/scripts/get_serial_numbers.sh)"
+
+    if [ "$SERIAL_NUMBER" ]
+    then
+        parallel run_monkey {1} $1 $BASE_OUTPUT_NAME ::: $SERIAL_NUMBER
+
+        MONKEY_FAILED=false
+        for s in $SERIAL_NUMBER
+        do
+            MONKEY_FINISHED="$(tail -1 ${BASE_OUTPUT_NAME}_${s}.log | grep -i "monkey finished")"
+
+            if ! [ "$MONKEY_FINISHED" ]
+            then
+                echo "Monkey test on $s appears to have crashed"
+                MONKEY_FAILED=true
+            fi
+        done
+
+        if [ "$MONKEY_FAILED" = true ]
+        then
+            exit 1
+        fi
+    else
+        echo "No device found"
+        exit 1
+    fi
+    \end{lstlisting}
+\end{description}

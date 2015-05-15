@@ -6,7 +6,7 @@ This chapter describes our work on the user story \us{Decrease Job Build Times o
 \end{chapterorganization}
 
 \section{Selecting a Non-Emulator Test Method}
-As explained in \sectionref{sec:non-emulator_testing} there are two ways of running tests without an emulator: testing on a physical device, and testing on the Java Virtual Machine. Testing on a physical device is the only way to realistically run tests. All groups have a tablet laying unused much of the day as well as all night, and we will utilize these unused tablets. However, it will be too tedious connecting these tablets physically to the server (the server is behind locks in the basement of Aalborg University) and we most likely will not get permission to physically connect USB devices to it.
+As explained in \sectionref{sec:non-emulator_testing} there are two ways of running tests without an emulator: testing on a physical device, and testing on the Java Virtual Machine. Testing on a physical device is the only way to realistically run tests. All groups have a tablet laying unused much of the day as well as all night, and we will utilize these unused tablets. This way, we can test on multiple different devices and Android versions without significantly increasing the build times and resource use on the server, which would be the case when testing on emulators. However, it will be too tedious connecting these tablets physically to the server (the server is behind locks in the basement of Aalborg University) and we most likely will not get permission to physically connect USB devices to it.
 
 \section{The Overall Idea}
 We want to create a pool of available tablets, such that they in an easy way can be part of testing. Our plan is to setup a wireless router in vicinity of our group rooms. The wireless router broadcasts a Wi-Fi signal, and any tablet connected to this Wi-Fi will automatically be in a pool of connected tablets, available for testing. The server is able to communicate with the wireless router through the network at Aalborg University. We have acquired a wireless router from the semester coordinator, Ulrik Nyman \todo{sp}, a \emph{TP-Link TL-WDR3600}.
@@ -21,6 +21,53 @@ Script is called in a cron job. Because stability and if it crashes it will be e
 \section{Creating Route from Server to Tablet}
 Testing the above setup revealed that the server and our router is separated on the network. The only traffic we can get through is ping. We went to IT Services at Aalborg University and got our router moved to the same network as the server. \todo{Skriv dette pænere og mere fyldestgørende?}
 
+\section{Adapting Job Flow on Jenkins}
+We need to connect to the physical devices before the emulator plugin runs, so that it will not start any emulator. When we have connected to the devices all Giraf apps on those devices must be uninstalled so they do not interfere with anything. Finally we make a script to disconnect any connected devices once a build has finished. Following is a description of the three scripts:
+
+\begin{description}
+  \item[Connection Script] To connect to all devices connected to the router we get the information on the devices page of the router. The script can be seen in \listingref{lst:connect_devices}. We first check the connection on line \ref{connect_devices:check_connection} by supplying the \code{i} option so that \code{curl} returns the HTTP header. We then \code{grep 200} to check that there is a connection (code 200 means a successful connection). We then check the error code of that command on line \ref{connect_devices:if_start}. If it is \code{0} then a connection was established. We then get the ports of all devices connected to the router on line \ref{connect_devices:get_ports}. Finally we simply iterate through those ports and connect to them via ADB (lines \ref{connect_devices:connection_loop_start}--\ref{connect_devices:connection_loop_end}).
+
+  \begin{lstlisting}[language=bash,caption=Script that connects to devices,label=lst:connect_devices]
+  URL="http://172.25.11.91/cgi-bin/devices"
+
+  curl --connect-timeout 10 -i --silent $URL | head -1 | grep 200 > /dev/null (*@\label{connect_devices:check_connection}@*)
+
+  if [ "$?" -eq "0" ] (*@\label{connect_devices:if_start}@*)
+  then
+      DEVICE_PORTS="$(curl --silent $URL)" (*@\label{connect_devices:get_ports}@*)
+      for d in $DEVICE_PORTS (*@\label{connect_devices:connection_loop_start}@*)
+      do
+          $ANDROID_HOME/platform-tools/adb connect 172.25.11.91:$d
+      done (*@\label{connect_devices:connection_loop_end}@*)
+  else
+      echo "No connection found"
+  fi
+  \end{lstlisting}
+  \item[Uninstallation Script] \dummy
+  \begin{lstlisting}[language=bash,caption=Script that uninstalls all installed Giraf apps on all devices,label=lst:uninstall_apks]
+  i = 1
+  \end{lstlisting}
+
+  \begin{lstlisting}[language=bash,caption=Script that gets the serial numbers of all connected devices,label=lst:get_serial_numbers]
+  i = 1
+  \end{lstlisting}
+  \item[Disconnection Script] \dummy
+  \begin{lstlisting}[language=bash,caption=Script that disconnects all connected devices,label=lst:disconnect_devices]
+  i = 1
+  \end{lstlisting}
+\end{description}
+
+The overall flow of a job is now:
+
+\begin{enumerate}
+  \item Disconnect devices
+  \item Connect to devices
+  \item Uninstall apps
+  \item Run build
+  \item Uninstall apps
+  \item Disconnect devices
+\end{enumerate}
+
 \section{Wireless ADB App}
 The Android Debug Bridge\footnote{Android SDK tool which manages communication between a computer and a device.} (ADB) tool supports device communication over Wi-Fi out-of-the-box\parencite{AndroidADB}. This is very convenient for us, because the interface for communication between computer and device is the same no matter if the devices are connected by wire or not. To connect a device wirelessly to a computer, the following steps are to be performed:
 \begin{enumerate}
@@ -29,16 +76,81 @@ The Android Debug Bridge\footnote{Android SDK tool which manages communication b
   \item Disconnect the devices
   \item Run \code{adb connect <ip>:<port>} to connect to the device with the specified ip and port
 \end{enumerate}
-There is one problem with this, though: We do not have physical access to the server and can not attach a device using USB\@. Therefore, we need a way to avoid this step. We can do that by setting at specific property in an Android configuration file \parencite{stackoverflow-adb-tcp}. Wireless ADB is enabled by executing the following commands in the Android shell:
+There is one problem with this, though: We do not have physical access to the server and cannot attach a device using USB\@. Therefore, we need a way to avoid this step. We can do that by setting at specific property in an Android configuration file \parencite{stackoverflow-adb-tcp}. Wireless ADB is enabled by executing the following commands in the Android shell:
 \begin{lstlisting}
 su
 setprop service.adb.tcp.port <port>
 stop adbd
 start adbd
 \end{lstlisting}
-To disable it again, the port property is simply set to \code{-1} instead of the port. However, doing this requires root permission on the device. We therefore require devices to be rooted in order to be part of the tablet pool.
+To disable it again, the port property is simply set to \code{-1} instead of the port. However, doing this requires root permission on the device. We therefore require devices to be rooted in order to be part of the tablet pool. The expected port in the ADB tool is $5555$, so we use that on the device.
 
-To make it easy for developers to enable and disable wireless ADB (and by that add a device to the tablet pool), we develop an Android app to do this. By making it easy to join the tablet pool, we expect that developers are likely to use this feature when they do not use the device.
+To make it easy for developers to enable and disable wireless ADB (and by that add a device to the tablet pool), we develop an Android app to do this, shown in \figureref{fig:jenkins_wireless_screenshot}. By making it easy to join the tablet pool, we expect that developers are likely to use this feature when they do not use the device.
+\fig{jenkins_wireless_screenshot}{Adb app}{Wireless ADB app}
+
+\subsection{Android App Implementation}
+To run the shell script in the app, we execute the code shown in \listingref{lst:android_app_shell}. When we execute \code{su} (line 5), the device shows a dialog which asks the user for root permission. After accepting, every subsequent \code{su} call will be executed without need for permission. The method returns the exit code of the command so it can be handled accordingly by the caller.
+\begin{javacode}[float,label=lst:android_app_shell,caption=Enable wireless ADB in Android]
+public static int enableWifiAdb() throws IOException, InterruptedException {
+  Process process = null;
+  DataOutputStream os = null;
+  try {
+    process = Runtime.getRuntime().exec("su");
+    os = new DataOutputStream(process.getOutputStream());
+    os.writeBytes(String.format("setprop service.adb.tcp.port %d\n", ADB_TCP_PORT));
+    os.writeBytes("stop adbd\n");
+    os.writeBytes("start adbd\n");
+    os.writeBytes("exit\n");
+    os.flush();
+    int exitValue = process.waitFor();
+    process.destroy();
+    return exitValu
+  } finally {
+    if(os != null) {
+      os.close();
+    }
+  }
+}
+\end{javacode}
+If the device of some reason is rebooted, we make sure that automatically enables wireless ADB when it is started. We do this by declaring a \code{BroadcastReceiver}, which is automatically triggered when the device is booted. The receiver is declared in the Android manifest file and implemented as shown in \listingref{lst:android_app_broadcast_receiver}. The \code{onReceive()} method (lines 3--8) is called when the broadcast is received. We set the state of wireless ADB according to the user's preference (lines 19--27). We also set a notification (lines 21 and 25) to show the ADB state to the user.
+
+\begin{javacode}[float,label=lst:android_app_broadcast_receiver,caption=Android boot broadcast receiver]
+public class BootReceiver extends BroadcastReceiver {
+  @Override
+  public void onReceive(Context context, Intent intent) {
+    if(intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
+      Log.i("giraf", "Starts adb after boot");
+      enableAdb(context);
+    }
+  }
+
+
+  /**
+  * Enables adb if the preference is set.
+  * @param context The application context.
+  */
+  private void enableAdb(Context context) {
+    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+    boolean enabled = prefs.getBoolean("adb_enabled", false);
+    // Enable/disable adb wifi
+    try {
+      if (enabled) {
+        if(AdbUtils.enableWifiAdb() == 0) {
+          AdbUtils.showNotification(context, true);
+        }
+      } else {
+        if(AdbUtils.disableWifiAdb() == 0) {
+          AdbUtils.showNotification(context, false);
+        }
+      }
+    } catch (IOException | InterruptedException e) {
+      e.printStackTrace();
+      Toast.makeText(context, "Could not enable ADB over WiFi.", Toast.LENGTH_LONG).show();
+    }
+  }
+}
+\end{javacode}
+
 
 \section{Adapting Jenkins to Use Physical Devices}
 
@@ -71,16 +183,4 @@ throws IOException, InterruptedException {
 }
 \end{javacode}
 With this change, Jenkins will only start an emulator instance if there are no devices attached. This shortens the build time significantly. 
-\section{Adapting Job Flow on Jenkins}
 
-\begin{itemize}
-  \item New jobflow:
-  \begin{itemize}
-    \item disconnect
-    \item connect
-    \item uninstall
-    \item run build
-    \item uninstall
-    \item disconnect
-  \end{itemize}
-\end{itemize}
