@@ -1,0 +1,31 @@
+\chapter{Installting all APKs Script}\label{app:install_apks}
+\begin{lstlisting}[language=bash,caption=Script that install APKs on all connected devices in parallel,label=lst:install_apks_parallel]
+#!/bin/bash
+install() { (*@\label{install_apks_parallel:install_func_start}@*)
+    INSTALL_OUTPUT="$($ANDROID_HOME/platform-tools/adb -s $1 install $2)"
+    echo $INSTALL_OUTPUT
+
+    IS_SUCCESS="$(echo "$INSTALL_OUTPUT" | grep -i success)"
+
+    if ! [ "$IS_SUCCESS" ]
+    then
+        echo "Error installing $2"
+        exit 1
+    fi
+} (*@\label{install_apks_parallel:install_func_end}@*)
+export -f install (*@\label{install_apks_parallel:install_func_export}@*)
+
+# Exit if no APKs are given
+if [ $# -eq 0 ]
+then
+    echo "No APKs found"
+    exit 1
+fi
+
+SERIAL_NUMBER="$(/srv/scripts/get_serial_numbers.sh)"
+
+for p in $@ (*@\label{install_apks_parallel:loop_start}@*)
+do
+    parallel install {1} ${p}\; exit $? ::: $SERIAL_NUMBER (*@\label{install_apks_parallel:parallel_loop}@*)
+done (*@\label{install_apks_parallel:loop_end}@*)
+\end{lstlisting}

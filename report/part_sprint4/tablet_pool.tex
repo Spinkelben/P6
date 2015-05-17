@@ -46,35 +46,35 @@ We need to connect to the physical devices before the emulator plugin runs, so t
       echo "No connection found"
   fi
   \end{lstlisting}
-  \item[Uninstallation Script] \dummy
+  \item[Uninstallation Script] The uninstallation script seen in \listingref{lst:uninstall_apks} uninstalls all Giraf APKs from all connected devices in parallel. We do it in parallel so that connecting more tablets will not increase the time it takes to uninstall. To do it in parallel we use the GNU parallel tool \parencite{Tange2011a}. On line \ref{lst:uninstall_apks:get_serial_numbers} we get the serial number of all connected devices. On line \ref{lst:uninstall_apks:parallel_loop} we run the parallel tool on the function \code{uninstall}. The variable \code{\$SERIAL\_NUMBER} after the three colons is the array that will looped in parallel. Each element is then passed onto the \code{uninstall} function. The uninstall function gets the packages names of all installed Giraf apps on the device on line \ref{lst:uninstall_apks:get_package_names}. The two \code{sed} calls at the end make sure there is nothing but the package names. The APKs are then uninstalled on lines \ref{lst:uninstall_apks:loop_start}--\ref{lst:uninstall_apks:loop_end}. The function is exported on line \ref{lst:uninstall_apks:export} so that parallel can use it.
   \begin{lstlisting}[language=bash,caption=Script that uninstalls all installed Giraf apps on all devices,label=lst:uninstall_apks]
-  SERIAL_NUMBER="$(/srv/scripts/get_serial_numbers.sh)"
-
   uninstall() {
     # Find all installed giraf apps on this device
-    PACKAGE_NAMES="$($ANDROID_HOME/platform-tools/adb -s $1 shell pm list packages -f | grep dk.aau.cs.giraf | sed 's/.*apk=//' | tr -d '\n')"
+    PACKAGE_NAMES="$($ANDROID_HOME/platform-tools/adb -s $1 shell pm list packages -f | grep dk.aau.cs.giraf | sed 's/.*apk=//' | sed 's/\s*//g')" (*@\label{lst:uninstall_apks:get_package_names}@*)
 
-    for p in $PACKAGE_NAMES
+    for p in $PACKAGE_NAMES (*@\label{lst:uninstall_apks:loop_start}@*)
     do
         echo "Uninstalling $p on $1"
         $ANDROID_HOME/platform-tools/adb -s $1 uninstall $p
-    done
+    done (*@\label{lst:uninstall_apks:loop_end}@*)
   }
-  export -f uninstall
+  export -f uninstall (*@\label{lst:uninstall_apks:export}@*)
+
+  SERIAL_NUMBER="$(/srv/scripts/get_serial_numbers.sh)" (*@\label{lst:uninstall_apks:get_serial_numbers}@*)
 
   # Only uninstall if there is a device
   if [ "$SERIAL_NUMBER" ]
   then
-      parallel uninstall ::: $SERIAL_NUMBER
+      parallel uninstall ::: $SERIAL_NUMBER (*@\label{lst:uninstall_apks:parallel_loop}@*)
   else
       echo "No device found. Not uninstalling."
   fi
   \end{lstlisting}
 
-  The script to get the serial numbers of connected devices can be seen in \listingref{lst:get_serial_numbers}.
+  The script to get the serial numbers of connected devices can be seen in \listingref{lst:get_serial_numbers}. It runs \code{adb devices} and then {grep}s exactly on \code{device}. \code{grep -vw emulator} makes sure that no emulators are matched. When an emulator is started on Jenkins, an additional device will appear that is also the emulator. This means that two devices will be shown that are in fact the same. To make sure we do not uninstall twice on the same device, we simply ignore one of the devices listed. When the devices have been found, we remove everything but the serial number itself with \code{sed 's/\textbackslash s*device//'} and make sure there is no additional whitespace with \code{sed 's/\textbackslash s*//g'}. The \code{g} at the end makes sure that all matching strings are substituted.
 
   \begin{lstlisting}[language=bash,caption=Script that gets the serial numbers of all connected devices,label=lst:get_serial_numbers]
-  i = 1
+  $ANDROID_HOME/platform-tools/adb devices | grep -w device | grep -vw emulator | sed 's/\s*device//' | sed 's/\s*//g'
   \end{lstlisting}
   \item[Disconnection Script] To disconnect all connected devices we simply get the serial number of all connected devices on line \ref{disconnect_devices:get_serial_numbers}. We then run a loop that disconnects those serial numbers (lines \ref{disconnect_devices:loop_start}--\ref{disconnect_devices:loop_end}).
   \begin{lstlisting}[language=bash,caption=Script that disconnects all connected devices,label=lst:disconnect_devices]
