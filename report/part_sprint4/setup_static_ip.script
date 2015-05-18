@@ -1,0 +1,35 @@
+#!/bin/sh
+
+# ...
+
+# Allocate next ip and port
+NEXT_IP_EXT="$(cat /usr/next_ip)"
+NEXT_PORT="$(cat /usr/next_port)"
+DEST_IP="192.168.1.$NEXT_IP_EXT"
+SRC_PORT="$NEXT_PORT"
+# Update ip/port files
+echo "$((NEXT_IP_EXT+1))" > /usr/next_ip
+echo "$((NEXT_PORT+1))" > /usr/next_port
+
+uci batch <<EOF
+add dhcp host
+set dhcp.@host[-1].mac=$1
+set dhcp.@host[-1].ip=$DEST_IP
+commit dhcp
+add firewall redirect
+set firewall.@redirect[-1].target=DNAT
+set firewall.@redirect[-1].src=wan
+set firewall.@redirect[-1].dest=lan
+set firewall.@redirect[-1].proto='tcp udp'
+set firewall.@redirect[-1].src_dport=$SRC_PORT
+set firewall.@redirect[-1].dest_ip=$DEST_IP
+set firewall.@redirect[-1].dest_port=5555
+commit firewall
+EOF
+
+uci commit dhcp
+uci commit firewall
+
+logger "New device $1 added with IP $DEST_IP and port $SRC_PORT"
+
+/etc/init.d/dnsmasq reload
