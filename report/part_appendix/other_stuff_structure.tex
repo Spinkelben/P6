@@ -3,23 +3,22 @@ Here we describe the main points of interest of other stuffs.
 
 \section{OpenWRT Wireless Router}
 Wireless SSID: MariusTestNetworkTM
-
-Management:
-\mono{http://192.168.1.1}
-\mono{http://172.25.11.91}
-\mono{SSH root@192.168.1.1}
-
-Username: \mono{root}
+\\\\
+Management:\\
+\mono{http://192.168.1.1}\\
+\mono{http://172.25.11.91}\\
+\mono{SSH root@192.168.1.1}\\
+Username: \mono{root}\\
 Password: \mono{routeradmin}
-
-The IPv4 WAN configuration must be:
-Type: Static
-Address: \mono{172.25.11.91}
-Netmask: \mono{255.255.255.0}
-Gateway: \mono{172.25.11.1}
-DNS1: \mono{172.18.21.2}
-DNS2: \mono{172.18.21.34}
-
-Applying these settings will put the router on a network visible to the server.
-
-The scripts are in \mono{/www/cgi-bin/}
+\\\\
+The IPv4 WAN configuration must be:\\
+Type: Static\\
+Address: \mono{172.25.11.91}\\
+Netmask: \mono{255.255.255.0}\\
+Gateway: \mono{172.25.11.1}\\
+DNS1: \mono{172.18.21.2}\\
+DNS2: \mono{172.18.21.34}\\
+\\\\
+Applying these settings will (in combination with the router's MAC address) put the router on a network visible to the server.
+\\\\
+The scripts are located in \mono{/www/cgi-bin/} and \mono{/bin/}
