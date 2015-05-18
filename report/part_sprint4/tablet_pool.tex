@@ -24,82 +24,6 @@ Script is called in a cron job. Because stability and if it crashes it will be e
 \section{Creating Route from Server to Tablet}
 Testing the above setup revealed that the server and our router is separated on the network. The only traffic we can get through is ping. We went to IT Services at Aalborg University and got our router moved to the same network as the server. \todo{Skriv dette pænere og mere fyldestgørende?}
 
-\section{Adapting Job Flow on Jenkins}
-We need to connect to the physical devices before the emulator plugin runs, so that it will not start any emulator. When we have connected to the devices all Giraf apps on those devices must be uninstalled so they do not interfere with anything. Finally we make a script to disconnect any connected devices once a build has finished. Following is a description of the three scripts:
-
-\begin{description}
-  \item[Connection Script] To connect to all devices connected to the router we get the information on the devices page of the router. The script can be seen in \listingref{lst:connect_devices}. We first check the connection on line \ref{connect_devices:check_connection} by supplying the \code{i} option so that \code{curl} returns the HTTP header. We then \code{grep 200} to check that there is a connection (code 200 means a successful connection). We then check the error code of that command on line \ref{connect_devices:if_start}. If it is \code{0} then a connection was established. We then get the ports of all devices connected to the router on line \ref{connect_devices:get_ports}. Finally we simply iterate through those ports and connect to them via ADB (lines \ref{connect_devices:connection_loop_start}--\ref{connect_devices:connection_loop_end}).
-
-  \begin{lstlisting}[language=bash,caption=Script that connects to devices,label=lst:connect_devices]
-  URL="http://172.25.11.91/cgi-bin/devices"
-
-  curl --connect-timeout 10 -i --silent $URL | head -1 | grep 200 > /dev/null (*@\label{connect_devices:check_connection}@*)
-
-  if [ "$?" -eq "0" ] (*@\label{connect_devices:if_start}@*)
-  then
-      DEVICE_PORTS="$(curl --silent $URL)" (*@\label{connect_devices:get_ports}@*)
-      for d in $DEVICE_PORTS (*@\label{connect_devices:connection_loop_start}@*)
-      do
-          $ANDROID_HOME/platform-tools/adb connect 172.25.11.91:$d
-      done (*@\label{connect_devices:connection_loop_end}@*)
-  else
-      echo "No connection found"
-  fi
-  \end{lstlisting}
-  \item[Uninstallation Script] The uninstallation script seen in \listingref{lst:uninstall_apks} uninstalls all Giraf APKs from all connected devices in parallel. We do it in parallel so that connecting more tablets will not increase the time it takes to uninstall. To do it in parallel we use the GNU parallel tool \parencite{Tange2011a}. On line \ref{lst:uninstall_apks:get_serial_numbers} we get the serial number of all connected devices. On line \ref{lst:uninstall_apks:parallel_loop} we run the parallel tool on the function \code{uninstall}. The variable \code{\$SERIAL\_NUMBER} after the three colons is the array that will looped in parallel. Each element is then passed onto the \code{uninstall} function. The uninstall function gets the packages names of all installed Giraf apps on the device on line \ref{lst:uninstall_apks:get_package_names}. The two \code{sed} calls at the end make sure there is nothing but the package names. The APKs are then uninstalled on lines \ref{lst:uninstall_apks:loop_start}--\ref{lst:uninstall_apks:loop_end}. The function is exported on line \ref{lst:uninstall_apks:export} so that parallel can use it.
-  \begin{lstlisting}[language=bash,caption=Script that uninstalls all installed Giraf apps on all devices,label=lst:uninstall_apks]
-  uninstall() {
-    # Find all installed giraf apps on this device
-    PACKAGE_NAMES="$($ANDROID_HOME/platform-tools/adb -s $1 shell pm list packages -f | grep dk.aau.cs.giraf | sed 's/.*apk=//' | sed 's/\s*//g')" (*@\label{lst:uninstall_apks:get_package_names}@*)
-
-    for p in $PACKAGE_NAMES (*@\label{lst:uninstall_apks:loop_start}@*)
-    do
-        echo "Uninstalling $p on $1"
-        $ANDROID_HOME/platform-tools/adb -s $1 uninstall $p
-    done (*@\label{lst:uninstall_apks:loop_end}@*)
-  }
-  export -f uninstall (*@\label{lst:uninstall_apks:export}@*)
-
-  SERIAL_NUMBER="$(/srv/scripts/get_serial_numbers.sh)" (*@\label{lst:uninstall_apks:get_serial_numbers}@*)
-
-  # Only uninstall if there is a device
-  if [ "$SERIAL_NUMBER" ]
-  then
-      parallel uninstall ::: $SERIAL_NUMBER (*@\label{lst:uninstall_apks:parallel_loop}@*)
-  else
-      echo "No device found. Not uninstalling."
-  fi
-  \end{lstlisting}
-
-  The script to get the serial numbers of connected devices can be seen in \listingref{lst:get_serial_numbers}. It runs \code{adb devices} and then {grep}s exactly on \code{device}. \code{grep -vw emulator} makes sure that no emulators are matched. When an emulator is started on Jenkins, an additional device will appear that is also the emulator. This means that two devices will be shown that are in fact the same. To make sure we do not uninstall twice on the same device, we simply ignore one of the devices listed. When the devices have been found, we remove everything but the serial number itself with \code{sed 's/\textbackslash s*device//'} and make sure there is no additional whitespace with \code{sed 's/\textbackslash s*//g'}. The \code{g} at the end makes sure that all matching strings are substituted.
-
-  \begin{lstlisting}[language=bash,caption=Script that gets the serial numbers of all connected devices,label=lst:get_serial_numbers]
-  $ANDROID_HOME/platform-tools/adb devices | grep -w device | grep -vw emulator | sed 's/\s*device//' | sed 's/\s*//g'
-  \end{lstlisting}
-  \item[Disconnection Script] To disconnect all connected devices we simply get the serial number of all connected devices on line \ref{disconnect_devices:get_serial_numbers}. We then run a loop that disconnects those serial numbers (lines \ref{disconnect_devices:loop_start}--\ref{disconnect_devices:loop_end}).
-  \begin{lstlisting}[language=bash,caption=Script that disconnects all connected devices,label=lst:disconnect_devices]
-  SERIAL_NUMBER="$(/srv/scripts/get_serial_numbers.sh)" (*@\label{disconnect_devices:get_serial_numbers}@*)
-
-  for s in $SERIAL_NUMBER (*@\label{disconnect_devices:loop_start}@*)
-  do
-      $ANDROID_HOME/platform-tools/adb disconnect $s
-  done (*@\label{disconnect_devices:loop_end}@*)
-  \end{lstlisting}
-\end{description}
-
-The overall flow of a job is now:
-
-\begin{enumerate}
-  \item Disconnect devices
-  \item Connect to devices
-  \item Uninstall apps
-  \item Run build
-  \item Uninstall apps
-  \item Disconnect devices
-\end{enumerate}
-
-We start by disconnecting devices to make sure the connections are up to date. If a device somehow loses Internet connection, it will not appear to have been disconnected unless we specifically disconnect it. After having disconnected any devices we then connect to all devices. When a connection has been established, we uninstall all installed Giraf apps. While we do this after the build itself, we must also do it initially. This is because groups might install Giraf apps on their devices while disconnected from the test network, and then connect their tablets to the test network later. We also do not want to leave any apps on the devices if groups want to use their tablets after they have been tested on. When we have performed the build and uninstalled any Giraf apps we disconnect the devices.
-
 \section{Wireless ADB App}
 The Android Debug Bridge\footnote{Android SDK tool which manages communication between a computer and a device.} (ADB) tool supports device communication over Wi-Fi out-of-the-box \parencite{AndroidADB}. This is very convenient for us, because the interface for communication between computer and device is the same no matter if the devices are connected by wire or not. To connect a device wirelessly to a computer, the following steps are to be performed:
 \begin{enumerate}
@@ -183,7 +107,6 @@ public class BootReceiver extends BroadcastReceiver {
 }
 \end{javacode}
 
-
 \section{Adapting Jenkins to Use Physical Devices}
 We currently use the Jenkins Android Emulator Plugin to run an emulator during each build. However, when one or more tablets are available for testing, we do not want to start an emulator. The plugin cannot be configured to start an emulator only if there are no physical devices attached. We decide to modify the Android Emulator Plugin to perform a check before starting an emulator. We modify the plugin such that it provides an option to check whether there are devices available, and then only to start an emulator if there are no devices already connected. We have submitted a pull request with the changes\footnote{\url{https://github.com/jenkinsci/android-emulator-plugin/pull/50}}. The maintainer of the plugin can choose to merge the request into the master branch of the plugin. This would be an advantage for us, as we the do not have to maintain our fork of the plugin.
 
@@ -197,7 +120,7 @@ We currently use the Jenkins Android Emulator Plugin to run an emulator during e
   \item An \code{AndroidSDK} which contains information about and methods relating to the installed Android SDK.
   \item The tool to run. An Enum with information about the tools provided by the SDK.
   \item The actual command to send to the tool, formatted as a string. In this case it is \code{-d devices}
-  \item The \code{FilePath} to the workspace if relevant. In this case it is not, so we just send a null value.	
+  \item The \code{FilePath} to the workspace if relevant. In this case it is not, so we just send a null value. 
 \end{itemize}
 
 \begin{javacode}[caption=The devicesConnected method which checks for connected devices.,label=lst:deviceCheck]
@@ -226,4 +149,80 @@ throws IOException, InterruptedException {
 }
 \end{javacode}
 
-After the call, the standard output is converted to a string, and the method \code{getDeviceNames} converts the string into a list of device names. If the list is populated, then there are devices connected and the method returns true. The method \code{devicesConnected} is called during the emulator startup method, after the build environment is set up, but before the emulator has been started. With this addition to the plugin, Jenkins will only start an emulator instance if there are no devices attached. This shortens the build time significantly. 
+After the call, the standard output is converted to a string, and the method \code{getDeviceNames} converts the string into a list of device names. If the list is populated, then there are devices connected and the method returns true. The method \code{devicesConnected} is called during the emulator startup method, after the build environment is set up, but before the emulator has been started. With this addition to the plugin, Jenkins will only start an emulator instance if there are no devices attached. This shortens the build time significantly.
+
+\section{Adapting Job Flow on Jenkins}
+We need to connect to the physical devices before the emulator plugin runs, so that it will not start any emulator. When we have connected to the devices all Giraf apps on those devices must be uninstalled so they do not interfere with anything. Finally we make a script to disconnect any connected devices once a build has finished. Following is a description of the three scripts:
+
+\begin{description}
+  \item[Connection Script] To connect to all devices connected to the router we get the information on the devices page of the router. The script can be seen in \listingref{lst:connect_devices}. We first check the connection on line \ref{connect_devices:check_connection} by supplying the \code{i} option so that \code{curl} returns the HTTP header. We then \code{grep 200} to check that there is a connection (code 200 means a successful connection). We then check the error code of that command on line \ref{connect_devices:if_start}. If it is \code{0} then a connection was established. We then get the ports of all devices connected to the router on line \ref{connect_devices:get_ports}. Finally we simply iterate through those ports and connect to them via ADB (lines \ref{connect_devices:connection_loop_start}--\ref{connect_devices:connection_loop_end}).
+
+  \begin{lstlisting}[language=bash,caption=Script that connects to devices,label=lst:connect_devices]
+  URL="http://172.25.11.91/cgi-bin/devices"
+
+  curl --connect-timeout 10 -i --silent $URL | head -1 | grep 200 > /dev/null (*@\label{connect_devices:check_connection}@*)
+
+  if [ "$?" -eq "0" ] (*@\label{connect_devices:if_start}@*)
+  then
+      DEVICE_PORTS="$(curl --silent $URL)" (*@\label{connect_devices:get_ports}@*)
+      for d in $DEVICE_PORTS (*@\label{connect_devices:connection_loop_start}@*)
+      do
+          $ANDROID_HOME/platform-tools/adb connect 172.25.11.91:$d
+      done (*@\label{connect_devices:connection_loop_end}@*)
+  else
+      echo "No connection found"
+  fi
+  \end{lstlisting}
+  \item[Uninstallation Script] The uninstallation script seen in \listingref{lst:uninstall_apks} uninstalls all Giraf APKs from all connected devices in parallel. We do it in parallel so that connecting more tablets will not increase the time it takes to uninstall. To do it in parallel we use the GNU parallel tool \parencite{Tange2011a}. On line \ref{lst:uninstall_apks:get_serial_numbers} we get the serial number of all connected devices. On line \ref{lst:uninstall_apks:parallel_loop} we run the parallel tool on the function \code{uninstall}. The variable \code{\$SERIAL\_NUMBER} after the three colons is the array that will looped in parallel. Each element is then passed onto the \code{uninstall} function. The uninstall function gets the packages names of all installed Giraf apps on the device on line \ref{lst:uninstall_apks:get_package_names}. The two \code{sed} calls at the end make sure there is nothing but the package names. The APKs are then uninstalled on lines \ref{lst:uninstall_apks:loop_start}--\ref{lst:uninstall_apks:loop_end}. The function is exported on line \ref{lst:uninstall_apks:export} so that parallel can use it.
+  \begin{lstlisting}[language=bash,caption=Script that uninstalls all installed Giraf apps on all devices,label=lst:uninstall_apks]
+  uninstall() {
+    # Find all installed giraf apps on this device
+    PACKAGE_NAMES="$($ANDROID_HOME/platform-tools/adb -s $1 shell pm list packages -f | grep dk.aau.cs.giraf | sed 's/.*apk=//' | sed 's/\s*//g')" (*@\label{lst:uninstall_apks:get_package_names}@*)
+
+    for p in $PACKAGE_NAMES (*@\label{lst:uninstall_apks:loop_start}@*)
+    do
+        echo "Uninstalling $p on $1"
+        $ANDROID_HOME/platform-tools/adb -s $1 uninstall $p
+    done (*@\label{lst:uninstall_apks:loop_end}@*)
+  }
+  export -f uninstall (*@\label{lst:uninstall_apks:export}@*)
+
+  SERIAL_NUMBER="$(/srv/scripts/get_serial_numbers.sh)" (*@\label{lst:uninstall_apks:get_serial_numbers}@*)
+
+  # Only uninstall if there is a device
+  if [ "$SERIAL_NUMBER" ]
+  then
+      parallel uninstall ::: $SERIAL_NUMBER (*@\label{lst:uninstall_apks:parallel_loop}@*)
+  else
+      echo "No device found. Not uninstalling."
+  fi
+  \end{lstlisting}
+
+  The script to get the serial numbers of connected devices can be seen in \listingref{lst:get_serial_numbers}. It runs \code{adb devices} and then {grep}s exactly on \code{device}. \code{grep -vw emulator} makes sure that no emulators are matched. When an emulator is started on Jenkins, an additional device will appear that is also the emulator. This means that two devices will be shown that are in fact the same. To make sure we do not uninstall twice on the same device, we simply ignore one of the devices listed. When the devices have been found, we remove everything but the serial number itself with \code{sed 's/\textbackslash s*device//'} and make sure there is no additional whitespace with \code{sed 's/\textbackslash s*//g'}. The \code{g} at the end makes sure that all matching strings are substituted.
+
+  \begin{lstlisting}[language=bash,caption=Script that gets the serial numbers of all connected devices,label=lst:get_serial_numbers]
+  $ANDROID_HOME/platform-tools/adb devices | grep -w device | grep -vw emulator | sed 's/\s*device//' | sed 's/\s*//g'
+  \end{lstlisting}
+  \item[Disconnection Script] To disconnect all connected devices we simply get the serial number of all connected devices on line \ref{disconnect_devices:get_serial_numbers}. We then run a loop that disconnects those serial numbers (lines \ref{disconnect_devices:loop_start}--\ref{disconnect_devices:loop_end}).
+  \begin{lstlisting}[language=bash,caption=Script that disconnects all connected devices,label=lst:disconnect_devices]
+  SERIAL_NUMBER="$(/srv/scripts/get_serial_numbers.sh)" (*@\label{disconnect_devices:get_serial_numbers}@*)
+
+  for s in $SERIAL_NUMBER (*@\label{disconnect_devices:loop_start}@*)
+  do
+      $ANDROID_HOME/platform-tools/adb disconnect $s
+  done (*@\label{disconnect_devices:loop_end}@*)
+  \end{lstlisting}
+\end{description}
+
+The overall flow of a job is now:
+
+\begin{enumerate}
+  \item Disconnect devices
+  \item Connect to devices
+  \item Uninstall apps
+  \item Run build
+  \item Uninstall apps
+  \item Disconnect devices
+\end{enumerate}
+
+We start by disconnecting devices to make sure the connections are up to date. If a device somehow loses Internet connection, it will not appear to have been disconnected unless we specifically disconnect it. After having disconnected any devices we then connect to all devices. When a connection has been established, we uninstall all installed Giraf apps. While we do this after the build itself, we must also do it initially. This is because groups might install Giraf apps on their devices while disconnected from the test network, and then connect their tablets to the test network later. We also do not want to leave any apps on the devices if groups want to use their tablets after they have been tested on. When we have performed the build and uninstalled any Giraf apps we disconnect the devices.
