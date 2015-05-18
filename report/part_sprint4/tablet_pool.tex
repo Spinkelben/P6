@@ -228,13 +228,13 @@ else
 fi
   \end{lstlisting}
 
-  The script to get the serial numbers of connected devices can be seen in \listingref{lst:get_serial_numbers}. It runs \code{adb devices} and then {grep}s exactly on \code{device}. \code{grep -vw emulator} makes sure that no emulators are matched. When an emulator is started on Jenkins, an additional device will appear that is also the emulator. This means that two devices will be shown that are in fact the same. To make sure we do not uninstall twice on the same device, we simply ignore one of the devices listed. When the devices have been found, we remove everything but the serial number itself with \code{sed 's/\textbackslash s*device//'} and make sure there is no additional whitespace with \code{sed 's/\textbackslash s*//g'}. The \code{g} at the end makes sure that all matching strings are substituted.
+  The script to get the serial numbers of connected devices can be seen in \listingref{lst:get_serial_numbers}. It runs \code{adb devices} and then {grep}s exactly on \code{device}. \code{grep -vw emulator} makes sure that no emulators are matched. When an emulator is started on Jenkins, an additional device will appear that is also the emulator. This means that two devices will be shown that are in fact the same. To make sure we do not uninstall twice on the same device, we simply ignore one of the devices listed. When the devices have been found, we remove everything but the serial number itself with \code{sed 's/\textbackslash s*device//'} and make sure there is no additional whitespace with \code{sed 's/\textbackslash s*//g'}. The \code{g} at the end makes sure that all matching strings are substituted.\todo{Vis eksempel på sed input}
 
   \begin{lstlisting}[language=bash,caption=Script that gets the serial numbers of all connected devices,label=lst:get_serial_numbers]
   $ANDROID_HOME/platform-tools/adb devices | grep -w device | grep -vw emulator | sed 's/\s*device//' | sed 's/\s*//g'
   \end{lstlisting}
 \subsubsection{Disconnection Script}
-To disconnect all connected devices we simply get the serial number of all connected devices on line \ref{disconnect_devices:get_serial_numbers}. We then run a loop that disconnects those serial numbers (lines \ref{disconnect_devices:loop_start}--\ref{disconnect_devices:loop_end}).
+To disconnect all connected devices in the script shown in \listingref{lst:disconnect_devices}, we simply get the serial number of all connected devices on line \ref{disconnect_devices:get_serial_numbers}. We then run a loop that disconnects those serial numbers (lines \ref{disconnect_devices:loop_start}--\ref{disconnect_devices:loop_end}).
   \begin{lstlisting}[language=bash,caption=Script that disconnects all connected devices,label=lst:disconnect_devices]
 SERIAL_NUMBER="$(/srv/scripts/get_serial_numbers.sh)" (*@\label{disconnect_devices:get_serial_numbers}@*)
 
