@@ -3,16 +3,21 @@
 This chapter describes our work on the user story \us{Decrease Job Build Times on Jenkins}. The developers want more rapid response to builds failing or succeeding. As explained in \sectionref{sec:faster_build_evaluation}, the emulator start-up time is a significant part of the build time, taking approximately two minutes. The emulator is used for running the tests, and as such we have to find an alternative method of running the tests.
 
 \begin{chapterorganization}
-  \item test
+  \item in \sectionref{sec:selecting_nonemu_method} we ;
+  \item in \sectionref{sec:pool_of_tablets} we ;
+  \item in \sectionref{sec:router_server_tablet} we ;
+  \item in \sectionref{sec:wireless_adb} we ;
+  \item in \sectionref{sec:jenkins_physical_devices} we ;
+  \item in \sectionref{sec:adapting_job_flow} we ;
 \end{chapterorganization}
 
-\section{Selecting a Non-Emulator Test Method}
-As explained in \sectionref{sec:non-emulator_testing} there are two ways of running tests without an emulator: testing on a physical device, and testing on the Java Virtual Machine. Testing on a physical device is the most method resulting in the must trustworthy test results. Most groups have a tablet laying unused much of the day as well as all night, and we intend to utilize these unused tablets. This way, we can test on multiple different devices and Android versions without significantly increase the build times and resource use on the server, which would be the case when testing on emulators. However, it will be too tedious connecting these tablets physically to the server as we need them (the server is behind locks in the basement of Aalborg University) and we most likely will not get permission to physically connect USB devices to it.
+\section{Selecting a Non-Emulator Test Method}\label{sec:selecting_nonemu_method}
+As explained in \sectionref{sec:non-emulator_testing} there are two ways of running tests without an emulator: testing on a physical device, and testing on the Java Virtual Machine. Testing on a physical device is the only way to realistically run tests. All groups have a tablet laying unused much of the day as well as all night, and we will utilize these unused tablets. This way, we can test on multiple different devices and Android versions without significantly increasing the build times and resource use on the server, which would be the case when testing on emulators. However, it will be too tedious connecting these tablets physically to the server (the server is behind locks in the basement of Aalborg University) and we most likely will not get permission to physically connect USB devices to it.
 
 \section{The Overall Idea}
 We want to create a pool of available tablets, such that groups in an easy way can provide their tablets for testing. Our plan is to setup a wireless router in vicinity of our group rooms. The wireless router broadcasts a Wi-Fi signal, and any tablet connected to this Wi-Fi will automatically be in a pool of connected tablets, potentially available for testing. The server is able to communicate with the wireless router through the network at Aalborg University. We have acquired a wireless router from the semester coordinator, Ulrik Nyman, a \emph{TP-Link TL-WDR3600}.
 
-\section{Creating a Pool of Test Tablets}
+\section{Creating a Pool of Test Tablets}\label{sec:pool_of_tablets}
 In order to transform a common wireless router into a device that maintains a pool of tablets, we flash it with a custom firmware. A custom firmware allows us to access the device as root user and reprogram parts of it. We tried flashing with the \emph{DD-WRT}\parencite{ddwrt} firmware, an open source router firmware. However, we found no build of the firmware that worked properly on our device. Either SSH or some crucial binaries did not work (also documented in the DD-WRT forums by other users), or the build was known to brick the router. We therefore choose to flash with \emph{OpenWRT}\parencite{openwrt}, another open source router firmware. We choose OpenWRT because it is compatible with our device and have scripting support (as well as working SSH and binaries). After flashing with OpenWRT, we setup the basic system settings and configure the Wi-Fi network as one normally will in any home router.
 
 All tablets connected need static IP addresses as well as port forwarding to them. Therefore, we also need to partially disable the DHCP server on the router. A DHCP server automatically assigns any connecting client with a temporary IP address. We disable this, which means that any connecting client will not get an IP address. Now, we create a script which searches for any connected clients without an assigned IP address, and then assigns IP addresses to them, as seen in \listingref{lst:discover_devices}. It does this by retrieving a list of connected MAC addresses (line \ref{discover:maclist}) and cross-reference this list with a list of MAC addresses with assigned IP addresses (lines \ref{discover:iplist_begin}--\ref{discover:iplist_end}). All MAC addresses without an assigned IP address will get one (line \ref{discover:assign_ipport}) as well as a port forward rule in the firewall. Since we control the IP addresses and port forwards given, we can safely just assign an incremented IP address and port number. The script called in line \ref{discover:assign_ipport} can be seen in \listingref{lst:assign_ip_and_port}. This script calls the \code{uci} tool, Unified Configuration Interface, which is a way of changing configuration in the OpenWRT system.
@@ -32,10 +37,10 @@ Now that tablets can connect to the router in a controlled way, we want to enabl
 
 \lstinputlisting[language=bash,caption=Script that returns port numbers of connected devices,label=lst:list_devices_ports]{part_sprint4/devices.script}
 
-\section{Creating Route from Server to Tablet}
+\section{Creating Route from Server to Tablet}\label{sec:router_server_tablet}
 Testing the above setup revealed that the server and our router is separated on the network. The only traffic we can get through is ping. We investigated the cause of this with the help of IT Services at Aalborg University, and they moved our router to the same network as the server (determined by its MAC-address). We can now access the router from the server, which means we can access the tablets from the server (because of port forwarding on the router).
 
-\section{Wireless ADB App}
+\section{Wireless ADB App}\label{sec:wireless_adb}
 The Android Debug Bridge\footnote{Android SDK tool which manages communication between a computer and a device.} (ADB) tool supports device communication over Wi-Fi out-of-the-box \parencite{AndroidADB}. This is very convenient for us, because the interface for communication between computer and device is the same no matter if the devices are connected by wire or not. To connect a device wirelessly to a computer, the following steps are to be performed:
 \begin{enumerate}
   \item Connect the device to the computer using USB
@@ -121,7 +126,7 @@ public class BootReceiver extends BroadcastReceiver {
 }
 \end{javacode}
 
-\section{Adapting Jenkins to Use Physical Devices}
+\section{Adapting Jenkins to Use Physical Devices}\label{sec:jenkins_physical_devices}
 We currently use the Jenkins Android Emulator Plugin to run an emulator during each build. However, when one or more tablets are available for testing, we do not want to start an emulator. The plugin cannot be configured to start an emulator only if there are no physical devices attached. We decide to modify the Android Emulator Plugin to perform a check before starting an emulator. We modify the plugin such that it provides an option to check whether there are devices available, and then only to start an emulator if there are no devices already connected. We have submitted a pull request with the changes\footnote{\url{https://github.com/jenkinsci/android-emulator-plugin/pull/50}}. The maintainer of the plugin can choose to merge the request into the master branch of the plugin. This would be an advantage for us, as we the do not have to maintain our fork of the plugin.
 
 \listingref{lst:deviceCheck} contains the main addition to the plugin; the method which checks for connected devices. The main part of the method is preparing for the call in line \ref{line:runTool}, and parsing the output afterwards. The call is to a method which sends a command to a tool provided by the Android SDK. The call corresponds to writing \code{adb -d devices} in the terminal. The parameters, in order, to the call are:
@@ -165,7 +170,7 @@ throws IOException, InterruptedException {
 
 After the call, the standard output is converted to a string, and the method \code{getDeviceNames} converts the string into a list of device names. If the list is populated, then there are devices connected and the method returns true. The method \code{devicesConnected} is called during the emulator startup method, after the build environment is set up, but before the emulator has been started. With this addition to the plugin, Jenkins will only start an emulator instance if there are no devices attached. This shortens the build time significantly.
 
-\section{Adapting Job Flow on Jenkins}
+\section{Adapting Job Flow on Jenkins}\label{sec:adapting_job_flow}
 We need to connect to the physical devices before the emulator plugin runs, so that it will not start any emulator. When we have connected to the devices all Giraf apps on those devices must be uninstalled so they do not interfere with anything. Finally we make a script to disconnect any connected devices once a build has finished. Following is a description of the three scripts:
 
 \begin{description}

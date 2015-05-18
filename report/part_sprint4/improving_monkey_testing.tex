@@ -3,7 +3,8 @@ We make some changes to the way monkey tests are performed this sprint.
 
 \begin{chapterorganization}
   \item in \sectionref{sec:monkey_test_debug_app} we make monkey tests run on debug apps rather than release apps;
-  \item in \sectionref{sec:monkey_in_parallel} we update monkey tests to be able to run in parallel on all connected devices, because of the addition of physical devices being used by Jenkins now.
+  \item in \sectionref{sec:monkey_in_parallel} we update monkey tests to be able to run in parallel on all connected devices, because of the addition of physical devices being used by Jenkins now;
+  \item in \sectionref{sec:monkey_test_flow} we give a summary of the new monkey test flow.
 \end{chapterorganization}
 
 \section{Running Monkey Tests on Debug Apps}\label{sec:monkey_test_debug_app}
@@ -100,13 +101,13 @@ else
 fi
 \end{lstlisting}
 
-\section{Monkey Test Flow}
-\kimnote{Consider explaining this is the great perspective. What is the full workflow of monkey testing the apps. What where the problem, what solutions are there, and why did you choose this solution.}\todo{$\leftarrow$ Jeg har ikke lige kigge så meget på denne.}
+\section{Monkey Test Flow}\label{sec:monkey_test_flow}
+The setup of monkey testing has been through several changes since its inception. The current flow of a monkey test is as follows:
 
-\begin{enumerate}
-    \item Run emulator/Connect to devices
-    \item Install APKs
-    \item Run dummy database inserter
-    \item Run monkey test and report any failures
-    \item Publish log files and screenshots
-\end{enumerate}
+\begin{description}
+  \item[Connect to Devices/Run Emulator] We start by trying to connect to any physical devices. If there are no devices to connect to, we start an emulator instead.
+  \item[Install APKs] The APKs needed for the monkey test are installed. This mostly includes the Launcher app and Pictosearch app, but varies from app to app. The dummy database inserter app and the app to be tested is also installed. The APKs are installed in parallel on all connected devices.
+  \item[Run Dummy Database Inserter] The dummy database inserter app is run in parallel on all connected devices after having installed all APKs. We do this so that apps do not have to download the full database which can take 10 minutes or more. The build waits for the dummy database inserter app to finish inserting data before continuing.
+  \item[Run Monkey Test and Report Any Failures] The monkey test is run in parallel on all connected devices. A log file is produced for each device containing relevant device information. A screenshot is also made immediatly after the app has either finished monkey testing or crashed. If a failure happened on any device a failure is reported. 
+  \item[Publish Log Files and Screenshots] The log files and screenshots are published on Jenkins so that they can be accessed easily.
+\end{description}
