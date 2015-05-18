@@ -1,9 +1,9 @@
 #!/bin/sh
 
 # Retrieve mac addresses of connected devices on wlan0:
-maclist=$(iwinfo wlan0 assoclist | grep -E -o '[[:xdigit:]]{2}(:[[:xdigit:]]{2}){5}' | awk '{print tolower($0)}')
+maclist=$(iwinfo wlan0 assoclist | grep -E -o '[[:xdigit:]]{2}(:[[:xdigit:]]{2}){5}' | awk '{print tolower($0)}') (*@\label{discover:maclist}@*)
 
-. /lib/functions.sh
+. /lib/functions.sh (*@\label{discover:iplist_begin}@*)
 config_cb() {
   config_type="$1"
   if [ "$config_type" = "host" ]
@@ -19,7 +19,7 @@ config_cb() {
   fi
 }
 
-config_load dhcp
+config_load dhcp (*@\label{discover:iplist_end}@*)
 
 for x in $maclist
 do
@@ -27,6 +27,6 @@ do
   if [ "$?" != "0" ]
   then
     # We found a new device. Call this script to setup static IP and port forward:
-    /bin/setup_static_ip.sh $x
+    /bin/setup_static_ip.sh $x  (*@\label{discover:assign_ipport}@*)
   fi
 done
