@@ -1,0 +1,68 @@
+\chapter{Misc}
+\todo{Midlertidig titel}
+
+\section{Jenkins Priority Queue}
+We have committed ourselves to setup a prioritized build queue on Jenkins, such that libraries have a higher priority than other jobs, such as apps. Developers do not want to wait for libraries to build when there are many apps in the queue. This is because libraries are released on Artifactory often, and waiting for them to be released blocks further development more than waiting for apps to build.
+
+To solve this user story, we install a Jenkins plugin \parencite{jenkins-priority-plugin} which allows for a prioritized build queue. This plugin allows us to assign each Jenkins project a priority from 1 to 5 (where 1 is the highest priority). We select a scheduling algorithm which manages the way in which jobs are ordered.
+
+\subsection{Scheduling Algorithms}
+By introducing a priority queue, a number of potential problems arise. There is a risk of starvation, which means that high priority jobs take all resources such that jobs of lower priority are never run. The overall objective is to increase the average throughput of high priority jobs without making the low priority jobs starve.
+
+The Jenkins plugin comes with three different scheduling algorithms:
+
+\begin{description}
+  \item[Absolute] The queue is strictly ordered by priority. The highest priority job is greedily selected every time a new job is to be executed.
+  \item[Fair Queuing] The first job from each priority group is executed with round-robin scheduling. This way, each priority get equal execution time.
+  \item[Weighted Fair Queuing] Each priority gets a fraction of the total throughput. The higher priority, the larger the fraction. For example, jobs with priority 1 gets $\frac{1}{2}$ of the total throughput, and priority 2 gets $\frac{1}{4}$ and so on.
+\end{description}
+\kimnote{I am not familier with these algorithms, so to me it does not seem like that fair queuing gives an incleased throughput of high prority taks. Please make sure that you explain these alrogithms fully or provide a cite to someone who does.}
+
+The absolute scheduling algorithm clearly improves the throughput of high priority jobs. However, there is a risk of starving jobs. The fair queuing algorithm, on the other hand, does not risk starving jobs. However, it also does not necessarily increase the throughput of high priority tasks. The weighted fair queuing algorithm distributes the resources among the different jobs based on their priorities. The throughput of high priority jobs is increased, and the throughput of low priority tasks is decreased. Because of this, we use the weighted fair queuing algorithm to make library jobs build faster than other jobs on Jenkins.
+\kimnote{Weighted Fair Queuing can also course starvation, as fare as I understand, so why not use Absolute? Please elaborate ;)}
+
+\section{Easy App Download and Installation}
+The user story \us{Easy Download and Installation of all Apps} describes that developers want to be able to easily install the the most recent versions of all apps on their devices. To solve this problem, we develop a script which downloads the most recent apps from the FTP server. The solution must work on both Unix systems and Windows without any additional software.
+
+\subsection{Keeping Track of Newest Apps}
+When new applications are built on Jenkins, we upload them to the Giraf FTP server. We extend this upload functionality to also create a symbolic link to the newest version in a \mono{newest\_releases/} directory. This directory contains only one link per app, and thus allows us avoid finding the newest release in a directory containing all releases. Thus we avoid having to search for the newest APK as we have previously done, simplifying the script. Now, we can simply download all files in this directory to have the most recent versions of all apps.
+
+\subsection{Downloading and Installing Apps}
+Because we keep track of the newest apps on the build server, only little work is to be done in the download script. Because of this, we allow ourselves to develop two different scripts: A bash script for Unix and a Powershell script for Windows. These scripts first connect to the FTP server and downloads the apps. Afterwards, it reinstalls each app on a connected device.
+
+The Unix script can be seen in \listingref{lst:download_install_apks_unix}. We connect to the FTP with the \code{-i -n} options that disables prompting when downloading multiple files and disables auto login, respectively (line \ref{download_install_apks:ftp_start}). Having connected we specify that the files to be downloaded are binary, get all files in the newest releases directory and quit (lines \ref{download_install_apks:binary}--\ref{download_install_apks:quit}). We then install the downloaded APKs onto a connected device (lines \ref{download_install_apks:installing_start}--\ref{download_install_apks:installing_stop}). The Powershell script can be seen in \appendixref{app:download_and_install_apks_windows} and works similarly.
+
+Because the scripts do not require any additional software and because they download and install all applications automatically, this solution comply with the conditions of satisfaction of the user story.
+
+\begin{lstlisting}[language=bash,caption=Unix script that downloads and installs newest APKs,label=lst:download_install_apks_unix]
+#!/bin/bash
+ftp -i -n ftp://ftpuser:9scWKbP@cs-cust06-int.cs.aau.dk/newest_releases/ << EOF (*@\label{download_install_apks:ftp_start}@*)
+    binary (*@\label{download_install_apks:binary}@*)
+    mget * (*@\label{download_install_apks:mget}@*)
+    quit (*@\label{download_install_apks:quit}@*)
+EOF
+
+COUNTER=0 (*@\label{download_install_apks:installing_start}@*)
+for f in *.apk
+do
+    echo "Trying to Uninstall $f"
+    adb uninstall ${f%'.apk'}
+    echo "Installing $f"
+    adb install -r "$f"
+    COUNTER=$(expr $COUNTER + 1)
+done (*@\label{download_install_apks:installing_stop}@*)
+echo "Installed $COUNTER apps"
+exit 0
+\end{lstlisting}
+
+\section{Pre-Receive Hook}
+During the latest sprints, we have discovered several times that developers have committed the database password on Git which causes everyone to change the database password. This is frustrating and time consuming, and for this reason we choose to implement a pre-receive Git hook which rejects a push containing the database password. This is not a user story but a refactoring of the version control system. A pre-receive hook is run every time something is pushed to the Git repository, but before the changes are applied (in contrast to the post-receive hook previously described). If the script returns a non-zero exit code, the commit is rejected.
+
+As we develop this hook, we add a number of additional features. Overall, it checks for the following:
+\begin{description}
+  \item[Database Passwords] The database password is stored in a Java file called \mono{DatabaseCredentials.java}. Every database developer has this file locally and inserts it manually during development. On Jenkins, this file is automatically added to the project during build. Even though the file is part of the gitignore list, it is sometimes commited by mistake. If this file is contained anywhere in the push, it is rejected.
+  \item[References to Local Dependencies] Sometimes, applications reference a \code{0.0-SNAPSHOT} version of a library, which is used to reference a library which is stored on the developer's computer. When Jenkins builds the project, it breaks because it cannot find the library. Such mistakes are avoided by checking for local dependency references.
+  \item[Dynamic Dependency References] Dependencies can be declared with a dynamic version number (e.g.\@ \code{1.4.+}). As described earlier, we discourage this as it removes the ability to backtrack exact dependency versions in a specific revision of a repository. We therefore check for such references as well and rejects the push of they are referenced.
+  \item[Push Enabled] The script checks the contents of a specific file on the server. If the file contains \mono{1}, we instantly reject the push. This allows us to temporarily disable pushes to Git if we for example are restarting Jenkins.
+\end{description}
+The full pre-receive Git hook code can be seen in \appendixref{sec:app_git_hook_pre}.
