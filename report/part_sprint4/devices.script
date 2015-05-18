@@ -35,7 +35,7 @@ config_cb() {
         fi
       done
     }
-    fi
+  fi
 }
 config_load firewall
 echo $portlist | tr " " "\n"
