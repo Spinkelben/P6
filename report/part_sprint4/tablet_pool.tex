@@ -28,7 +28,7 @@ We have the option to run this script either in a loop, busy-waiting most of the
 \lstinputlisting[language=bash,caption=Script that assigns discovers new devices and assigns a static IP address and port forward by calling the script below,label=lst:discover_devices]{part_sprint4/discover_devices.script}
 \lstinputlisting[language=bash,caption=Script that sets up static IP address and a port forward for a given MAC address,label=lst:assign_ip_and_port]{part_sprint4/setup_static_ip.script}
 
-Now that tablets can connect to the Wi-Fi in a controlled way, we want to enable Jenkins to request a list of the port numbers of the connected tablets. OpenWRT already runs a small http server for its configuration GUI\@. We create a new script that returns a list of the port numbers of all connected devices. This script can be reached from \mono{http://$\langle$router-ip$\rangle$/cgi-bin/devices}. We have enabled the http server to be reached from outside the router in the router firewall.  The script works by retrieving a list of connected MAC addresses, cross-referencing this list with a list of the current DHCP leases, which returns the IP addresses of the connected devices. This list of IP addresses is cross-referenced with the firewall configuration, where we search for a port forward for each IP address. The port is returned.
+Now that tablets can connect to the Wi-Fi in a controlled way, we want to enable Jenkins to request a list of the port numbers of the connected tablets. OpenWRT already runs a small http server for its configuration GUI\@. We create a new script that returns a list of the port numbers of all connected devices. This script can be reached from \mono{http://$\langle$router-ip$\rangle$/cgi-bin/devices}. We have enabled the http server to be reached from outside the router in the router firewall. The script works by retrieving a list of connected MAC addresses (line \ref{devices:maclist}), cross-referencing this list with a list of the current DHCP leases, which returns the IP addresses of the connected devices (lines \ref{devices:iplistbegin}--\ref{devices:iplistbegin}). This list of IP addresses is cross-referenced with the firewall configuration, where we search for a port forward for each IP address (lines \ref{devices:portbegin}--\ref{devices:portend}). The ports are returned (line \ref{devices:result}).
 
 \lstinputlisting[language=bash,caption=Script that returns port numbers of connected devices,label=lst:list_devices_ports]{part_sprint4/devices.script}
 
@@ -172,44 +172,44 @@ We need to connect to the physical devices before the emulator plugin runs, so t
   \item[Connection Script] To connect to all devices connected to the router we get the information on the devices page of the router. The script can be seen in \listingref{lst:connect_devices}. We first check the connection on line \ref{connect_devices:check_connection} by supplying the \code{i} option so that \code{curl} returns the HTTP header. We then \code{grep 200} to check that there is a connection (code 200 means a successful connection). We then check the error code of that command on line \ref{connect_devices:if_start}. If it is \code{0} then a connection was established. We then get the ports of all devices connected to the router on line \ref{connect_devices:get_ports}. Finally we simply iterate through those ports and connect to them via ADB (lines \ref{connect_devices:connection_loop_start}--\ref{connect_devices:connection_loop_end}).
 
   \begin{lstlisting}[language=bash,caption=Script that connects to devices,label=lst:connect_devices]
-  URL="http://172.25.11.91/cgi-bin/devices"
+URL="http://172.25.11.91/cgi-bin/devices"
 
-  curl --connect-timeout 10 -i --silent $URL | head -1 | grep 200 > /dev/null (*@\label{connect_devices:check_connection}@*)
+curl --connect-timeout 10 -i --silent $URL | head -1 | grep 200 > /dev/null (*@\label{connect_devices:check_connection}@*)
 
-  if [ "$?" -eq "0" ] (*@\label{connect_devices:if_start}@*)
-  then
-      DEVICE_PORTS="$(curl --silent $URL)" (*@\label{connect_devices:get_ports}@*)
-      for d in $DEVICE_PORTS (*@\label{connect_devices:connection_loop_start}@*)
-      do
-          $ANDROID_HOME/platform-tools/adb connect 172.25.11.91:$d
-      done (*@\label{connect_devices:connection_loop_end}@*)
-  else
-      echo "No connection found"
-  fi
+if [ "$?" -eq "0" ] (*@\label{connect_devices:if_start}@*)
+then
+    DEVICE_PORTS="$(curl --silent $URL)" (*@\label{connect_devices:get_ports}@*)
+    for d in $DEVICE_PORTS (*@\label{connect_devices:connection_loop_start}@*)
+    do
+        $ANDROID_HOME/platform-tools/adb connect 172.25.11.91:$d
+    done (*@\label{connect_devices:connection_loop_end}@*)
+else
+    echo "No connection found"
+fi
   \end{lstlisting}
   \item[Uninstallation Script] The uninstallation script seen in \listingref{lst:uninstall_apks} uninstalls all Giraf APKs from all connected devices in parallel. We do it in parallel so that connecting more tablets will not increase the time it takes to uninstall. To do it in parallel we use the GNU parallel tool \parencite{Tange2011a}. On line \ref{lst:uninstall_apks:get_serial_numbers} we get the serial number of all connected devices. On line \ref{lst:uninstall_apks:parallel_loop} we run the parallel tool on the function \code{uninstall}. The variable \code{\$SERIAL\_NUMBER} after the three colons is the array that will looped in parallel. Each element is then passed onto the \code{uninstall} function. The uninstall function gets the packages names of all installed Giraf apps on the device on line \ref{lst:uninstall_apks:get_package_names}. The two \code{sed} calls at the end make sure there is nothing but the package names. The APKs are then uninstalled on lines \ref{lst:uninstall_apks:loop_start}--\ref{lst:uninstall_apks:loop_end}. The function is exported on line \ref{lst:uninstall_apks:export} so that parallel can use it.
   \begin{lstlisting}[language=bash,caption=Script that uninstalls all installed Giraf apps on all devices,label=lst:uninstall_apks]
-  uninstall() {
-    # Find all installed giraf apps on this device
-    PACKAGE_NAMES="$($ANDROID_HOME/platform-tools/adb -s $1 shell pm list packages -f | grep dk.aau.cs.giraf | sed 's/.*apk=//' | sed 's/\s*//g')" (*@\label{lst:uninstall_apks:get_package_names}@*)
+uninstall() {
+  # Find all installed giraf apps on this device
+  PACKAGE_NAMES="$($ANDROID_HOME/platform-tools/adb -s $1 shell pm list packages -f | grep dk.aau.cs.giraf | sed 's/.*apk=//' | sed 's/\s*//g')" (*@\label{lst:uninstall_apks:get_package_names}@*)
 
-    for p in $PACKAGE_NAMES (*@\label{lst:uninstall_apks:loop_start}@*)
-    do
-        echo "Uninstalling $p on $1"
-        $ANDROID_HOME/platform-tools/adb -s $1 uninstall $p
-    done (*@\label{lst:uninstall_apks:loop_end}@*)
-  }
-  export -f uninstall (*@\label{lst:uninstall_apks:export}@*)
+  for p in $PACKAGE_NAMES (*@\label{lst:uninstall_apks:loop_start}@*)
+  do
+      echo "Uninstalling $p on $1"
+      $ANDROID_HOME/platform-tools/adb -s $1 uninstall $p
+  done (*@\label{lst:uninstall_apks:loop_end}@*)
+}
+export -f uninstall (*@\label{lst:uninstall_apks:export}@*)
 
-  SERIAL_NUMBER="$(/srv/scripts/get_serial_numbers.sh)" (*@\label{lst:uninstall_apks:get_serial_numbers}@*)
+SERIAL_NUMBER="$(/srv/scripts/get_serial_numbers.sh)" (*@\label{lst:uninstall_apks:get_serial_numbers}@*)
 
-  # Only uninstall if there is a device
-  if [ "$SERIAL_NUMBER" ]
-  then
-      parallel uninstall ::: $SERIAL_NUMBER (*@\label{lst:uninstall_apks:parallel_loop}@*)
-  else
-      echo "No device found. Not uninstalling."
-  fi
+# Only uninstall if there is a device
+if [ "$SERIAL_NUMBER" ]
+then
+    parallel uninstall ::: $SERIAL_NUMBER (*@\label{lst:uninstall_apks:parallel_loop}@*)
+else
+    echo "No device found. Not uninstalling."
+fi
   \end{lstlisting}
 
   The script to get the serial numbers of connected devices can be seen in \listingref{lst:get_serial_numbers}. It runs \code{adb devices} and then {grep}s exactly on \code{device}. \code{grep -vw emulator} makes sure that no emulators are matched. When an emulator is started on Jenkins, an additional device will appear that is also the emulator. This means that two devices will be shown that are in fact the same. To make sure we do not uninstall twice on the same device, we simply ignore one of the devices listed. When the devices have been found, we remove everything but the serial number itself with \code{sed 's/\textbackslash s*device//'} and make sure there is no additional whitespace with \code{sed 's/\textbackslash s*//g'}. The \code{g} at the end makes sure that all matching strings are substituted.
@@ -219,12 +219,12 @@ We need to connect to the physical devices before the emulator plugin runs, so t
   \end{lstlisting}
   \item[Disconnection Script] To disconnect all connected devices we simply get the serial number of all connected devices on line \ref{disconnect_devices:get_serial_numbers}. We then run a loop that disconnects those serial numbers (lines \ref{disconnect_devices:loop_start}--\ref{disconnect_devices:loop_end}).
   \begin{lstlisting}[language=bash,caption=Script that disconnects all connected devices,label=lst:disconnect_devices]
-  SERIAL_NUMBER="$(/srv/scripts/get_serial_numbers.sh)" (*@\label{disconnect_devices:get_serial_numbers}@*)
+SERIAL_NUMBER="$(/srv/scripts/get_serial_numbers.sh)" (*@\label{disconnect_devices:get_serial_numbers}@*)
 
-  for s in $SERIAL_NUMBER (*@\label{disconnect_devices:loop_start}@*)
-  do
-      $ANDROID_HOME/platform-tools/adb disconnect $s
-  done (*@\label{disconnect_devices:loop_end}@*)
+for s in $SERIAL_NUMBER (*@\label{disconnect_devices:loop_start}@*)
+do
+    $ANDROID_HOME/platform-tools/adb disconnect $s
+done (*@\label{disconnect_devices:loop_end}@*)
   \end{lstlisting}
 \end{description}
 
