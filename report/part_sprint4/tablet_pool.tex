@@ -3,43 +3,43 @@
 This chapter describes our work on the user story \us{Decrease Job Build Times on Jenkins}. The developers want more rapid response to builds failing or succeeding. As explained in \sectionref{sec:faster_build_evaluation}, the emulator start-up time is a significant part of the build time, taking approximately two minutes. The emulator is used for running the tests, and as such we have to find an alternative method of running the tests.
 
 \begin{chapterorganization}
-  \item in \sectionref{sec:selecting_nonemu_method} we ;
-  \item in \sectionref{sec:pool_of_tablets} we ;
-  \item in \sectionref{sec:router_server_tablet} we ;
-  \item in \sectionref{sec:wireless_adb} we ;
-  \item in \sectionref{sec:jenkins_physical_devices} we ;
-  \item in \sectionref{sec:adapting_job_flow} we ;
+  \item in \sectionref{sec:selecting_nonemu_method} we choose to use non-emulator testing to decrease the emulator time usage during building, as well as describe our plan for implementing this;
+  \item in \sectionref{sec:pool_of_tablets} we setup a pool of tablets to be tested and we describe the scripts we created to perform this task;
+  \item in \sectionref{sec:router_server_tablet} we enable the test network to be reached from the server;
+  \item in \sectionref{sec:wireless_adb} we enable testing on the tablets, and create an app to the tablets that automates this process as much as possible;
+  \item in \sectionref{sec:jenkins_physical_devices} we describe the adaptation of Jenkins such that it only starts an emulator if there are no connected devices;
+  \item in \sectionref{sec:adapting_job_flow} we present the updated flow for jobs on Jenkins in order to successfully run tests on tablets. This includes running scripts to connect to devices, uninstall old APKs, build and install the necessary APKs, and disconnect devices.
 \end{chapterorganization}
 
 \section{Selecting a Non-Emulator Test Method}\label{sec:selecting_nonemu_method}
 As explained in \sectionref{sec:non-emulator_testing} there are two ways of running tests without an emulator: testing on a physical device, and testing on the Java Virtual Machine. Testing on a physical device is the only way to realistically run tests. All groups have a tablet laying unused much of the day as well as all night, and we will utilize these unused tablets. This way, we can test on multiple different devices and Android versions without significantly increasing the build times and resource use on the server, which would be the case when testing on emulators. However, it will be too tedious connecting these tablets physically to the server (the server is behind locks in the basement of Aalborg University) and we most likely will not get permission to physically connect USB devices to it.
 
-\section{The Overall Idea}
-We want to create a pool of available tablets, such that they in an easy way can be part of testing. Our plan is to setup a wireless router in vicinity of our group rooms. The wireless router broadcasts a Wi-Fi signal, and any tablet connected to this Wi-Fi will automatically be in a pool of connected tablets, available for testing. The server is able to communicate with the wireless router through the network at Aalborg University. We have acquired a wireless router from the semester coordinator, Ulrik Nyman, a \emph{TP-Link TL-WDR3600}.
+We want to create a pool of available tablets, such that groups in an easy way can provide their tablets for testing. Our plan is to setup a wireless router in vicinity of our group rooms. The wireless router broadcasts a Wi-Fi signal, and any tablet connected to this Wi-Fi will automatically be in a pool of connected tablets, potentially available for testing. The server is able to communicate with the wireless router through the network at Aalborg University. We have acquired a wireless router from the semester coordinator, Ulrik Nyman, a \emph{TP-Link TL-WDR3600}.
 
 \section{Creating a Pool of Test Tablets}\label{sec:pool_of_tablets}
-In order to transform a common wireless router into a device that maintains a pool of tablets, we flash it with a custom firmware. A custom firmware allows us to access the device as root and reprogram parts of it. We tried flashing with the \emph{DD-WRT} firmware \todo{Insert citation}, an open source router firmware, however we found no build of the firmware that worked properly on our device. Either SSH or some crucial binaries did not work (also documented in the DD-WRT forums by other users), or the build was known to brick the router. We have therefore chosen to flash with \emph{OpenWRT}, another open source router firmware \todo{Insert citation}. We choose OpenWRT because it is compatible with our device and have scripting support (as well as working SSH and binaries). After flashing with OpenWRT, we setup the basic system settings and configure the Wi-Fi network as one normally will in any home router.
+In order to transform a common wireless router into a device that maintains a pool of tablets, we flash it with a custom firmware. A custom firmware allows us to access the device as root user and reprogram parts of it. We tried flashing with the \emph{DD-WRT} \parencite{ddwrt} firmware, an open source router firmware. However, we found no build of the firmware that worked properly on our device. Either SSH or some crucial binaries did not work (also documented in the DD-WRT forums by other users), or the build was known to brick the router. We therefore choose to flash with \emph{OpenWRT} \parencite{openwrt}, another open source router firmware. We choose OpenWRT because it is compatible with our device and have scripting support (as well as working SSH and binaries). After flashing with OpenWRT, we setup the basic system settings and configure the Wi-Fi network as one normally will in any home router.
 
-All tablets connected need static IP addresses as well as port forwarding to them. Therefore, we also need to partially disable the DHCP server on the router. \emph{Dynamic DHCP} automatically assigns any connecting client with a temporary IP address. We disable this, which means that any connecting client will not get an IP address. Now, we create a script which searches for any connected clients without an assigned IP address, and then assigns IP addresses to them, as seen in \listingref{lst:discover_devices}. It does this by retrieving a list of connected MAC addresses (line \ref{discover:maclist}) and cross-reference this list with a list of MAC addresses with assigned IP addresses (lines \ref{discover:iplist_begin}--\ref{discover:iplist_end}). All MAC addresses without an assigned IP address will get one (line \ref{discover:assign_ipport}) as well as a port forward rule in the firewall. Since we control the IP addresses and port forwards given, we can safely just assign an incremented IP address and port number. The script called in line \ref{discover:assign_ipport} can be seen in \listingref{lst:assign_ip_and_port}. This script calls \code{uci}, Unified Configuration Interface, which is a way of changing configuration in the OpenWRT system. 
+All tablets connected need static IP addresses as well as port forwarding to them. Therefore, we also need to partially disable the DHCP server on the router. A DHCP server automatically assigns any connecting client with a temporary IP address. We disable this, which means that any connecting client will not get an IP address. Now, we create a script which searches for any connected clients without an assigned IP address, and then assigns IP addresses to them, as seen in \listingref{lst:discover_devices}. It does this by retrieving a list of connected MAC addresses (line \ref{discover:maclist}) and cross-reference this list with a list of MAC addresses with assigned IP addresses (lines \ref{discover:iplist_begin}--\ref{discover:iplist_end}). All MAC addresses without an assigned IP address will get one (line \ref{discover:assign_ipport}) as well as a port forward rule in the firewall. Since we control the IP addresses and port forwards given, we can safely just assign an incremented IP address and port number. The script called in line \ref{discover:assign_ipport} can be seen in \listingref{lst:assign_ip_and_port}. This script calls the \code{uci} tool, Unified Configuration Interface, which is a way of changing configuration in the OpenWRT system.
 
 A new device will thus trigger the following changes in the router:
 \begin{enumerate}
   \item We save an entry in the DHCP settings, such that the MAC address of the new device will be linked to the next free IP address (incremented)
-  \item We save a port forward entry in the firewall settings, such that any request to a port (e.g.\ \mono{9001}) will be assigned IP address port \mono{5555}.
-\end{enumerate} 
+  \item We save a port forward entry in the firewall settings, such that any request to a port (e.g.\ \mono{9001}) will be assigned the IP address of a device and port \mono{5555}.
+\end{enumerate}
 
-We have the option to run this script either in a loop, busy-waiting most of the time, or to run the script periodically in a cron job. If the script crashes, a cron job will ensure that it runs again. However, the minimum resolution of a cron job is one minute. We find waiting up to a minute reasonable --- it is only the first time connecting. After this first time, the devices will connect and receive their static IP addresses instantly. Because of the stability, we choose to run the script in a cron job every one minute.
+We have the option to run this script either in a loop, busy-waiting most of the time, or to run the script periodically in a cron job. If the script crashes, a cron job will ensure that it runs again. However, the minimum resolution of a cron job is one minute. We find waiting up to a minute reasonable --- it is only the first time connecting. After this first time, the devices will connect and receive their static IP addresses instantly. Because of the stability advantage, we choose to run the script in a cron job every one minute.
 
-\lstinputlisting[language=bash,caption=Script that assigns discovers new devices and assigns a static IP address and port forward by calling the script below,label=lst:discover_devices]{part_sprint4/discover_devices.script}
-\lstinputlisting[language=bash,caption=Script that sets up static IP address and a port forward for a given MAC address,label=lst:assign_ip_and_port]{part_sprint4/setup_static_ip.script}
+\lstinputlisting[float=tb,language=bash,caption=Script that assigns discovers new devices and assigns a static IP address and port forward by calling the script below,label=lst:discover_devices]{part_sprint4/discover_devices.script}
+\lstinputlisting[float=tbp,language=bash,caption=Script that sets up static IP address and a port forward for a given MAC address,label=lst:assign_ip_and_port]{part_sprint4/setup_static_ip.script}
 
-Now that tablets can connect to the Wi-Fi in a controlled way, we want to enable Jenkins to request a list of the port numbers of the connected tablets. OpenWRT already runs a small http server for its configuration GUI\@. We create a new script, seen in \listingref{lst:list_devices_ports}, that returns a list of the port numbers of all connected devices. This script can be reached from \mono{http://$\langle$router-ip$\rangle$/cgi-bin/devices}. We have enabled the http server to be reached from outside the router in the router firewall. The script works by retrieving a list of connected MAC addresses (line \ref{devices:maclist}), cross-referencing this list with a list of the current DHCP leases, which returns the IP addresses of the connected devices (lines \ref{devices:iplistbegin}--\ref{devices:iplistbegin}). This list of IP addresses is cross-referenced with the firewall configuration, where we search for a port forward for each IP address (lines \ref{devices:portbegin}--\ref{devices:portend}). The ports are returned (line \ref{devices:result}).
+Now that tablets can connect to the router in a controlled way, we want to enable Jenkins to request a list of the port numbers of the connected tablets. OpenWRT already runs a small HTTP server for its configuration GUI\@. We create a new script, seen in \listingref{lst:list_devices_ports}, that returns a list of the port numbers of all connected devices. This script is executed when a HTTP GET is requested to \mono{http://$\langle$router-ip$\rangle$/cgi-bin/devices}. We have enabled the HTTP server to be reached from outside the router in the router firewall. The script works by retrieving a list of connected MAC addresses (line \ref{devices:maclist}), cross-referencing this list with a list of the current DHCP leases, which returns the IP addresses of the connected devices (lines \ref{devices:iplistbegin}--\ref{devices:iplistend}). This list of IP addresses is cross-referenced with the firewall configuration, where we search for a port forward for each IP address (lines \ref{devices:portbegin}--\ref{devices:portend}). The ports are returned (line \ref{devices:result}).
 
-\lstinputlisting[language=bash,caption=Script that returns port numbers of connected devices,label=lst:list_devices_ports]{part_sprint4/devices.script}
+\lstinputlisting[float=tbp,language=bash,caption=Script that returns port numbers of connected devices,label=lst:list_devices_ports]{part_sprint4/devices.script}
 
 \section{Creating Route from Server to Tablet}\label{sec:router_server_tablet}
-Testing the above setup revealed that the server and our router is separated on the network. The only traffic we can get through is ping. We investigated the cause of this with the help of IT Services at Aalborg University, and they moved our router to the same network as the server. We can now access the router from the server, which means we can access the tablets from the server (because of port forwarding on the router).
+Testing the above setup revealed that the server and our router is separated on the network. The only traffic we can get through is ping. We investigated the cause of this with the help of IT Services at Aalborg University, and they moved our router to the same network as the server (determined by its MAC-address). We can now access the router from the server, which means we can access the tablets from the server (because of port forwarding on the router).
 
+%\FloatBarrier
 \section{Wireless ADB App}\label{sec:wireless_adb}
 The Android Debug Bridge\footnote{Android SDK tool which manages communication between a computer and a device.} (ADB) tool supports device communication over Wi-Fi out-of-the-box \parencite{AndroidADB}. This is very convenient for us, because the interface for communication between computer and device is the same no matter if the devices are connected by wire or not. To connect a device wirelessly to a computer, the following steps are to be performed:
 \begin{enumerate}
@@ -65,7 +65,7 @@ The app does, however, not support safe disconnection from the testing pool. If 
 
 \subsection{Android App Implementation}
 To run the shell script in the app, we execute the code shown in \listingref{lst:android_app_shell}. When we execute \code{su} (line 5), the device shows a dialog which asks the user for root permission. After accepting, every subsequent \code{su} call will be executed without need for permission. The method returns the exit code of the command so it can be handled accordingly by the caller.
-\begin{javacode}[float,label=lst:android_app_shell,caption=Enable wireless ADB in Android]
+\begin{javacode}[float=tb,label=lst:android_app_shell,caption=Enable wireless ADB in Android]
 public static int enableWifiAdb() throws IOException, InterruptedException {
   Process process = null;
   DataOutputStream os = null;
@@ -89,7 +89,7 @@ public static int enableWifiAdb() throws IOException, InterruptedException {
 \end{javacode}
 If the device for some reason is rebooted, we make sure to automatically enable wireless ADB when the device is started. We do this by declaring a \code{BroadcastReceiver}, which is automatically triggered when the device is booted. The receiver is declared in the Android manifest file and implemented as shown in \listingref{lst:android_app_broadcast_receiver}. The \code{onReceive()} method (lines 3--8) is called when the broadcast is received. We set the state of wireless ADB according to the user's preference (lines 19--27). We also set a notification (lines 21 and 25) to show the ADB state to the user.
 
-\begin{javacode}[float,label=lst:android_app_broadcast_receiver,caption=Android boot broadcast receiver]
+\begin{javacode}[float=tb,label=lst:android_app_broadcast_receiver,caption=Android boot broadcast receiver]
 public class BootReceiver extends BroadcastReceiver {
   @Override
   public void onReceive(Context context, Intent intent) {
@@ -129,20 +129,20 @@ public class BootReceiver extends BroadcastReceiver {
 \section{Adapting Jenkins to Use Physical Devices}\label{sec:jenkins_physical_devices}
 We currently use the Jenkins Android Emulator Plugin to run an emulator during each build. However, when one or more tablets are available for testing, we do not want to start an emulator. The plugin cannot be configured to start an emulator only if there are no physical devices attached. We decide to modify the Android Emulator Plugin to perform a check before starting an emulator. We modify the plugin such that it provides an option to check whether there are devices available, and then only to start an emulator if there are no devices already connected. We have submitted a pull request with the changes\footnote{\url{https://github.com/jenkinsci/android-emulator-plugin/pull/50}}. The maintainer of the plugin can choose to merge the request into the master branch of the plugin. This would be an advantage for us, as we the do not have to maintain our fork of the plugin.
 
-\listingref{lst:deviceCheck} contains the main addition to the plugin; the method which checks for connected devices. The main part of the method is preparing for the call in line \ref{line:runTool}, and parsing the output afterwards. The call is to a method which sends a command to a tool provided by the Android SDK. The call corresponds to writing \code{adb -d devices} in the terminal. The parameters, in order, to the call are:
+\listingref{lst:deviceCheck} contains the main addition to the plugin; the method which checks for connected devices. The main part of the method is preparing for the call in line \ref{line:runTool}, and parsing the output afterwards. The call is to a method which sends a command to a tool provided by the Android SDK. The call corresponds to writing \code{adb -d devices} in the terminal, which lists all connected devices. The parameters, in order, to the call are:
 
 \begin{itemize}
-  \item A \code{Launcher} which is an abstraction of an asynchronous process call, which blocks the calling thread until the operation is completed.
+  \item A \code{Launcher}, which is an abstraction of an process call, which blocks the calling thread until the operation is completed.
   \item An environment of variables which the process is run in. The most important variable is the \code{ANDROID\_ADB\_SERVER\_PORT} variable, as it decides which port ADB uses.
-  \item An \code{OutputStream} for standard output. This is where the result of the command is saved.
-  \item An \code{OutputStream} for errors.
-  \item An \code{AndroidSDK} which contains information about and methods relating to the installed Android SDK.
+  \item An \code{OutputStream} for standard output. This provides the output of the command.
+  \item An \code{OutputStream} for the error output of the command.
+  \item An \code{AndroidSDK} which contains information about and methods related to the installed Android SDK.
   \item The tool to run. An Enum with information about the tools provided by the SDK.
   \item The actual command to send to the tool, formatted as a string. In this case it is \code{-d devices}
-  \item The \code{FilePath} to the workspace if relevant. In this case it is not, so we just send a null value. 
+  \item The \code{FilePath} to the Jenkins workspace if relevant. In this case it is not, so we just send a \code{null} value.
 \end{itemize}
 
-\begin{javacode}[caption=The devicesConnected method which checks for connected devices.,label=lst:deviceCheck]
+\begin{javacode}[float=tb, caption=The devicesConnected method which checks for connected devices.,label=lst:deviceCheck]
 private boolean devicesConnected(AndroidEmulatorContext emu, PrintStream logger, int adbPort, AbstractBuild<?,?> build)
 throws IOException, InterruptedException {
     final ByteArrayOutputStream deviceList = new ByteArrayOutputStream();
@@ -171,10 +171,20 @@ throws IOException, InterruptedException {
 After the call, the standard output is converted to a string, and the method \code{getDeviceNames} converts the string into a list of device names. If the list is populated, then there are devices connected and the method returns true. The method \code{devicesConnected} is called during the emulator startup method, after the build environment is set up, but before the emulator has been started. With this addition to the plugin, Jenkins will only start an emulator instance if there are no devices attached. This shortens the build time significantly.
 
 \section{Adapting Job Flow on Jenkins}\label{sec:adapting_job_flow}
-We need to connect to the physical devices before the emulator plugin runs, so that it will not start any emulator. When we have connected to the devices all Giraf apps on those devices must be uninstalled so they do not interfere with anything. Finally we make a script to disconnect any connected devices once a build has finished. Following is a description of the three scripts:
+We need to connect to the physical devices before the emulator plugin runs, so that it will not start any emulator. The overall flow of the new test process is:
 
-\begin{description}
-  \item[Connection Script] To connect to all devices connected to the router we get the information on the devices page of the router. The script can be seen in \listingref{lst:connect_devices}. We first check the connection on line \ref{connect_devices:check_connection} by supplying the \code{i} option so that \code{curl} returns the HTTP header. We then \code{grep 200} to check that there is a connection (code 200 means a successful connection). We then check the error code of that command on line \ref{connect_devices:if_start}. If it is \code{0} then a connection was established. We then get the ports of all devices connected to the router on line \ref{connect_devices:get_ports}. Finally we simply iterate through those ports and connect to them via ADB (lines \ref{connect_devices:connection_loop_start}--\ref{connect_devices:connection_loop_end}).
+\begin{enumerate}
+  \item Disconnect devices
+  \item Connect to devices
+  \item Uninstall apps
+  \item Run build
+  \item Uninstall apps
+  \item Disconnect devices
+\end{enumerate}
+We start by disconnecting devices to make sure the connections are up to date. If a device somehow loses Internet connection, it will not appear to have been disconnected unless we specifically disconnect it. After having disconnected any device, we then connect to all devices again. When a connection has been established, we uninstall all installed Giraf apps to make sure that they do not interfere with the test. While we do this after the build itself, we must also do it initially. This is because groups might install Giraf apps on their devices while disconnected from the test network, and then connect their tablets to the test network later. We also do not want to leave any apps on the devices if groups want to use their tablets after they have been tested on. When we have performed the build and uninstalled any Giraf apps we disconnect the devices.
+
+\subsubsection{Connection Script}
+To connect to all devices connected to the router we get the information from the HTTP server on the router. The script can be seen in \listingref{lst:connect_devices}. We first check the connection to the server on line \ref{connect_devices:check_connection} by supplying the \code{i} option so that \code{curl} returns the HTTP response header. We then execute \code{grep 200} to check that the request was successful (code 200 means a successful connection). After this, we check the error code of that command on line \ref{connect_devices:if_start}. If the HTTP response code was \code{200}, grep sets its exit code to \code{0}. We then get the ports of all devices connected to the router on line \ref{connect_devices:get_ports}. Finally, we simply iterate through those ports and connect to them via ADB (lines \ref{connect_devices:connection_loop_start}--\ref{connect_devices:connection_loop_end}).
 
   \begin{lstlisting}[language=bash,caption=Script that connects to devices,label=lst:connect_devices]
 URL="http://172.25.11.91/cgi-bin/devices"
@@ -192,7 +202,8 @@ else
     echo "No connection found"
 fi
   \end{lstlisting}
-  \item[Uninstallation Script] The uninstallation script seen in \listingref{lst:uninstall_apks} uninstalls all Giraf APKs from all connected devices in parallel. We do it in parallel so that connecting more tablets will not increase the time it takes to uninstall. To do it in parallel we use the GNU parallel tool \parencite{Tange2011a}. On line \ref{lst:uninstall_apks:get_serial_numbers} we get the serial number of all connected devices. On line \ref{lst:uninstall_apks:parallel_loop} we run the parallel tool on the function \code{uninstall}. The variable \code{\$SERIAL\_NUMBER} after the three colons is the array that will looped in parallel. Each element is then passed onto the \code{uninstall} function. The uninstall function gets the packages names of all installed Giraf apps on the device on line \ref{lst:uninstall_apks:get_package_names}. The two \code{sed} calls at the end make sure there is nothing but the package names. The APKs are then uninstalled on lines \ref{lst:uninstall_apks:loop_start}--\ref{lst:uninstall_apks:loop_end}. The function is exported on line \ref{lst:uninstall_apks:export} so that parallel can use it.
+\subsubsection{Uninstallation Script}
+ The uninstallation script seen in \listingref{lst:uninstall_apks} uninstalls all Giraf APKs from all connected devices in parallel. We do it in parallel so that connecting more tablets will not increase the time it takes to uninstall apps. To do it in parallel, we use the GNU parallel tool \parencite{Tange2011a}. On line \ref{lst:uninstall_apks:get_serial_numbers} we get the serial number of all connected devices. On line \ref{lst:uninstall_apks:parallel_loop} we run the parallel tool on the function \code{uninstall}. The variable \code{\$SERIAL\_NUMBER} after the three colons is the array that will looped in parallel. Each element is then passed onto the \code{uninstall} function. The uninstall function gets the packages names of all installed Giraf apps on the device on line \ref{lst:uninstall_apks:get_package_names}. The two \code{sed} calls at the end make sure they return nothing but the package names, which are to be passed to adb to uninstall the apps. The apps are uninstalled on lines \ref{lst:uninstall_apks:loop_start}--\ref{lst:uninstall_apks:loop_end}. The function is exported on line \ref{lst:uninstall_apks:export} so that parallel can use it.
   \begin{lstlisting}[language=bash,caption=Script that uninstalls all installed Giraf apps on all devices,label=lst:uninstall_apks]
 uninstall() {
   # Find all installed giraf apps on this device
@@ -217,12 +228,13 @@ else
 fi
   \end{lstlisting}
 
-  The script to get the serial numbers of connected devices can be seen in \listingref{lst:get_serial_numbers}. It runs \code{adb devices} and then {grep}s exactly on \code{device}. \code{grep -vw emulator} makes sure that no emulators are matched. When an emulator is started on Jenkins, an additional device will appear that is also the emulator. This means that two devices will be shown that are in fact the same. To make sure we do not uninstall twice on the same device, we simply ignore one of the devices listed. When the devices have been found, we remove everything but the serial number itself with \code{sed 's/\textbackslash s*device//'} and make sure there is no additional whitespace with \code{sed 's/\textbackslash s*//g'}. The \code{g} at the end makes sure that all matching strings are substituted.
+  The script to get the serial numbers of connected devices can be seen in \listingref{lst:get_serial_numbers}. It runs \code{adb devices} and then {grep}s exactly on \code{device}. \code{grep -vw emulator} makes sure that no emulators are matched. When an emulator is started on Jenkins, an additional device will appear that is also the emulator. This means that two devices will be shown that are in fact the same. To make sure we do not uninstall twice on the same device, we simply ignore one of the devices listed. When the devices have been found, we remove everything but the serial number itself with \code{sed 's/\textbackslash s*device//'} and make sure there is no additional whitespace with \code{sed 's/\textbackslash s*//g'}. The \code{g} at the end makes sure that all matching strings are substituted.\todo{Vis eksempel på sed input}
 
   \begin{lstlisting}[language=bash,caption=Script that gets the serial numbers of all connected devices,label=lst:get_serial_numbers]
   $ANDROID_HOME/platform-tools/adb devices | grep -w device | grep -vw emulator | sed 's/\s*device//' | sed 's/\s*//g'
   \end{lstlisting}
-  \item[Disconnection Script] To disconnect all connected devices we simply get the serial number of all connected devices on line \ref{disconnect_devices:get_serial_numbers}. We then run a loop that disconnects those serial numbers (lines \ref{disconnect_devices:loop_start}--\ref{disconnect_devices:loop_end}).
+\subsubsection{Disconnection Script}
+To disconnect all connected devices in the script shown in \listingref{lst:disconnect_devices}, we simply get the serial number of all connected devices on line \ref{disconnect_devices:get_serial_numbers}. We then run a loop that disconnects those serial numbers (lines \ref{disconnect_devices:loop_start}--\ref{disconnect_devices:loop_end}).
   \begin{lstlisting}[language=bash,caption=Script that disconnects all connected devices,label=lst:disconnect_devices]
 SERIAL_NUMBER="$(/srv/scripts/get_serial_numbers.sh)" (*@\label{disconnect_devices:get_serial_numbers}@*)
 
@@ -231,17 +243,3 @@ do
     $ANDROID_HOME/platform-tools/adb disconnect $s
 done (*@\label{disconnect_devices:loop_end}@*)
   \end{lstlisting}
-\end{description}
-
-The overall flow of a job is now:
-
-\begin{enumerate}
-  \item Disconnect devices
-  \item Connect to devices
-  \item Uninstall apps
-  \item Run build
-  \item Uninstall apps
-  \item Disconnect devices
-\end{enumerate}
-
-We start by disconnecting devices to make sure the connections are up to date. If a device somehow loses Internet connection, it will not appear to have been disconnected unless we specifically disconnect it. After having disconnected any devices we then connect to all devices. When a connection has been established, we uninstall all installed Giraf apps. While we do this after the build itself, we must also do it initially. This is because groups might install Giraf apps on their devices while disconnected from the test network, and then connect their tablets to the test network later. We also do not want to leave any apps on the devices if groups want to use their tablets after they have been tested on. When we have performed the build and uninstalled any Giraf apps we disconnect the devices.
