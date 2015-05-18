@@ -1,8 +1,8 @@
 %!TEX root = ../report.tex
 \chapter{Jenkins Priority Queue}
-We have committed ourselves to setup a prioritized build queue on Jenkins, such that libraries have a higher priority than other jobs, such as apps. The reason for this is that developers often wait for new libraries to be published to Artifactory, but seldom wait for a release of an application on Google Play. \kimnote{I do not fully understand the problem, please elaborate.}
+We have committed ourselves to setup a prioritized build queue on Jenkins, such that libraries have a higher priority than other jobs, such as apps. Developers do not want to wait for libraries to build when there are many apps in the queue. This is because libraries are released on Artifactory often, and waiting for them to be released blocks further development more than waiting for apps to build.
 
-To solve this user story, we install a Jenkins plugin \parencite{jenkins-priority-plugin}\kimnote{insert cite or footnote} which allows for a prioritized build queue. This plugin allows us to assign each Jenkins project a priority from 1 to 5 (where 1 is the highest priority). We select a scheduling algorithm which manages the way in which jobs are ordered.
+To solve this user story, we install a Jenkins plugin \parencite{jenkins-priority-plugin} which allows for a prioritized build queue. This plugin allows us to assign each Jenkins project a priority from 1 to 5 (where 1 is the highest priority). We select a scheduling algorithm which manages the way in which jobs are ordered.
 
 \section{Scheduling Algorithms}
 By introducing a priority queue, a number of potential problems arise. There is a risk of starvation, which means that high priority jobs take all resources such that jobs of lower priority are never run. The overall objective is to increase the average throughput of high priority jobs without making the low priority jobs starve.
@@ -12,7 +12,7 @@ The Jenkins plugin comes with three different scheduling algorithms:
 \begin{description}
   \item[Absolute] The queue is strictly ordered by priority. The highest priority job is greedily selected every time a new job is to be executed.
   \item[Fair Queuing] The first job from each priority group is executed with round-robin scheduling. This way, each priority get equal execution time.
-  \item[Weighted Fair Queuing] Each priority gets a fraction of the total throughput. The higher priority, the larger the fraction. For example, jobs with priority 1 gets $\frac{1}{2}$ of the total througput, and priority 2 gets $\frac{1}{4}$ and so on.
+  \item[Weighted Fair Queuing] Each priority gets a fraction of the total throughput. The higher priority, the larger the fraction. For example, jobs with priority 1 gets $\frac{1}{2}$ of the total throughput, and priority 2 gets $\frac{1}{4}$ and so on.
 \end{description}
 \kimnote{I am not familier with these algorithms, so to me it does not seem like that fair queuing gives an incleased throughput of high prority taks. Please make sure that you explain these alrogithms fully or provide a cite to someone who does.}
 
