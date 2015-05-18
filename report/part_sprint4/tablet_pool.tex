@@ -87,7 +87,7 @@ public static int enableWifiAdb() throws IOException, InterruptedException {
   }
 }
 \end{javacode}
-If the device for some reason is rebooted, we make sure to automatically enable wireless ADB when the device is started. We do this by declaring a \code{BroadcastReceiver}, which is automatically triggered when the device is booted. The receiver is declared in the Android manifest file and implemented as shown in \listingref{lst:android_app_broadcast_receiver}. The \code{onReceive()} method (lines 3--8) is called when the broadcast is received. We set the state of wireless ADB according to the user's preference (lines 19--27). We also set a notification (lines 21 and 25) to show the ADB state to the user.
+If the device for some reason is rebooted, we make sure to automatically enable wireless ADB when the device is started. We do this by declaring a \code{BroadcastReceiver}, which is automatically triggered when the device is booted. The receiver is declared in the Android manifest file and implemented as shown in \listingref{lst:android_app_broadcast_receiver}. The \code{onReceive()} method (lines 3--8) is called when the broadcast is received. We set the state of wireless ADB according to the user's preference (lines 20--30). We also set a notification (lines 22 and 27) to show the ADB state to the user, and start a background service which keeps the screen and Wi-Fi on while testing (lines 23 and 28).
 
 \begin{javacode}[float=tb,label=lst:android_app_broadcast_receiver,caption=Android boot broadcast receiver]
 public class BootReceiver extends BroadcastReceiver {
@@ -112,10 +112,12 @@ public class BootReceiver extends BroadcastReceiver {
       if (enabled) {
         if(AdbUtils.enableWifiAdb() == 0) {
           AdbUtils.showNotification(context, true);
+          AdbUtils.startWakelockService(context, true);
         }
       } else {
         if(AdbUtils.disableWifiAdb() == 0) {
           AdbUtils.showNotification(context, false);
+          AdbUtils.startWakelockService(context, false);
         }
       }
     } catch (IOException | InterruptedException e) {
