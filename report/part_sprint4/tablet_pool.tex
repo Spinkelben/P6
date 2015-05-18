@@ -28,14 +28,14 @@ Testing the above setup revealed that the server and our router is separated on 
 The Android Debug Bridge\footnote{Android SDK tool which manages communication between a computer and a device.} (ADB) tool supports device communication over Wi-Fi out-of-the-box \parencite{AndroidADB}. This is very convenient for us, because the interface for communication between computer and device is the same no matter if the devices are connected by wire or not. To connect a device wirelessly to a computer, the following steps are to be performed:
 \begin{enumerate}
   \item Connect the device to the computer using USB
-  \item Run \code{adb tcpip <port>} to enable Wi-Fi debugging
+  \item Run \code{adb tcpip $\langle$port$\rangle$} to enable Wi-Fi debugging
   \item Disconnect the devices
-  \item Run \code{adb connect <ip>:<port>} to connect to the device with the specified ip and port
+  \item Run \code{adb connect $\langle$ip$\rangle$:$\langle$port$\rangle$} to connect to the device with the specified ip and port
 \end{enumerate}
 There is one problem with this, though: We do not have physical access to the server and cannot attach a device using USB\@. Therefore, we need a way to avoid this step. We can do that by setting at specific property in an Android configuration file \parencite{stackoverflow-adb-tcp}. Wireless ADB is enabled by executing the following commands in the Android shell:
-\begin{lstlisting}
+\begin{lstlisting}[mathescape]
 su
-setprop service.adb.tcp.port <port>
+setprop service.adb.tcp.port $\langle$port$\rangle$
 stop adbd
 start adbd
 \end{lstlisting}
