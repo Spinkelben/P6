@@ -5,17 +5,17 @@ echo # Must be here.
 # ...
 
 # Retrieve mac addresses of connected devices on wlan0:
-maclist=$(iwinfo wlan0 assoclist | grep -E -o '[[:xdigit:]]{2}(:[[:xdigit:]]{2}){5}' | awk '{print tolower($0)}') 
+maclist=$(iwinfo wlan0 assoclist | grep -E -o '[[:xdigit:]]{2}(:[[:xdigit:]]{2}){5}' | awk '{print tolower($0)}') (*@\label{devices:maclist}@*)
 
 # Get the IP for each connected mac adddress:
 regex_ip="\([0-9]\{1,3\}\.\)\{3\}[0-9]\{1,3\}"
-for x in $maclist
+for x in $maclist (*@\label{devices:iplistbegin}@*)
 do
   iplist="$iplist $(sed -n -e "s/^\(.*$x\) \($regex_ip\) \(.*\)/\2/p" /tmp/dhcp.leases)"
-done
+done (*@\label{devices:iplistend}@*)
 
 # Find matching port number from firewall redirection configuration:
-. /lib/functions.sh
+. /lib/functions.sh (*@\label{devices:portbegin}@*)
 config_cb() {
   type="$1"
   config_name="$2"
@@ -37,5 +37,6 @@ config_cb() {
     }
   fi
 }
-config_load firewall
-echo $portlist | tr " " "\n"
+config_load firewall (*@\label{devices:portend}@*)
+
+echo $portlist | tr " " "\n" (*@\label{devices:result}@*)
