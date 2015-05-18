@@ -42,9 +42,6 @@ fi
 
 We add the execution of the move script as a post-build task on all app jobs on Jenkins. We also update the monkey jobs to use the debug versions instead of the release versions. This means that when new apps are built, the debug versions are moved to the debug folder in the FTP directory. Every night, the monkey tests use these debug versions for testing. Hence, the user story is solved.
 
-\kimnote{Consider explaining this is the great perspective. What is the full workflow of monkey testing the apps. What where the problem, what solutions are there, and why did you choose this solution.}\todo{$\leftarrow$ Jeg har ikke lige kigge så meget på denne.}
-\kimnote{Did not read the next section.}
-
 \section{Running Monkey Tests in Parallel}\label{sec:monkey_in_parallel}
 With the addition of being able to run tests on multiple physical devices, we need to update monkey tests so that they run in parallel on all connected devices. To do this, we first update our script that installs APKs on a device so that it does so in parallel on all connected devices (see \appendixref{lst:uninstall_apks}). We do the same for the script that runs the dummy database insertion app (see \appendixref{app:start_wait_db_inserter_parallel}). The modifications to these two scripts are similar to that of the the uninstallation script (\listingref{lst:uninstall_apks}). Finally to run the monkey tests in parallel we make a new script, as the Jenkins emulator plugin does not support this feature. The script can be seen in \listingref{lst:run_monkey_parallel} We choose not to extend the Jenkins plugin with this feature, as it is faster for us to make a script.
 
@@ -102,3 +99,14 @@ else
     exit 1
 fi
 \end{lstlisting}
+
+\section{Monkey Test Flow}
+\kimnote{Consider explaining this is the great perspective. What is the full workflow of monkey testing the apps. What where the problem, what solutions are there, and why did you choose this solution.}\todo{$\leftarrow$ Jeg har ikke lige kigge så meget på denne.}
+
+\begin{enumerate}
+    \item Run emulator/Connect to devices
+    \item Install APKs
+    \item Run dummy database inserter
+    \item Run monkey test and report any failures
+    \item Publish log files and screenshots
+\end{enumerate}
