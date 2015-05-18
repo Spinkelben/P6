@@ -3,12 +3,12 @@
 This chapter describes our work on the user story \us{Decrease Job Build Times on Jenkins}. The developers want more rapid response to builds failing or succeeding. As explained in \sectionref{sec:faster_build_evaluation}, the emulator start-up time is a significant part of the build time, taking approximately two minutes. The emulator is used for running the tests, and as such we have to find an alternative method of running the tests.
 
 \begin{chapterorganization}
-  \item in \sectionref{sec:selecting_nonemu_method} we ;
-  \item in \sectionref{sec:pool_of_tablets} we ;
-  \item in \sectionref{sec:router_server_tablet} we ;
-  \item in \sectionref{sec:wireless_adb} we ;
-  \item in \sectionref{sec:jenkins_physical_devices} we ;
-  \item in \sectionref{sec:adapting_job_flow} we ;
+  \item in \sectionref{sec:selecting_nonemu_method} we choose to use non-emulator testing to decrease the emulator time usage of builds;
+  \item in \sectionref{sec:pool_of_tablets} we setup a pool of tablets to be tested;
+  \item in \sectionref{sec:router_server_tablet} we make sure that the test network is connected to the server network;
+  \item in \sectionref{sec:wireless_adb} we make an app to tablets that enables them to be tested on;
+  \item in \sectionref{sec:jenkins_physical_devices} we adapt Jenkins so that it only starts an emulator if there are no connected devices;
+  \item in \sectionref{sec:adapting_job_flow} we present the updated flow for jobs on Jenkins.
 \end{chapterorganization}
 
 \section{Selecting a Non-Emulator Test Method}\label{sec:selecting_nonemu_method}
