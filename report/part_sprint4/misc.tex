@@ -2,9 +2,10 @@
 This chapter describes our work with the two user stories relating to prioritizing jobs in Jenkins, and downloading and installing all apps in an easy way. We have also identified several things the last sprints that can improve usability and avoid some common mistakes among developers with regards to using Git. Even though we do not have a user story to back this up, we decide to implement these minor things to improve the developer-friendliness and to avoid the common mistakes.
 
 \begin{chapterorganization}
-  \item in \sectionref{sec:jenkins_prio_queue} we identify and implement a way of prioritizing jobs in Jenkins, and compare various scheduling algorithms.
-  \item in \sectionref{sec:appdownloadscript} we create scripts that developers can execute which will download the newest versions of all apps and install them onto a connected device.
-  \item in \sectionref{sec:prereceivehook} we describe small usability improvements and mechanisms to avoid common mistakes when developers push to Git repositories.
+  \item in \sectionref{sec:jenkins_prio_queue} we identify and implement a way of prioritizing jobs in Jenkins, and compare various scheduling algorithms;
+  \item in \sectionref{sec:appdownloadscript} we create scripts that developers can execute which will download the newest versions of all apps and install them onto a connected device;
+  \item in \sectionref{sec:prereceivehook} we describe small usability improvements and mechanisms to avoid common mistakes when developers push to Git repositories;
+  \item in \sectionref{sec:jenkins_doc} we describe how we document Jenkins targeting future developers of the Giraf project.
 \end{chapterorganization}
 
 \section{Jenkins Priority Queue}\label{sec:jenkins_prio_queue}
@@ -67,7 +68,10 @@ As we develop this hook, we add a number of additional features. Overall, it che
 \begin{description}
   \item[Database Passwords] The database password is stored in a Java file called \mono{DatabaseCredentials.java}. Every database developer has this file locally and inserts it manually during development. On Jenkins, this file is automatically added to the project during build. Even though the file is part of the gitignore list, it is sometimes commited by mistake. If this file is contained anywhere in the push, it is rejected.
   \item[References to Local Dependencies] Sometimes, applications reference a \code{0.0-SNAPSHOT} version of a library, which is used to reference a library which is stored on the developer's computer. When Jenkins builds the project, it breaks because it cannot find the library. Such mistakes are avoided by checking for local dependency references.
-  \item[Dynamic Dependency References] Dependencies can be declared with a dynamic version number (e.g.\@ \code{1.4.+}). As described earlier, we discourage this as it removes the ability to backtrack exact dependency versions in a specific revision of a repository. We therefore check for such references as well and rejects the push of they are referenced.
+  \item[Dynamic Dependency References] Dependencies can be declared with a dynamic version number (e.g.\ \code{1.4.+}). As described earlier, we discourage this as it removes the ability to backtrack exact dependency versions in a specific revision of a repository. We therefore check for such references as well and rejects the push of they are referenced.
   \item[Push Enabled] The script checks the contents of a specific file on the server. If the file contains \mono{1}, we instantly reject the push. This allows us to temporarily disable pushes to Git if we for example are restarting Jenkins.
 \end{description}
 The full pre-receive Git hook code can be seen in \appendixref{sec:app_git_hook_pre}.
+
+\section{Documenting Jenkins}\label{sec:jenkins_doc}
+We need to document our setup in Jenkins for future developers. We describe the project structure, Jenkins configuration, and the Jenkins installation. The document can be seen in \appendixref{app:jenkins_structure}. \todo{Is this long enough??? Andreas havde de gode formuleringer}
