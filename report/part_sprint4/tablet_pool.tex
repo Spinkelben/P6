@@ -181,12 +181,14 @@ We need to connect to the physical devices before the emulator plugin runs, so t
   \item Connect to devices
   \item Uninstall apps
   \item Run build
+  \item Disconnect devices
+  \item Connect to devices
   \item Uninstall apps
   \item Disconnect devices
 \end{enumerate}
 \end{multicols}
 
-We start by disconnecting devices to make sure the connections are up to date. If a device somehow loses Internet connection, it will not appear to have been disconnected unless we specifically disconnect it. After having disconnected any device, we then connect to all devices again. When a connection has been established, we uninstall all installed Giraf apps to make sure that they do not interfere with the test. While we do this after the build itself, we must also do it initially. This is because groups might install Giraf apps on their devices while disconnected from the test network, and then connect their tablets to the test network later. We also do not want to leave any apps on the devices if groups want to use their tablets after they have been tested on. When we have performed the build and uninstalled any Giraf apps we disconnect the devices.
+We start by disconnecting devices to make sure the connections are up to date. If a device somehow loses connection, it will not appear to have been disconnected unless we specifically disconnect it. After having disconnected any device, we then connect to all devices again. When a connection has been established, we uninstall all installed Giraf apps to make sure that they do not interfere with the test. While we do this after the build itself, we must also do it initially. This is because groups might install Giraf apps on their devices while disconnected from the test network, and then connect their tablets to the test network later. We also do not want to leave any apps on the devices if groups want to use their tablets after they have been tested on. When we have performed the build we disconnect devices followed by connecting to them --- the reason is the same as when we start. Following this we uninstall any Giraf apps and then disconnect.
 
 \subsubsection{Connection Script}
 To connect to all devices connected to the router we get the information from the HTTP server on the router. The script can be seen in \listingref{lst:connect_devices}. We first check the connection to the server on line \ref{connect_devices:check_connection} by supplying the \code{i} option so that \code{curl} returns the HTTP response header. We then execute \code{grep 200} to check that the request was successful (code 200 means a successful connection). After this, we check the error code of that command on line \ref{connect_devices:if_start}. If the HTTP response code was \code{200}, grep sets its exit code to \code{0}. We then get the ports of all devices connected to the router on line \ref{connect_devices:get_ports}. Finally, we simply iterate through those ports and connect to them via ADB (lines \ref{connect_devices:connection_loop_start}--\ref{connect_devices:connection_loop_end}).

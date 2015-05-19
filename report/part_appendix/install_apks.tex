@@ -1,4 +1,4 @@
-\chapter{Installting all APKs Script}\label{app:install_apks}
+\chapter{Installing all APKs Script}\label{app:install_apks}
 \begin{lstlisting}[language=bash,caption=Script that install APKs on all connected devices in parallel,label=lst:install_apks_parallel]
 #!/bin/bash
 install() { (*@\label{install_apks_parallel:install_func_start}@*)
@@ -9,7 +9,7 @@ install() { (*@\label{install_apks_parallel:install_func_start}@*)
 
     if ! [ "$IS_SUCCESS" ]
     then
-        echo "Error installing $2"
+        echo "Error installing $2 on $1"
         exit 1
     fi
 } (*@\label{install_apks_parallel:install_func_end}@*)

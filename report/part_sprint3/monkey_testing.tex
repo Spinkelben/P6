@@ -8,7 +8,7 @@ We succeed in setting up monkey testing for all Giraf apps.
 \end{chapterorganization}
 
 \section{Dummy Database Inserter}\label{sec:dummy_db_inserter}
-To make sure that the local database contains data before starting the monkey test, we create a new Android application which inserts dummy data into the database. The application is very simple and the main part is shown in \listingref{lst:dummy_db_ins_main_activity}. It starts a thread which inserts the data using a method provided by the database library project. When inserted, the application closes. We detect when the applications has closed to know when the data has been inserted. In line 26, we call \code{System.exit(0)} which ensures that the application is completely closed (killed), as it otherwise would just be in an idle state.
+To make sure that the local database contains data before starting the monkey test, we create a new Android application which inserts dummy data into the database. The application is very simple and the main part is shown in \listingref{lst:dummy_db_ins_main_activity}. It starts a thread which inserts the data using a method provided by the database library project. When inserted, the application closes. We detect when the applications has closed to know when the data has been inserted. In line \ref{dummydb:exit}, we call \code{System.exit(0)} which ensures that the application is completely closed (killed), as it otherwise would just be in an idle state.
 
 \begin{javacode}[caption=Dummy database inserter \mono{MainActivity},label=lst:dummy_db_ins_main_activity]
 public class MainActivity extends Activity {
@@ -36,7 +36,7 @@ public class MainActivity extends Activity {
         protected void onPostExecute(Void aVoid) {
             // Force exit app (so we can detect it)
             context.finish();
-            System.exit(0);
+            System.exit(0);(*@\label{dummydb:exit}@*)
         }
     }
 }
@@ -44,20 +44,20 @@ public class MainActivity extends Activity {
 
 Having installed the dummy database inserter app onto a device, it must be started before running any monkey test. It is vital that the monkey test does not start before the dummy data has been inserted. Otherwise the database will not be populated with usable data.
 
-We therefore make a script, seen in \listingref{lst:start_wait_dummy_db_inserter}, that starts the dummy database inserter app and waits for it to finish by busy waiting. It does so by first starting the app in line 1. It then runs a while loop (lines 5--9) that uses \code{adb shell ps} to list all processes running on the Android device, and then piping that to \code{grep} to check for the specific app. The loop runs for as long as the output is not empty.
+We therefore make a script, seen in \listingref{lst:start_wait_dummy_db_inserter}, that starts the dummy database inserter app and waits for it to finish by busy waiting. It does so by first starting the app in line \ref{dummydb:1}. It then runs a while loop (lines \ref{dummydb:begin}--\ref{dummydb:end}) that uses \code{adb shell ps} to list all processes running on the Android device, and then piping that to \code{grep} to check for the specific app. The loop runs for as long as the output is not empty.
 
 Busy waiting is generally to be avoided, as it wastes CPU time \parencite[ch.2]{tanenbaum2007}. An alternative would be to block the process and have the tablet notify the process that it has finished. However, this is difficult and time consuming to implement. To avoid too much waste, we insert a sleep of two seconds, thus blocking the process and freeing up CPU time.\todo{Vigtigt: Læs denne paragraf}
 
 \begin{lstlisting}[language=bash,showstringspaces=false,caption=Start and wait for dummy database inserter,label=lst:start_wait_dummy_db_inserter]
-/srv/android-sdk-linux//platform-tools/adb shell am start -n dk.aau.cs.giraf.dummydbinserter/dk.aau.cs.giraf.dummydbinserter.MainActivity
+/srv/android-sdk-linux//platform-tools/adb shell am start -n dk.aau.cs.giraf.dummydbinserter/dk.aau.cs.giraf.dummydbinserter.MainActivity (*@\label{dummydb:1}@*)
 
 IS_RUNNING="$(/srv/android-sdk-linux//platform-tools/adb shell ps | grep dk.aau.cs.giraf.dummydbinserter)"
 
-while [ "$IS_RUNNING" ]
+while [ "$IS_RUNNING" ] (*@\label{dummydb:begin}@*)
 do
     IS_RUNNING="$(/srv/android-sdk-linux//platform-tools/adb shell ps | grep dk.aau.cs.giraf.dummydbinserter)"
     sleep 2
-done
+done (*@\label{dummydb:end}@*)
 
 echo "finished dummy insertion"
 \end{lstlisting}
@@ -65,9 +65,9 @@ echo "finished dummy insertion"
 \section{Adapting Giraf Apps for Monkey Testing}\label{sec:adapting_apps_for_monkey_testing}
 Each Giraf application expects being started from the launcher, so that information about the current user is passed to the app. This prevents us from running monkey tests on the apps, as the monkey test will start the app without providing this information, resulting in crashes or failure to start. We circumvent this by detecting whether an app is started by a monkey test; if so, we use a test user received from the database to log-in. The process varies for each app. We show how to implement the change for the \emph{user manager} app in the activity \mono{MainActivity}.
 
-The original code can be seen in \listingref{lst:main_activity_original}. When \mono{MainActivity} is created, it gets the log-in information provided by the launcher (line 7). This information is then passed onto \mono{getProfileFromExtras()} that gets a profile from this information. Line 14--19 shows a snippet of this method. It calls \mono{signInWithGuardianId()} with the ID of a guardian.
+The original code can be seen in \listingref{lst:main_activity_original}. When \code{MainActivity} is created, it gets the log-in information provided by the launcher (line \ref{origmain:7}). This information is then passed onto \code{getProfileFromExtras()} that gets a profile from this information. Line \ref{origmain:begin}--\ref{origmain:end} shows a snippet of this method. It calls \code{signInWithGuardianId()} with the ID of a guardian.
 
-In the modified version of \emph{user manager} that supports monkey testing, seen in \listingref{lst:main_activity_monkey_test}, we add an if-statement (line 7) that checks if the app is started by a monkey test. If it is, we make a new \mono{Helper} (line 8), which is a database helper that enables us to get all guardians and select the ID of the first guardian (line 10). Instead of calling \mono{getProfileFromExtras()}, we call \mono{signInWithGuardianId()} directly. If the app was not started by a monkey test we proceed as normal (lines 12--15).
+In the modified version of \emph{user manager} that supports monkey testing, seen in \listingref{lst:main_activity_monkey_test}, we add an if-statement (line \ref{main:ismonkey}) that checks if the app is started by a monkey test. If it is, we make a new \code{Helper} (line \ref{main:helper}), which is a database helper that enables us to get all guardians and select the ID of the first guardian (line \ref{main:signin}). Instead of calling \code{getProfileFromExtras()}, we call \code{signInWithGuardianId()} directly. If the app was not started by a monkey test we proceed as normal (lines \ref{main:begin}--\ref{main:end}).
 
 \begin{javacode}[caption=User manager MainActivity sign in original,label=lst:main_activity_original]
 public class MainActivity extends FragmentActivity {
@@ -76,19 +76,19 @@ public class MainActivity extends FragmentActivity {
   protected void onCreate(Bundle savedInstanceState) {
     // ...
 
-    Bundle extras = getIntent().getExtras();
+    Bundle extras = getIntent().getExtras();(*@\label{origmain:7}@*)
     getProfileFromExtras(extras);
     checkIfValidProfile();
 
     // ...
   }
 
-  private void getProfileFromExtras(Bundle extras) {
+  private void getProfileFromExtras(Bundle extras) { (*@\label{origmain:begin}@*)
     // ...
     } else if (extras.containsKey(EXTRAS_PROFILE_CURRENT_GUARDIAN_ID)) {
       signInWithGuardianId(extras.getInt(EXTRAS_PROFILE_CURRENT_GUARDIAN_ID));
     } // ...
-  }
+  } (*@\label{origmain:end}@*)
 
   // ...
 }
@@ -101,15 +101,15 @@ public class MainActivity extends FragmentActivity {
   protected void onCreate(Bundle savedInstanceState) {
     // ...
 
-    if (ActivityManager.isUserAMonkey()) {
-      Helper h = new Helper(this);
+    if (ActivityManager.isUserAMonkey()) { (*@\label{main:ismonkey}@*)
+      Helper h = new Helper(this);  (*@\label{main:helper}@*)
 
-      signInWithGuardianId(h.profilesHelper.getGuardians().get(0).getId());
+      signInWithGuardianId(h.profilesHelper.getGuardians().get(0).getId()); (*@\label{main:signin}@*)
     }
-    else {
+    else { (*@\label{main:begin}@*)
       Bundle extras = getIntent().getExtras();
       getProfileFromExtras(extras);
-    }
+    } (*@\label{main:end}@*)
 
     checkIfValidProfile();
 
