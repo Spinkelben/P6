@@ -61,7 +61,7 @@ To make it easy for developers to enable and disable wireless ADB (and by that a
 
 The app does, however, not support safe disconnection from the testing pool. If groups disconnect their devices, they may do it during a build. The build will then result in failure due to premature disconnection. We add this as a user story to the product backlog to find and implement a solution to this issue. \todo{Denne paragraf er ny: Læs}
 
-\figcustomwidth{jenkins_wireless_screenshot}{Adb app}{Wireless ADB app}{\textwidth}
+\figcustomwidth{jenkins_wireless_screenshot}{Wiresless ADB app}{Wireless ADB app}{\textwidth}
 
 \subsection{Android App Implementation}
 To run the shell script in the app, we execute the code shown in \listingref{lst:android_app_shell}. When we execute \code{su} (line 5), the device shows a dialog which asks the user for root permission. After accepting, every subsequent \code{su} call will be executed without need for permission. The method returns the exit code of the command so it can be handled accordingly by the caller.
@@ -175,6 +175,7 @@ After the call, the standard output is converted to a string, and the method \co
 \section{Adapting Job Flow on Jenkins}\label{sec:adapting_job_flow}
 We need to connect to the physical devices before the emulator plugin runs, so that it will not start any emulator. The overall flow of the new test process is:
 
+\begin{multicols}{2}
 \begin{enumerate}
   \item Disconnect devices
   \item Connect to devices
@@ -183,6 +184,8 @@ We need to connect to the physical devices before the emulator plugin runs, so t
   \item Uninstall apps
   \item Disconnect devices
 \end{enumerate}
+\end{multicols}
+
 We start by disconnecting devices to make sure the connections are up to date. If a device somehow loses Internet connection, it will not appear to have been disconnected unless we specifically disconnect it. After having disconnected any device, we then connect to all devices again. When a connection has been established, we uninstall all installed Giraf apps to make sure that they do not interfere with the test. While we do this after the build itself, we must also do it initially. This is because groups might install Giraf apps on their devices while disconnected from the test network, and then connect their tablets to the test network later. We also do not want to leave any apps on the devices if groups want to use their tablets after they have been tested on. When we have performed the build and uninstalled any Giraf apps we disconnect the devices.
 
 \subsubsection{Connection Script}
