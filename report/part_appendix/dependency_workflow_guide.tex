@@ -1,12 +1,12 @@
 \chapter{Dependency Workflow Guide}\label{app:dependency_workflow_guide}
 Alle biblioteker bliver published på et Maven repository Artifactory (felter skal være tomme for at logge ind) når de bygges på Jenkins. Hvis man ønsker at udgive en version, skriver man (et vilkårligt sted) i sin git-besked \mono{@minor}, \mono{@major} eller \mono{@patch}, for at udgive henholdsvis en minor, major og patch release. Ved en patch går for eksempel version \mono{1.0.0} til \mono{1.0.1}. Ved minor release går for eksempel version \mono{1.1.2} til \mono{1.2.0}, og ved en major release går for eksempel version \mono{1.1.4} til \mono{2.0.0}. Når der committes uden \mono{@patch}, \mono{@minor} eller \mono{@major} bliver der udgivet et snapshot (udviklingsversion). Et snapshot har eksempelvis versionen \mono{1.1.5-SNAPSHOT}, hvis den NÆSTE patch-release er \mono{1.1.5}. Forskellen på patch, minor og major releases er beskrevet her. Kort fortalt:
 \begin{itemize}
-  \item MAJOR angiver ændringer som ikke er bagud-kompatible.
-  \item MINOR er ny funktionalitet med bagudkompatibilitet.
-  \item PATCH er bagud-kompatible bug-fixes.
+  \item \mono{MAJOR} angiver ændringer som ikke er bagud-kompatible.
+  \item \mono{MINOR} er ny funktionalitet med bagudkompatibilitet.
+  \item \mono{PATCH} er bagud-kompatible bug-fixes.
 \end{itemize}
 
-For at angive en dependency til et bibliotek, tilføjer man den i dependencies-sektionen i build.gradle-filen. For eksempel (\listingref{lst:decl_depe}):
+For at angive en dependency til et bibliotek, tilføjer man den i dependencies-sektionen i \mono{build.gradle}-filen. For eksempel (\listingref{lst:decl_depe}):
 
 \begin{gradlecode}[caption=Dekleration af dependencies,label=lst:decl_depe]
 dependencies {
@@ -33,7 +33,7 @@ repositories {
 }
 \end{gradlecode}
 
-For at sikre, at det nyeste \mono{SNAPSHOT} altid bliver downloaded, kan følgende tilføjes til build.gradle i det projekt, som anvende biblioteker (det er måske allerede tilføjet) (\listingref{lst:always_newest_snapshot}):
+For at sikre, at det nyeste \mono{SNAPSHOT} altid bliver downloaded, kan følgende tilføjes til \mono{build.gradle} i det projekt, som anvende biblioteker (det er måske allerede tilføjet) (\listingref{lst:always_newest_snapshot}):
 
 \begin{gradlecode}[caption=Kode til at altid at bruge det nyeste snapshot,label=lst:always_newest_snapshot]
 // Always download latest snapshot
