@@ -2,242 +2,78 @@
 \label{app:build_times}
 
 \section{Before New Dependency System}
-The run targets are: \code{check connectedCheck assembleRelease}. The time of all tasks can be seen in \listingref{lst:full_data_old_dep_system}. Notice that the emulator time for both the fast and slow are included, with the slow in parentheses.
+The run targets are: \code{check connectedCheck assembleRelease}. The time of all tasks can be seen below. Notice that the emulator time for both the fast and slow are included, with the slow in parentheses.
 
-\begin{gradlecode}[caption=Running time of tasks of old dependency system,label=lst:full_data_old_dep_system]
-Milliseconds;Task
-18000ms;Emulator_fast
-(115000; Emulator_slow)
-309ms;GIRAF_Components:preBuild
-105ms;OasisLib:mergeReleaseProguardFiles
-94ms;OasisLib:preBuild
-154ms;local-db:preBuild
-63ms;local-db:compileReleaseAidl
-86ms;metadata_local:compileJava
-60ms;metadata_local:jar
-65ms;local-db:compileReleaseJava
-1015ms;local-db:packageReleaseJar
-63ms;metadata:compileJava
-92ms;OasisLib:compileReleaseJava
-50ms;GIRAF_Components:prepareWorkspaceOasisLibUnspecifiedLibrary
-238ms;GIRAF_Components:mergeDebugResources
-200ms;GIRAF_Components:processDebugResources
-114ms;GIRAF_Components:compileDebugJava
-243ms;GIRAF_Components:mergeReleaseResources
-171ms;GIRAF_Components:processReleaseResources
-53ms;GIRAF_Components:compileReleaseJava
-11826ms;GIRAF_Components:lint
-60ms;OasisLib:compileDebugJava
-3872ms;OasisLib:lint
-128ms;barcodescanner:preBuild
-102ms;barcodescanner:processDebugResources
-161ms;barcodescanner:compileDebugJava
-72ms;barcodescanner:packageReleaseResources
-67ms;barcodescanner:processReleaseResources
-69ms;barcodescanner:compileReleaseJava
-6026ms;barcodescanner:lint
-207ms;GIRAF_Components:packageReleaseResources
-116ms;GIRAF_Components:bundleRelease
-110ms;launcher-app:preBuild
-89ms;launcher-app:prepareWorkspaceGIRAF_ComponentsUnspecifiedLibrary
-348ms;launcher-app:mergeDebugResources
-175ms;launcher-app:processDebugResources
-59ms;launcher-app:compileDebugJava
-130ms;launcher-app:mergeReleaseResources
-87ms;launcher-app:processReleaseResources
-50ms;launcher-app:compileReleaseJava
-7292ms;launcher-app:lint
-976ms;local-db:lint
-81ms;GIRAF_Components:packageDebugResources
-81ms;GIRAF_Components:mergeDebugTestResources
-91007ms;GIRAF_Components:connectedAndroidTest
-139ms;OasisLib:unzipJacocoAgent
-73ms;OasisLib:instrumentDebug
-56ms;OasisLib:packageDebugResources
-98ms;OasisLib:compileDebugTestJava
-59ms;OasisLib:packageDebugTest
-152473ms;OasisLib:connectedAndroidTest
-2376ms;OasisLib:createDebugCoverageReport
-53ms;launcher-app:dexDebug
-14950ms;local-db:connectedAndroidTest
-173ms;GIRAF_Components:preBuild
-111ms;OasisLib:mergeReleaseProguardFiles
-81ms;OasisLib:preBuild
-92ms;local-db:preBuild
-71ms;metadata_local:compileJava
-186ms;GIRAF_Components:mergeReleaseResources
-204ms;GIRAF_Components:processReleaseResources
-64ms;GIRAF_Components:compileReleaseJava
-184ms;GIRAF_Components:packageReleaseResources
-117ms;GIRAF_Components:bundleRelease
-139ms;barcodescanner:preBuild
-66ms;barcodescanner:processReleaseResources
-881ms;barcodescanner:compileReleaseJava
-81ms;launcher-app:preBuild
-69ms;launcher-app:prepareWorkspaceGIRAF_ComponentsUnspecifiedLibrary
-191ms;launcher-app:mergeReleaseResources
-96ms;launcher-app:processReleaseResources
-6652ms;launcher-app:lintVitalRelease
-89ms;launcher-app:dexRelease
-\end{gradlecode}
+%\begin{tabular}{l|c}%
+%    \bfseries Task & \bfseries Milliseconds
+%    \csvreader[separator=semicolon, respect all=true]{olddependencysystem.csv}{}% use head of csv as column names
+%    {\\\hline\Task & \Milliseconds}% specify your coloumns here
+%\end{tabular}
+
+\pgfplotstabletypeset[
+    font=\footnotesize,
+    begin table=\begin{longtable},
+    end table=\end{longtable},
+    every head row/.style={before row=\toprule,after row=\midrule},
+    every last row/.style={after row=\bottomrule\caption{Running time of tasks of old dependency system}},
+    col sep=semicolon,
+    %monotext/.style={%
+    %    postproc cell content/.append style={/pgfplots/table/@cell content/.add={\mono{}{}}},
+    %}
+    columns/Task/.style={
+        string type,
+        column type=l%,
+        %postproc cell content/.append style={
+        %    /pgfplots/table/@cell content/.add={\}{\EUR{}},
+    },%},
+    columns/Milliseconds/.style={string type, column type=r},
+    %columns/Task/.append style={monotext},
+    columns={Milliseconds,Task}, 
+   ]{part_appendix/olddependencysystem.csv}
 
 \section{After New Dependency System}
-The build time of the Launcher app with the targets \code{check connectedCheck assembleRelease} can be seen in \listingref{lst:full_data_new_dep_system_1}. The build time with the targets \code{clean check connectedCheck increaseVersionCode assembleRelease publishApkRelease} can be seen in \listingref{lst:full_data_new_dep_system_2}.
+The build time of the Launcher app with the targets \code{check connectedCheck assembleRelease} can be seen in in the first table below. The build time with the targets \code{clean check connectedCheck increaseVersionCode assembleRelease publishApkRelease} can be seen in the second table below.
 
-\begin{gradlecode}[caption=Running time of tasks of new dependency system with limited targets,label=lst:full_data_new_dep_system_1]
-Milliseconds;Task
-115000ms;Emulator
-399ms;barcodescanner:preBuild
-192ms;barcodescanner:compileDebugAidl
-179ms;barcodescanner:compileDebugRenderscript
-108ms;barcodescanner:packageDebugResources
-68ms;barcodescanner:processDebugManifest
-1481ms;barcodescanner:processDebugResources
-166ms;barcodescanner:compileDebugJava
-102ms;barcodescanner:compileReleaseRenderscript
-55ms;barcodescanner:mergeReleaseAssets
-94ms;barcodescanner:packageReleaseResources
-91ms;barcodescanner:processReleaseResources
-116ms;barcodescanner:compileReleaseJava
-16626ms;barcodescanner:lint
-131ms;barcodescanner:packageReleaseJar
-85ms;barcodescanner:bundleRelease
-110ms;launcher-app:preBuild
-213ms;launcher-app:prepareDkAauCsGirafGirafComponent13SNAPSHOTLibrary
-500ms;launcher-app:mergeDebugResources
-299ms;launcher-app:processDebugResources
-66ms;launcher-app:compileDebugJava
-57ms;launcher-app:renameApk
-104ms;launcher-app:generateReleaseBuildConfig
-327ms;launcher-app:mergeReleaseResources
-585ms;launcher-app:processReleaseManifest
-1582ms;launcher-app:processReleaseResources
-3519ms;launcher-app:compileReleaseJava
-318ms;launcher-app:mergeUnsignedBuildResources
-164ms;launcher-app:processUnsignedBuildResources
-118ms;launcher-app:compileUnsignedBuildJava
-13448ms;launcher-app:lint
-165ms;barcodescanner:mergeDebugTestResources
-94ms;barcodescanner:compileDebugTestJava
-86ms;barcodescanner:connectedAndroidTest
-94ms;launcher-app:unzipJacocoAgent
-166ms;launcher-app:instrumentDebug
-2479ms;launcher-app:packageDebug
-207ms;launcher-app:zipalignDebug
-88ms;launcher-app:compileDebugTestJava
-112287ms;launcher-app:connectedAndroidTest
-2579ms;launcher-app:createDebugCoverageReport
-61ms;barcodescanner:compileLint
-73ms;barcodescanner:mergeReleaseProguardFiles
-631ms;barcodescanner:preBuild
-61ms;barcodescanner:compileReleaseAidl
-109ms;barcodescanner:compileReleaseRenderscript
-92ms;barcodescanner:packageReleaseResources
-65ms;barcodescanner:processReleaseManifest
-87ms;barcodescanner:processReleaseResources
-1300ms;barcodescanner:compileReleaseJava
-126ms;barcodescanner:packageReleaseJar
-99ms;launcher-app:preBuild
-197ms;launcher-app:prepareDkAauCsGirafGirafComponent13SNAPSHOTLibrary
-88ms;launcher-app:renameApk
-350ms;launcher-app:mergeReleaseResources
-263ms;launcher-app:processReleaseResources
-60ms;launcher-app:compileReleaseJava
-9898ms;launcher-app:lintVitalRelease
-8206ms;launcher-app:dexRelease
-2328ms;launcher-app:packageRelease
-237ms;launcher-app:zipalignRelease
-\end{gradlecode}
+% Limited targets
+\pgfplotstabletypeset[
+    font=\footnotesize,
+    begin table=\begin{longtable},
+    end table=\end{longtable},
+    every head row/.style={before row=\toprule,after row=\midrule},
+    every last row/.style={after row=\bottomrule\caption{Running time of tasks of new dependency system with limited targets}},
+    col sep=semicolon,
+    %monotext/.style={%
+    %    postproc cell content/.append style={/pgfplots/table/@cell content/.add={\mono{}{}}},
+    %}
+    columns/Task/.style={
+        string type,
+        column type=l%,
+        %postproc cell content/.append style={
+        %    /pgfplots/table/@cell content/.add={\}{\EUR{}},
+    },%},
+    columns/Milliseconds/.style={string type, column type=r},
+    %columns/Task/.append style={monotext},
+    columns={Milliseconds,Task}, 
+   ]{part_appendix/newdependencysystem.csv}
 
-\begin{gradlecode}[caption=Running time of tasks of new dependency system with full targets,label=lst:full_data_new_dep_system_2]
-Milliseconds;Task
-115000ms;Emulator
-498ms;barcodescanner:clean
-668ms;launcher-app:clean
-251ms;barcodescanner:preBuild
-344ms;barcodescanner:compileDebugAidl
-240ms;barcodescanner:compileDebugRenderscript
-78ms;barcodescanner:generateDebugBuildConfig
-195ms;barcodescanner:mergeDebugAssets
-1996ms;barcodescanner:packageDebugResources
-361ms;barcodescanner:processDebugManifest
-414ms;barcodescanner:processDebugResources
-3727ms;barcodescanner:compileDebugJava
-55ms;barcodescanner:generateReleaseBuildConfig
-671ms;barcodescanner:packageReleaseResources
-85ms;barcodescanner:processReleaseManifest
-315ms;barcodescanner:processReleaseResources
-1515ms;barcodescanner:compileReleaseJava
-11808ms;barcodescanner:lint
-430ms;barcodescanner:packageReleaseJar
-153ms;barcodescanner:bundleRelease
-59ms;launcher-app:preBuild
-129ms;launcher-app:prepareComAndroidSupportSupportV42103Library
-853ms;launcher-app:prepareDkAauCsGirafGirafComponent13SNAPSHOTLibrary
-122ms;launcher-app:prepareDkAauCsGirafLocalDb11SNAPSHOTLibrary
-51ms;launcher-app:prepareDkAauCsGirafOasisLib11SNAPSHOTLibrary
-70ms;launcher-app:prepareFrAvianeyComViewpagerindicatorLibrary241Library
-123ms;launcher-app:prepareWorkspaceBarcodescannerUnspecifiedLibrary
-20268ms;launcher-app:mergeDebugResources
-196ms;launcher-app:processDebugManifest
-1214ms;launcher-app:processDebugResources
-1724ms;launcher-app:compileDebugJava
-75ms;launcher-app:renameApk
-19454ms;launcher-app:mergeReleaseResources
-141ms;launcher-app:processReleaseManifest
-698ms;launcher-app:processReleaseResources
-728ms;launcher-app:compileReleaseJava
-19885ms;launcher-app:mergeUnsignedBuildResources
-137ms;launcher-app:processUnsignedBuildManifest
-626ms;launcher-app:processUnsignedBuildResources
-744ms;launcher-app:compileUnsignedBuildJava
-10742ms;launcher-app:lint
-136ms;barcodescanner:packageDebugJar
-158ms;barcodescanner:bundleDebug
-104ms;barcodescanner:processDebugTestManifest
-464ms;barcodescanner:mergeDebugTestResources
-310ms;barcodescanner:processDebugTestResources
-160ms;barcodescanner:compileDebugTestJava
-9821ms;barcodescanner:preDexDebugTest
-1571ms;barcodescanner:dexDebugTest
-1064ms;barcodescanner:packageDebugTest
-104ms;barcodescanner:connectedAndroidTest
-72ms;launcher-app:unzipJacocoAgent
-1893ms;launcher-app:instrumentDebug
-50519ms;launcher-app:dexDebug
-2266ms;launcher-app:packageDebug
-647ms;launcher-app:zipalignDebug
-59ms;launcher-app:compileDebugTestNdk
-260ms;launcher-app:prepareComAndroidSupportTestEspressoEspressoCore20Library
-82ms;launcher-app:processDebugTestManifest
-325ms;launcher-app:processDebugTestResources
-821ms;launcher-app:compileDebugTestJava
-25022ms;launcher-app:dexDebugTest
-895ms;launcher-app:packageDebugTest
-114148ms;launcher-app:connectedAndroidTest
-1913ms;launcher-app:createDebugCoverageReport
-103ms;launcher-app:increaseVersionCode
-69ms;barcodescanner:mergeReleaseProguardFiles
-710ms;barcodescanner:preBuild
-71ms;barcodescanner:compileReleaseAidl
-135ms;barcodescanner:compileReleaseRenderscript
-121ms;barcodescanner:packageReleaseResources
-59ms;barcodescanner:processReleaseManifest
-58ms;barcodescanner:processReleaseResources
-132ms;barcodescanner:compileReleaseJava
-172ms;barcodescanner:packageReleaseJar
-74ms;launcher-app:preBuild
-187ms;launcher-app:prepareDkAauCsGirafGirafComponent13SNAPSHOTLibrary
-53ms;launcher-app:prepareWorkspaceBarcodescannerUnspecifiedLibrary
-76ms;launcher-app:renameApk
-78ms;launcher-app:generateReleaseBuildConfig
-1194ms;launcher-app:mergeReleaseResources
-602ms;launcher-app:processReleaseManifest
-1845ms;launcher-app:processReleaseResources
-3226ms;launcher-app:compileReleaseJava
-7897ms;launcher-app:lintVitalRelease
-49665ms;launcher-app:dexRelease
-2646ms;launcher-app:packageRelease
-241ms;launcher-app:zipalignRelease
-11148ms;launcher-app:publishApkRelease
-\end{gradlecode}
+% Full targets
+\pgfplotstabletypeset[
+    font=\footnotesize,
+    begin table=\begin{longtable},
+    end table=\end{longtable},
+    every head row/.style={before row=\toprule,after row=\midrule},
+    every last row/.style={after row=\bottomrule\caption{Running time of tasks of new dependency system with full targets}},
+    col sep=semicolon,
+    %monotext/.style={%
+    %    postproc cell content/.append style={/pgfplots/table/@cell content/.add={\mono{}{}}},
+    %}
+    columns/Task/.style={
+        string type,
+        column type=l%,
+        %postproc cell content/.append style={
+        %    /pgfplots/table/@cell content/.add={\}{\EUR{}},
+    },%},
+    columns/Milliseconds/.style={string type, column type=r},
+    %columns/Task/.append style={monotext},
+    columns={Milliseconds,Task}, 
+   ]{part_appendix/newdependencysystem_fulltargets.csv}
