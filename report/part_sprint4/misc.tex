@@ -24,7 +24,8 @@ The Jenkins plugin comes with three different scheduling algorithms:
 \end{description}
 
 The absolute scheduling algorithm clearly improves the throughput of high priority jobs. However, there is a risk of starving jobs. The fair queuing algorithm, on the other hand, does not risk starving jobs, but also does not improve throughput for prioritized jobs. The weighted fair queuing algorithm distributes the resources among the different jobs based on their priorities. The throughput of high priority jobs is increased, and the throughput of low priority tasks is decreased, and the low priority tasks are still guaranteed to be run at some point. Because of this, we use the weighted fair queuing algorithm to make library jobs build faster than other jobs on Jenkins.
-\todo{Read new explanation of queues}
+
+We give all libraries priority two by default, and all apps priority four. The \emph{Meta-database} library, however, has priority one, as the developers often wait for this specific library to complete.\todo{Read new explanation of queues}
 
 \section{Easy App Download and Installation}\label{sec:appdownloadscript}
 The user story \us{Easy Download and Installation of all Apps} describes that developers want to be able to easily install the the most recent versions of all apps on their devices. To solve this problem, we develop a script which downloads the most recent apps from the FTP server. The solution must work on both Unix systems and Windows without any additional software.
