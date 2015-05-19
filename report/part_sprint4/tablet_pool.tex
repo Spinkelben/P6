@@ -14,7 +14,39 @@ This chapter describes our work on the user story \us{Decrease Job Build Times o
 \section{Selecting a Non-Emulator Test Method}\label{sec:selecting_nonemu_method}
 As explained in \sectionref{sec:non-emulator_testing} there are two ways of running tests without an emulator: testing on a physical device, and testing on the Java Virtual Machine. Testing on a physical device is the only way to realistically run tests. All groups have a tablet laying unused much of the day as well as all night, and we will utilize these unused tablets. This way, we can test on multiple different devices and Android versions without significantly increasing the build times and resource use on the server, which would be the case when testing on emulators. However, it will be too tedious connecting these tablets physically to the server (the server is behind locks in the basement of Aalborg University) and we most likely will not get permission to physically connect USB devices to it.
 
-We want to create a pool of available tablets, such that groups in an easy way can provide their tablets for testing. Our plan is to setup a wireless router in vicinity of our group rooms. The wireless router broadcasts a Wi-Fi signal, and any tablet connected to this Wi-Fi will automatically be in a pool of connected tablets, potentially available for testing. The server is able to communicate with the wireless router through the network at Aalborg University. We have acquired a wireless router from the semester coordinator, Ulrik Nyman, a \emph{TP-Link TL-WDR3600}.
+We want to create a pool of available tablets, such that groups in an easy way can provide their tablets for testing. Our plan is to setup a wireless router in vicinity of our group rooms. The wireless router broadcasts a Wi-Fi signal, and any tablet connected to this Wi-Fi will automatically be in a pool of connected tablets, potentially available for testing. The server is able to communicate with the wireless router through the network at Aalborg University. We have acquired a wireless router from the semester coordinator, Ulrik Nyman, a \emph{TP-Link TL-WDR3600}. \todo{insert figure ref}
+
+\begin{figure}%
+  \centering
+  \tikzsetnextfilename{wirelessrouter}
+  \begin{tikzpicture}
+    \path 
+      (0,0) node[anchor=west] (server) {\includegraphics{server.pdf}}
+      -- (\textwidth/2,0) node[] (router) {\includegraphics{router.pdf}}
+      -- (\textwidth,0) node[anchor=east] (tablets) {\includegraphics{tablets.pdf}};
+      
+    %\node[below=3cm of dummy, rectangle, minimum width=4cm, minimum height=1.3cm, align=center, draw] (grouplan) {Group room lan};
+    
+    %\node[fit=(server) (router), rectangle, draw] {};
+
+    \draw[-] (server) -- (router);
+    \draw[-, dashed] (router) -- (tablets);
+    %\draw[-] (grouplan) -- (dummy);
+    %\draw[->, dashed] (jenkins-cloud) -- node[anchor=south] {Release artifact} (art-cloud);
+
+    %\node[draw, minimum height=1cm, minimum width=3cm, below=1cm of jenkins-cloud] (devmachine) {Dev machine};
+    %\node[draw, minimum height=1cm, minimum width=3cm, below=1cm of devmachine] (localrepo) {Local repository};
+
+    %\draw[->] ([xshift=-0.8cm]localrepo.north) -- node[anchor=east] {Gradle \mono{GetDeps}} ([xshift=-0.8cm]devmachine.south);
+    %\draw[->] ([xshift=0.8cm]devmachine.south) -- node[anchor=west] {Gradle \mono{PublishToMavenLocal}} ([xshift=0.8cm]localrepo.north);
+
+    %\draw[->] (devmachine) -- node[anchor=east, yshift=-5pt] {Git push} (git-cloud);
+    %\draw[->] (art-cloud) -- node[anchor=west, yshift=-5pt] {Gradle \mono{GetDeps}} (devmachine);
+
+  \end{tikzpicture}
+  \caption[Some short text]{Some long text.}%
+  \label{fig:wireless_router}%
+\end{figure}
 
 \section{Creating a Pool of Test Tablets}\label{sec:pool_of_tablets}
 In order to transform a common wireless router into a device that maintains a pool of tablets, we flash it with a custom firmware. A custom firmware allows us to access the device as root user and reprogram parts of it. We tried flashing with the \emph{DD-WRT} \parencite{ddwrt} firmware, an open source router firmware. However, we found no build of the firmware that worked properly on our device. Either SSH or some crucial binaries did not work (also documented in the DD-WRT forums by other users), or the build was known to brick the router. We therefore choose to flash with \emph{OpenWRT} \parencite{openwrt}, another open source router firmware. We choose OpenWRT because it is compatible with our device and have scripting support (as well as working SSH and binaries). After flashing with OpenWRT, we setup the basic system settings and configure the Wi-Fi network as one normally will in any home router.
