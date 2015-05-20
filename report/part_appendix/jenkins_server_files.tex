@@ -69,6 +69,7 @@ Finally Jenkins has a number of plugins to increase functionality. These can be 
 Jenkins has a number of files on the server that are of interest. These can be seen in \figureref{fig:jenkins_file_structure}.
 
 \begin{description}
+  \item[git\_disabled] If this file exists, all pushes to Git will be rejected. The text in the file will be printed to the user. This can be used to disable pushes while Jenkins is down for maintenance.
   \item[google\_play\_api\_key.p12] The credentials for the Gradle Play Published plugin so that apps can be automatically uploaded to Google Play.
   \item[keystore.properties] Contains credentials for signing APKs.
   \item[MainKeyStore.keystore] The keystore file for signing APKs.
@@ -83,6 +84,7 @@ In addition the \mono{jobs/} directory contains each project on Jenkins. In \fig
 \begin{figure}
   \dirtree{%
 .1 /srv/jenkins/.
+.2 git\_disabled.
 .2 credentials/.
 .3 artifactory.properies.
 .3 DatabaseCredentials.java.
