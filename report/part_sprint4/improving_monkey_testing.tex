@@ -88,12 +88,12 @@ run_monkey() {
     NO_EVENTS=1000
     DELAY=10 # in ms
 
-    $ANDROID_HOME/platform-tools/adb -s $1 shell 'am broadcast "intent:#Intent;action=org.thisisafactory.simiasque.SET_OVERLAY;B.enable=true;end"' (*@\label{run_monkey_parallel:go_away_monkey_true}@*)
+    $ANDROID_HOME/platform-tools/adb -s $1 shell am broadcast -a org.thisisafactory.simiasque.SET_OVERLAY --ez enable true(*@\label{run_monkey_parallel:go_away_monkey_true}@*)
 
     $ANDROID_HOME/platform-tools/adb -s $1 shell monkey --kill-process-after-error -v -v -s $SEED --throttle $DELAY -p $PACKAGE $NO_EVENTS > ${BASE_OUTPUT_NAME}_$1.log.tmp (*@\label{run_monkey_parallel:run_monkey_test}@*)
     $ANDROID_HOME/platform-tools/adb -s $1 shell screencap -p | sed 's/\r$//' > ${BASE_OUTPUT_NAME}_$1.png (*@\label{run_monkey_parallel:screenshot}@*)
 
-    $ANDROID_HOME/platform-tools/adb -s $1 shell 'am broadcast "intent:#Intent;action=org.thisisafactory.simiasque.SET_OVERLAY;B.enable=false;end"' (*@\label{run_monkey_parallel:go_away_monkey_false}@*)
+    $ANDROID_HOME/platform-tools/adb -s $1 shell am broadcast -a org.thisisafactory.simiasque.SET_OVERLAY --ez enable false(*@\label{run_monkey_parallel:go_away_monkey_false}@*)
 
     # Get device information
     $ANDROID_HOME/platform-tools/adb -s $1 shell getprop | grep -E "product|sdk|serial" | grep -v ro.boot | cat - ${BASE_OUTPUT_NAME}_$1.log.tmp > ${BASE_OUTPUT_NAME}_$1.log (*@\label{run_monkey_parallel:device_info}@*)
