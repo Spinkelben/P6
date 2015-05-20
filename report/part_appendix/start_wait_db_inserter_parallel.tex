@@ -2,7 +2,8 @@
 \begin{lstlisting}[language=bash,caption=Script that starts and waits for the dummy database insertion app in parallel on all connected devices,label=lst:start_wait_db_inserter_parallel]
 #!/bin/bash
 dummy_inserter() {
-    $ANDROID_HOME/platform-tools/adb -s $1 shell am start -n dk.aau.cs.giraf.dummydbinserter/dk.aau.cs.giraf.dummy$
+    $ANDROID_HOME/platform-tools/adb -s $1 shell am start -n dk.aau.cs.giraf.dummydbinserter/dk.aau.cs.giraf.dummydbinserter.MainActivity
+    sleep 1
 
     IS_RUNNING="$($ANDROID_HOME/platform-tools/adb -s $1 shell ps | grep dk.aau.cs.giraf.dummydbinserter)"
 
@@ -19,4 +20,5 @@ export -f dummy_inserter
 SERIAL_NUMBER="$(/srv/scripts/get_serial_numbers.sh)"
 
 parallel dummy_inserter ::: $SERIAL_NUMBER
+
 \end{lstlisting}
