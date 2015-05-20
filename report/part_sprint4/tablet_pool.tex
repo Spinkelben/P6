@@ -237,6 +237,8 @@ then
     do
         $ANDROID_HOME/platform-tools/adb connect 172.25.11.91:$d
     done (*@\label{connect_devices:connection_loop_end}@*)
+
+    sleep 1
 else
     echo "No connection found"
 fi

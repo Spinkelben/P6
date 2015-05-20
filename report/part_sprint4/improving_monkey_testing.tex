@@ -67,7 +67,9 @@ adb shell am broadcast -a org.thisisafactory.simiasque.SET_OVERLAY --ez enable t
 \end{figure}
 
 \section{Running Monkey Tests in Parallel}\label{sec:monkey_in_parallel}
-With the addition of being able to run tests on multiple physical devices, we enable monkey tests to run in parallel on all connected devices. First, we update our script that installs APKs on a device to do it in parallel on all connected devices (see \listingref{lst:uninstall_apks}). We do the same for the script that runs the dummy database insertion app (see \appendixref{app:start_wait_db_inserter_parallel}). The modifications to these two scripts are similar to that of the the uninstallation script (\listingref{lst:uninstall_apks}). Finally, to run the monkey tests in parallel we make a new script, as the Jenkins emulator plugin does not support this feature. The script can be seen in \listingref{lst:run_monkey_parallel}. We choose not to extend the Jenkins plugin with this feature, as it is faster for us to make a script.
+With the addition of being able to run tests on multiple physical devices, we need to update monkey tests so that they run in parallel on all connected devices. To do this, we first update our script that installs APKs on a device so that it does so in parallel on all connected devices (see \appendixref{lst:uninstall_apks}). We do the same for the script that runs the dummy database insertion app (see \appendixref{app:start_wait_db_inserter_parallel}). The modifications to these two scripts are similar to that of the the uninstallation script (\listingref{lst:uninstall_apks}). Finally to run the monkey tests in parallel we make a new script, as the Jenkins emulator plugin does not support this feature. The script can be seen in \listingref{lst:run_monkey_parallel}. We choose not to extend the Jenkins plugin with this feature, as it is faster for us to make a script.
+
+Before starting the script we send an intent to the Simiasque app that blocks the notification bar on line \ref{run_monkey_parallel:go_away_monkey_true}. After running the test we unblock the notifaction bar (line \ref{run_monkey_parallel:go_away_monkey_false}).
 
 On line \ref{run_monkey_parallel:run_monkey_test}, in the \code{run\_monkey} function, we run the monkey test on the device specified as the first argument (\code{\$1}). We place the output in a temporary log file. In line \ref{run_monkey_parallel:screenshot} we take a screenshot of the device using the ADB tool \parencite{stackoverflow-adb-screencap2014}. Thus, there will be a screenshot of the device just as it finished running the monkey test, or as the monkey test crashed the app. \todo{Vi færdiggør her en user story}
 
@@ -86,8 +88,12 @@ run_monkey() {
     NO_EVENTS=1000
     DELAY=10 # in ms
 
+    $ANDROID_HOME/platform-tools/adb -s $1 shell 'am broadcast "intent:#Intent;action=org.thisisafactory.simiasque.SET_OVERLAY;B.enable=true;end"' (*@\label{run_monkey_parallel:go_away_monkey_true}@*)
+
     $ANDROID_HOME/platform-tools/adb -s $1 shell monkey --kill-process-after-error -v -v -s $SEED --throttle $DELAY -p $PACKAGE $NO_EVENTS > ${BASE_OUTPUT_NAME}_$1.log.tmp (*@\label{run_monkey_parallel:run_monkey_test}@*)
     $ANDROID_HOME/platform-tools/adb -s $1 shell screencap -p | sed 's/\r$//' > ${BASE_OUTPUT_NAME}_$1.png (*@\label{run_monkey_parallel:screenshot}@*)
+
+    $ANDROID_HOME/platform-tools/adb -s $1 shell 'am broadcast "intent:#Intent;action=org.thisisafactory.simiasque.SET_OVERLAY;B.enable=false;end"' (*@\label{run_monkey_parallel:go_away_monkey_false}@*)
 
     # Get device information
     $ANDROID_HOME/platform-tools/adb -s $1 shell getprop | grep -E "product|sdk|serial" | grep -v ro.boot | cat - ${BASE_OUTPUT_NAME}_$1.log.tmp > ${BASE_OUTPUT_NAME}_$1.log (*@\label{run_monkey_parallel:device_info}@*)
@@ -124,6 +130,9 @@ else
 fi
 \end{lstlisting}
 
+\section{Preventing Monkey Test from Disabling WiFi}
+\dummy
+
 \section{Monkey Test Flow}\label{sec:monkey_test_flow}
 The setup of monkey testing has been through several changes since its inception. The current flow of a monkey test is as follows:
 
@@ -131,6 +140,8 @@ The setup of monkey testing has been through several changes since its inception
   \item[1) Connect to Devices/Run Emulator] We start by trying to connect to any physical devices. If there are no devices to connect to, we start an emulator instead.
   \item[2) Install APKs] The APKs needed for the monkey test are installed. This mostly includes the Launcher app and Pictosearch app, but varies from app to app. The dummy database inserter app and the app to be tested are also installed. The APKs are installed in parallel on all connected devices.
   \item[3) Run Dummy Database Inserter] The dummy database inserter app is run in parallel on all connected devices after having installed all APKs. We do this so that apps do not have to download the full database which can take 10 minutes or more. The build waits for the dummy database inserter app to finish inserting data before continuing.
-  \item[4) Run Monkey Test and Report Any Failures] The monkey test is run in parallel on all connected devices. A log file is produced for each device containing relevant device information. A screenshot is also made immediately after the app has either finished monkey testing or crashed. If a failure occured on any device, a failure is reported.
-  \item[5) Publish Log Files and Screenshots] The log files and screenshots are published on Jenkins so that they can be accessed easily.
+  \item[4) Enable Simiasque] We enable Simiasque to prevent the monkey test from disabling Wifi.
+  \item[5) Run Monkey Test and Report Any Failures] The monkey test is run in parallel on all connected devices. A log file is produced for each device containing relevant device information. A screenshot is also made immediately after the app has either finished monkey testing or crashed. If a failure occured on any device, a failure is reported.
+  \item[6) Disable Simiasque] Simiasque is disabled so that the notification bar can be used again.
+  \item[7) Publish Log Files and Screenshots] The log files and screenshots are published on Jenkins so that they can be accessed easily.
 \end{description}
