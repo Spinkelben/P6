@@ -116,19 +116,19 @@ do
 done
 \end{lstlisting}
 
-When the newest available APK for each app has been found, they are installed on an Android device. This script is seen in \listingref{lst:install_apks_on_android_device}. Line 3 tries to install an APK and stores the output in \code{INSTALL\_OUTPUT}. The output is stored, as \code{adb install} gives an error code of \code{0}, even if it fails. We therefore have to read the output to check if an error occurred so that Jenkins will report the job as a failure. This is done at line 6 where we check that the output contains the string \code{success}. The \code{i} option makes \code{grep} case insensitive. At line 9--10 the script exits with \code{1} if the output does not contain \code{success}.
+When the newest available APK for each app has been found, they are installed on an Android device. This script is seen in \listingref{lst:install_apks_on_android_device}. Line \ref{apkinstall:3} tries to install an APK and stores the output in \code{INSTALL\_OUTPUT}. The output is stored, as \code{adb install} gives an error code of \code{0}, even if it fails. We therefore have to read the output to check if an error occurred so that Jenkins will report the job as a failure. This is done at line 6 where we check that the output contains the string \code{success}. The \code{i} option makes \code{grep} case insensitive. At line \ref{apkinstall:begin}--\ref{apkinstall:end} the script exits with \code{1} if the output does not contain \code{success}.
 
 \begin{lstlisting}[language=bash,showstringspaces=false,caption=Script that installs the given APKs to an Android device,label=lst:install_apks_on_android_device]
 for a in $@
 do
-    INSTALL_OUTPUT="$(/srv/android-sdk-linux//platform-tools/adb install $a)"
+    INSTALL_OUTPUT="$(/srv/android-sdk-linux//platform-tools/adb install $a)"(*@\label{apkinstall:3}@*)
     echo $INSTALL_OUTPUT
 
     IS_SUCCESS="$(echo "$INSTALL_OUTPUT" | grep -i success)"
 
     # Check if output message does not contain success, since adb install does not provide exit code != 0 at failure
-    if ! [ "$IS_SUCCESS" ]; then
-        echo "Error installing $a"
+    if ! [ "$IS_SUCCESS" ]; then (*@\label{apkinstall:begin}@*)
+        echo "Error installing $a" (*@\label{apkinstall:end}@*)
         exit 1
     fi
 done
@@ -152,7 +152,7 @@ Jenkins compiles and builds the Giraf projects but does nothing with the generat
 
 Before the APKs can be published to Google Play, they need to be signed with a signature. The Android plugin for Gradle has functionality for automatic signing of APKs, and we will use this to sign. A keystore file is used to sign, and we are not interested in everybody having this file as it serves as a proof of identification. We save the file on the server, which means that it becomes impossible to build release versions of the apps locally using the Giraf keystore. When uploading a new app to Google Play, the version code of the new app must be greater than the version code of the app already in the app store. Incrementing the version code is not done per default, so we need to set up the build to increase the version code every time an app is successfully built. 
 
-We have written a Gradle plugin handling this with the major part of this seen in \listingref{lst:gradle_versioncode}. The plugin keeps a properties file with the current version code for all apps. Upon executing the \mono{increaseVersionCode} Gradle task, it reads the version code (line 8) from the properties file and increments it (line 12). Then it writes it to the app manifest file (line 13), such that the build following will use the new version code. Finally, it updates the property file with the new version code (line 15), such that the next build will use this version code. If no current version code is found in the properties file (line 21), we assume the app is new and starts at version code \mono{1}, and as such we do not increment it (line 10).
+We have written a Gradle plugin handling this with the major part of this seen in \listingref{lst:gradle_versioncode}. The plugin keeps a properties file with the current version code for all apps. Upon executing the \mono{increaseVersionCode} Gradle task, it reads the version code (line \ref{gradlevs:8}) from the properties file and increments it (line \ref{gradlevs:12}). Then it writes it to the app manifest file (line \ref{gradlevs:13}), such that the build following will use the new version code. Finally, it updates the property file with the new version code (line \ref{gradlevs:15}), such that the next build will use this version code. If no current version code is found in the properties file (line \ref{gradlevs:21}), we assume the app is new and starts at version code \mono{1}, and as such we do not increment it (line \ref{gradlevs:10}).
 \begin{gradlecode}[caption=Part of our Gradle plugin for updating version code,label=lst:gradle_versioncode]
 project.task('increaseVersionCode') << {
     // [...]
@@ -161,20 +161,20 @@ project.task('increaseVersionCode') << {
         throw new GradleException("No version code file found. Only Jenkins should run this task")
     }
     // [...]
-    def newVersion = getVersionCode(project, applicationId)
+    def newVersion = getVersionCode(project, applicationId)(*@\label{gradlevs:8}@*)
     def versionCode = newVersion['value']
-    if (!newVersion['created']) {
+    if (!newVersion['created']) { (*@\label{gradlevs:10}@*)
         // Increment version code if not new
-        versionCode++
-        // Write incremented version code to manifest
+        versionCode++ (*@\label{gradlevs:12}@*)
+        // Write incremented version code to manifest (*@\label{gradlevs:13}@*)
         // [...]
-        // Write incremented version code back to properties file
+        // Write incremented version code back to properties file (*@\label{gradlevs:15}@*)
         // [...]
     }
 }
 
 def getVersionCode(project, applicationId) {
-    // Reads the version code from the properties file. Returns 1 if the version code does not exist.
+    // Reads the version code from the properties file. Returns 1 if the version code does not exist. (*@\label{gradlevs:21}@*)
 }
 \end{gradlecode}
  
