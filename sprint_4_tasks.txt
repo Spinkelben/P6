@@ -1,0 +1,87 @@
+(estimering)[bli]
+(+) = added task
+(-) = missed task
+
+Rapport:
+- (4)(-) Projektevaluering
+- (3)(-) Sprint end 4
+- (4)(-) Introduktion
+- (2)(-) Kim notes 9.8
+- (1)(-) Konsistent brug af project
+- (1)(-) Konsistent brug af groups
+- (2)(-) Abstract
+- (1)(-) Reading guide
+- (2)(-) Spring planning 4
+- (2) Beskriv simiasque
+- (2) Kim notes
+- (2) Monkey test uses debug APKs
+- (2) Download and install script
+- (2) Beskriv pre-commit hook
+- (2) Valg af scheduleringsmetode
+- (1) Kimnotes 17
+- (2) Kimnotes 10-11
+- (2) Kimnotes 7-9.7
+- (2) Kimnotes 5
+- (2) Kimnotes 13-14
+- (2) Kimnotes 2, 3, 4
+- (2) Skriv om opdateret android emulator plugin
+- (1) Skriv at tablets kan disconnect under test og fejle
+- (1) Kimnotes 17.3
+- (2) Routeropsætning
+- (3) Multi-project sprint review
+- (1) Lav hyperlink referencer til linjer i kode
+- (2) Beskriv parallel monkey test running
+- (1) Ny Jenkins jobflow
+Total: 56
+Missed: 20
+Made: 56-20 = 36
+
+Tasks:
+- (2)[na] Investigate conditions of satisfaction for our back log items
+- (2)[na](+) Check monkey tests
+- (1)[na](+) Make pre-commit hook
+- (1)[1] Install Jenkins priority plugin
+- (2)[1] Choose schedule method for priority plugin
+- (0)[1](+) Give metadata high priority
+- (1)[2] Make monkey tests use debug APKs
+- (1)[2] Place debug APKs in a specific directory
+- (2)[3] Make script for downloading and installing newest APKs
+- (2)[4] Identify areas for Jenkins structure documentation (spike)
+- (2)[4] Write about Jenkins structure
+- (2)[4] Write about Jenkins files
+- (0)[5] Make monkey tests take screenshot and publish them
+- (2)[6](+) Make ADB-wifi app
+- (1)[6](+) Setup Jenkins Job for Simiasque
+- (1)[6] Investigate usage of physical tablets (spike)
+- (2)[6](+) Run monkey test without emulator plugin
+- (2)[6] How do we automatically connect to tablets? (spike)
+- (2)[6](+) Connect to all devices wirelessly from server
+- (1)[6](+) Uninstall APKs on all devices
+- (2)[6](+) Setup router
+- (6)[6](+) Only start an emulator when there are no connected devices
+Original total: 18
+Total: 37
+
+Tasks-Rapport:
+Investigate conditions of satisfaction for our back log items & na & 2 \\
+Check monkey tests after server crash (+) & na & 2 \\
+Make pre-commit hook (+) & na & 1 \\
+Install Jenkins priority plugin & 1 & 1 \\
+Choose schedule method for priority plugin & 1 & 2 \\
+Give metadata high priority (+) & 1 & 0 \\
+Make monkey tests use debug APKs & 2 & 1 \\
+Place debug APKs in a specific directory & 2 & 1 \\
+Make script for downloading and installing newest APKs & 3 & 2 \\
+Identify areas for Jenkins structure documentation (spike) & 4 & 2 \\
+Write about Jenkins structure & 4 & 2 \\
+Write about Jenkins files & 4 & 2 \\
+Make monkey tests take screenshot and publish them & 5 & 0 \\
+Make ADB-wifi app (+) & 6 & 2 \\
+Setup Jenkins Job for Simiasque (+) & 6 & 1 \\
+Investigate usage of physical tablets (spike) & 6 & 1 \\
+Run monkey test without emulator plugin (+) & 6 & 2 \\
+How do we automatically connect to tablets? (spike) & 6 & 2 \\
+Connect to all devices wirelessly from server (+) & 6 & 2 \\
+Uninstall APKs on all devices (+) & 6 & 1 \\
+Setup router (+) & 6 & 2 \\
+Only start an emulator when there are no connected devices (+) & 6 & 6 \\
