@@ -46,7 +46,7 @@ We add the execution of the move script as a post-build task on all app jobs on 
 \section{Running Monkey Tests in Parallel}\label{sec:monkey_in_parallel}
 With the addition of being able to run tests on multiple physical devices, we need to update monkey tests so that they run in parallel on all connected devices. To do this, we first update our script that installs APKs on a device so that it does so in parallel on all connected devices (see \appendixref{lst:uninstall_apks}). We do the same for the script that runs the dummy database insertion app (see \appendixref{app:start_wait_db_inserter_parallel}). The modifications to these two scripts are similar to that of the the uninstallation script (\listingref{lst:uninstall_apks}). Finally to run the monkey tests in parallel we make a new script, as the Jenkins emulator plugin does not support this feature. The script can be seen in \listingref{lst:run_monkey_parallel}. We choose not to extend the Jenkins plugin with this feature, as it is faster for us to make a script.
 
-Before starting the script we send an intent to the Simiasque app that blocks the notification bar on line \ref{run_monkey_parallel:go_away_monkey_true}. After running the test we unblock the notifaction bar (line \ref{run_monkey_parallel:go_away_monkey_false}).
+Before starting the script we send a broadcast to the Simiasque app that blocks the notification bar on line \ref{run_monkey_parallel:go_away_monkey_true}. After running the test we unblock the notifaction bar (line \ref{run_monkey_parallel:go_away_monkey_false}).
 
 On line \ref{run_monkey_parallel:run_monkey_test}, in the \code{run\_monkey} function, we run the monkey test on the device specified as the first argument (\code{\$1}). We place the output in a temporary log file. In line \ref{run_monkey_parallel:screenshot} we take a screenshot of the device using the ADB tool \parencite{stackoverflow-adb-screencap2014}. Thus, there will be a screenshot of the device just as it finished running the monkey test, or as the monkey test crashed the app. \todo{Vi færdiggør her en user story}
 
@@ -65,12 +65,12 @@ run_monkey() {
     NO_EVENTS=1000
     DELAY=10 # in ms
 
-    $ANDROID_HOME/platform-tools/adb -s $1 shell 'am broadcast "intent:#Intent;action=org.thisisafactory.simiasque.SET_OVERLAY;B.enable=true;end"' (*@\label{run_monkey_parallel:go_away_monkey_true}@*)
+    $ANDROID_HOME/platform-tools/adb -s $1 shell am broadcast -a org.thisisafactory.simiasque.SET_OVERLAY --ez enable true (*@\label{run_monkey_parallel:go_away_monkey_true}@*)
 
     $ANDROID_HOME/platform-tools/adb -s $1 shell monkey --kill-process-after-error -v -v -s $SEED --throttle $DELAY -p $PACKAGE $NO_EVENTS > ${BASE_OUTPUT_NAME}_$1.log.tmp (*@\label{run_monkey_parallel:run_monkey_test}@*)
     $ANDROID_HOME/platform-tools/adb -s $1 shell screencap -p | sed 's/\r$//' > ${BASE_OUTPUT_NAME}_$1.png (*@\label{run_monkey_parallel:screenshot}@*)
 
-    $ANDROID_HOME/platform-tools/adb -s $1 shell 'am broadcast "intent:#Intent;action=org.thisisafactory.simiasque.SET_OVERLAY;B.enable=false;end"' (*@\label{run_monkey_parallel:go_away_monkey_false}@*)
+    $ANDROID_HOME/platform-tools/adb -s $1 shell am broadcast -a org.thisisafactory.simiasque.SET_OVERLAY --ez enable false (*@\label{run_monkey_parallel:go_away_monkey_false}@*)
 
     # Get device information
     $ANDROID_HOME/platform-tools/adb -s $1 shell getprop | grep -E "product|sdk|serial" | grep -v ro.boot | cat - ${BASE_OUTPUT_NAME}_$1.log.tmp > ${BASE_OUTPUT_NAME}_$1.log (*@\label{run_monkey_parallel:device_info}@*)
