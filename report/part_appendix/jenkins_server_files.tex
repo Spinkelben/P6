@@ -17,7 +17,7 @@ For a project, mainly the following categories are configured:
 \end{description}
 
 \subsection{Abstract Projects}
-There is a number of abstract projects that are inherited to ease project configurations. The abstracts projects are:
+There are a number of abstract projects that are inherited to ease project configurations. Note that, of some unknown reason, not every setting can be inherited (so always verify it works if you add a setting in an abstract job). The abstracts projects are:
 
 \begin{description}
   \item[Android App Inheritable] The main inheritable project for apps. Inherits a number of other projects to form the basis of apps. All app projects inherits from this project.
@@ -72,8 +72,8 @@ Jenkins has a number of files on the server that are of interest. These can be s
   \item[google\_play\_api\_key.p12] The credentials for the Gradle Play Published plugin so that apps can be automatically uploaded to Google Play.
   \item[keystore.properties] Contains credentials for signing APKs.
   \item[MainKeyStore.keystore] The keystore file for signing APKs.
-  \item[libversion] Specifies the next version of each library. The version is automatically handled by a Git hook. Contains the repository to for the library which must be manually added, as well as the project name on Jenkins (written jobname). If a project on Jenkins is renamed this must be changed. It is important to add a new entry if additional libraries are made.
-  \item[versionCodes.properties] Contains the next version code for each Giraf app. This file is automatically handled.
+  \item[libversion] Specifies the next version of each library. The version is automatically handled by a Git hook. Contains the repository to the library which must be manually added, as well as the project name on Jenkins (written jobname). If a project on Jenkins is renamed this must be changed. It is important to add a new entry if additional libraries are made, as it will otherwise not be built.
+  \item[versionCodes.properties] Contains the next version code (not the version code shown to the user, but a strictly increasing integer corresponding to the \code{versionCode} property in the Android manifest file) for each Giraf app. This file is automatically handled.
   \item[artifactory.properties] Contains the credentials for Jenkins to upload libraries to Artifactory.
   \item[DatabaseCredentials.java] Contains the credentials for the local-db library. It is moved automatically whenever the local-db library is build on Jenkins.
 \end{description}
