@@ -9,11 +9,9 @@
 \section{Sprint Goals}\label{sec:s2_goals}
 \begin{description}
     \item[Set up Monkey Testing] We did not manage to finish the setup of automatic monkey tests, due to unexpected technical difficulties. Therefore the monkey test user story remains in the Product backlog.
-    \item[Faster Build] We had initially created some tasks aimed at reducing the time spent on testing, especially the emulator start up time. However short after the sprint began, a patch was released to the Jenkins Android Emulator Plugin, which reduced the emulator start up time drastically. As such we down-prioritized the emulator related tasks. Later, we found out that it was a bug that was causing the build to start before the emulator finished booting. We have therefore ignored an important part of the build process in this sprint. This means that the build times increased significantly again.
+    \item[Faster Build] We had initially created some tasks aimed at reducing the time spent on testing, especially the emulator start up time. However short after the sprint began, a patch was released to the Jenkins Android Emulator Plugin, which reduced the emulator start up time drastically. As such we down-prioritized the emulator related tasks. Later, we found out that it was a bug that was causing the build to start before the emulator finished booting. We have therefore ignored an important part of the build process in this sprint. This means that the build times increased significantly again after fixing the bug.
 
     We have replaced submodule dependencies with binary files. This greatly improves the build time, as the dependencies do not have to be built every time a project is built.
-
-    Overall the build times have increased due to adding more work for each job.
     \item[Uploading of Apps to Google Play] We have successfully enabled automatic upload of GIRAF apps to Google Play. Every time an app successfully builds on Jenkins the app is automatically uploaded and released on Google Play on the alpha track. From there, the Google Play group can easily upgrade an alpha release to a beta or production release.
     \item[Test Case Installation] Every night the newest build of each app is installed on an emulator to identify any installation problems.
     \item[Code Coverage] Code coverage reports are generated for all project and the result are published on Jenkins. Detailed statistics are available on the job page, and the percentage of lines of code covered for every project is visible on the job overview page. 

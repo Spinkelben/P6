@@ -1,19 +1,19 @@
 %!TEX root = ../report.tex
 \chapter{Sprint Planning}\label{chap:s4_sprintplanning}
-This sprint planning proceed ordinarily as specified by the development method. We first have a sprint planning in the subproject followed by sprint planning in the group.
+This sprint planning proceeds ordinarily as specified by the development method: We first have a sprint planning in the subproject followed by sprint planning in the group.
 
 \begin{chapterorganization}
-  \item in \sectionref{sec:S4_bd} we describe the user stories we commit ourselves to during the \bd sprint planning meeting.
-  \item in \sectionref{sec:S4_group} we describe the sprint planning in our group and lists our tasks with reference to a backlog item.
+  \item in \sectionref{sec:S4_bd} we describe the user stories we commit ourselves to during the \bd sprint planning meeting;
+  \item in \sectionref{sec:S4_group} we describe the sprint planning in our group and list our tasks with reference to a backlog item.
 \end{chapterorganization}
 
 \section{\bdtitle Sprint Planning}\label{sec:S4_bd}
-During the \bd sprint planning we choose to work on four user stories and one technical work item. They are labeled with a number in parentheses for reference. In the last sprint we specified precisely the backlog items used and how to formulate user stories (see \sectionref{sec:processspecs}).
+During the \bd sprint planning we choose to work on four user stories and one technical work item. They are labeled with a number in parentheses for reference. In the previous sprint we specified precisely the backlog items used and how to formulate user stories (see \sectionref{sec:processspecs}).
 
 Each user story now has a number of \emph{conditions of satisfaction}. These conditions of satisfaction are listed as bullets below each user story. The conditions have been elicited by asking our customers and our product owner.
 
 \begin{description}
-  \item[(1)] As a developer I want libraries to have higher priority than other jobs in the build scheduling on Jenkins so that libraries are not bottlenecked when several people are reliant on them.
+  \item[(1)] As a developer I want libraries to have higher priority than other jobs in the build scheduling in Jenkins so that libraries are not bottlenecked when several people are reliant on them.
   \begin{itemize}
     \item Jobs must not be starved
     \item Libraries must be prioritized higher than other job types
@@ -22,13 +22,13 @@ Each user story now has a number of \emph{conditions of satisfaction}. These con
   \begin{itemize}
     \item Monkey tests must run on debug APKs
   \end{itemize}
-  \item[(3)] As a developer I want an easy way to download and install all apps so that it is easy to test the apps combined, and easy to show the external customers.
+  \item[(3)] As a developer I want an easy way to download and install all apps so that it is easy to test the apps combined, and easy to show to the external customers.
   \begin{itemize}
     \item Users should not have to install additional software onto their computers
-    \item Users should be able to merely run a program that then automatically downloads and installs all apps on a device
+    \item Users should be able to merely run a program that automatically downloads and installs all apps on a device
     \item After running the program, the device must contain the newest version of all apps
   \end{itemize}
-  \item[(4)] As a future developer I want to know what is on Jenkins and how it is structured so that it it is easy to start working with
+  \item[(4)] As a future developer I want to know what is in Jenkins and how it is structured so that it it is easy to start working with
   \begin{itemize}
     \item Document how to configure projects
     \item Document configuration of authentication
@@ -43,15 +43,15 @@ Each user story now has a number of \emph{conditions of satisfaction}. These con
 The following is the technical work item we work on in sprint 4. This technical work item is not formulated as a user story, as it is hard to have conditions of satisfaction for it. The build time can almost always be decreased, and so it would be a never-ending user story. We choose to work on it in this sprint, as it was prioritized highly by the other groups, as there are still improvements to be made, mostly related to the emulator.
 
 \begin{description}
-  \item[(6) Decrease Job Build Times on Jenkins] When the queue on Jenkins is long, jobs can take a very long time to build. As we discussed in \sectionref{sec:non-emulator_testing}, the build times can be further reduces by working on the emulator.
+  \item[(6) Decrease Job Build Times on Jenkins] When the queue on Jenkins is long, jobs can take a very long time to build. As we discussed in \sectionref{sec:non-emulator_testing}, the build times can be further reduced by working on the emulator part.
 \end{description}
 
 \section{Group Sprint Planning}\label{sec:S4_group}
-At our internal sprint planning we divide the chosen backlog items into tasks and estimate them. For this sprint, we have a total of 70 half days of work. \tableref{tab:sprint4_tasks} shows the tasks we have committed to solve for this sprint. Tasks with a plus (+) are tasks that have been added during the sprint as they were discovered. Tasks with an estimation of 0 have been estimated as such, because they take virtually no time. There are three tasks in the sprint backlog which are not directly related to any backlog item. We do these because 
+At our internal sprint planning we divide the chosen backlog items into tasks and estimate them. For this sprint, we have a total of 70 half days of work. \tableref{tab:sprint4_tasks} shows the tasks we have committed to solve for this sprint. Tasks with a plus (+) are tasks that have been added during the sprint as they were discovered. Tasks with an estimation of 0 have been estimated as such, because they take virtually \todo{Check meaning of this word} no time. There are three tasks in the sprint backlog which are not directly related to any backlog item.
 
 In addition to the tasks related to solving our chosen backlog items, we also work on report related tasks to finish our report, such as introduction, conclusion, etc. The total amount of time estimated for report tasks during this sprint is 56.
 
-The total estimate for the original tasks is quite low (18). This is because we do a number of spikes, as indicated in parentheses for those tasks. We do these spikes because we have many uncertainties during this sprint. The final total estimate is therefore 37. The estimation for all tasks (report and non-report tasks) is 93. This far exceeds the time we have available for this sprint. Since we have a week following the sprint to do the final report changes, we postpone some report tasks. We therefore only manage to make 36 units of report tasks during this sprint, missing 20 units. The total amount of achieved work this sprint is therefore 73.
+The total estimate of 18 for the original tasks is quite low. This is because we do a number of spikes, as indicated in parentheses for those tasks. We do these spikes because we have many uncertainties during this sprint. The final total estimate is therefore 37. The estimation for all tasks (report and non-report tasks) is 93. This far exceeds the time we have available for this sprint. Since we have a week following the sprint to do the final report changes, we postpone some report tasks. We therefore only manage to make 36 units of report tasks during this sprint, missing 20 units. The total amount of achieved work this sprint is therefore 73.
 
 \begin{table}%
   \centering
@@ -59,9 +59,9 @@ The total estimate for the original tasks is quite low (18). This is because we 
     \toprule
     \textbf{Task} & \textbf{Backlog Item} & \textbf{Estimation} \\
     \midrule
-    Investigate conditions of satisfaction for our back log items & na & 2 \\
-    Check monkey tests after server crash (+) & na & 2 \\
-    Make pre-commit hook (+) & na & 1 \\
+    Investigate conditions of satisfaction for our back log items & n/a & 2 \\
+    Check monkey tests after server crash (+) & n/a & 2 \\
+    Make pre-commit hook (+) & n/a & 1 \\
     Install Jenkins priority plugin & 1 & 1 \\
     Choose schedule method for priority plugin & 1 & 2 \\
     Give metadata high priority (+) & 1 & 0 \\
