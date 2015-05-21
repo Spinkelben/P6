@@ -37,48 +37,48 @@ The agile method used for the project is Scrum, and the groups are organized as 
   simple/.style={draw, rounded corners, minimum height=2em, minimum width=7em},
   simplefixed/.style={draw, rounded corners, minimum height=1.7em, minimum width=3em},
   square/.style={draw, rounded corners, minimum height=1.4em, minimum width=1.4em}]
-  
+
   \node[simple] (mp) at (0,0) {Multi-project};
-  
+
   \node[simplefixed] (gui) at (0,-1.2) {DB}; % NOTICE OTHER NAME THAN LABEL.
   \node[simplefixed] (db) at (-3,-1.2) {GUI};
   \node[simplefixed] (bd) at (3,-1.2) {B\&D};
-  
+
   \node[square] (g1) at (-3.9, -2.4) {};
   \node[square] (g2) at (-3.3, -2.4) {};
   \node[] (g3) at (-2.7, -2.4) {...};
   \node[square] (g4) at (-2.1, -2.4) {};
-  
+
   \node[square] (g5) at (-0.9, -2.4) {};
   \node[square] (g6) at (-0.3, -2.4) {};
   \node[] (g7) at (0.3, -2.4) {...};
   \node[square] (g8) at (0.9, -2.4) {};
-  
+
   \node[square] (g9) at (2.1, -2.4) {};
   \node[square] (g10) at (2.7, -2.4) {};
   \node[] (g11) at (3.3, -2.4) {...};
   \node[square] (g12) at (3.9, -2.4) {};
-  
+
   \draw[->] (mp) to (gui);
   \draw[->] (mp) to (db);
   \draw[->] (mp) to (bd);
-  
+
   \draw[->] (db) to (g1);
   \draw[->] (db) to (g2);
   \draw[->] (db) to (g4);
-  
+
   \draw[->] (gui) to (g5);
   \draw[->] (gui) to (g6);
   \draw[->] (gui) to (g8);
-  
+
   \draw[->] (bd) to (g9);
   \draw[->] (bd) to (g10);
   \draw[->] (bd) to (g12);
-  
+
   \draw[decorate, line width=1pt, decoration={brace, mirror}] ([xshift=1.5em]g12.south east) -- ([xshift=1.5em]g12.north east) node [midway, yshift=-0.1em, xshift=2.2em] {Groups};
-  
+
   \draw[decorate, line width=1pt, decoration={brace, mirror}] ([xshift=1.5em]bd.south east) -- ([xshift=1.5em]bd.north east) node [midway, yshift=-0.1em, xshift=3.2em] {Subprojects};
-  
+
 \end{tikzpicture}
 \caption{Illustration of multi-project organization}%
 \label{fig:multi_project_organization}%
@@ -133,12 +133,12 @@ Two roles from Scrum are used in the multi-project:
   \node[simple] (guipo) at (0,0) {GUI PO};
   \node[simple] (dbpo) at (-1.3,-1.2) {DB PO};
   \node[simple] (bdpo) at (1.3,-1.2) {B\&D PO};
-  
+
   \draw[->] (guipo) to (dbpo);
   \draw[->] (guipo) to (bdpo);
   \draw[<->] (dbpo) to (bdpo);
   \draw[->] (extcust) to (guipo);
-  
+
 \end{tikzpicture}
 \caption{Illustration of product owners}%
 \label{fig:po_illu}%
@@ -147,7 +147,7 @@ Two roles from Scrum are used in the multi-project:
 \subsection{Meetings}\label{sec:meetings}
 Each week there is a meeting at the multi-project level. At this meeting the status of all groups in the multi-project is presented and the development method is evaluated. This ensures that all groups know the current status of the project. This meeting differs from a regular Scrum meeting in that it includes a point on method evaluation, so that the development method can be continually improved.
 
-Each sub-project holds internal Scrum meetings as well. These sub-project Scrum meetings are held at least twice a week. The sub-projects organizes these meetings themselves and use them to discuss things that are relevant only for the members of the sub-project. 
+Each sub-project holds internal Scrum meetings as well. These sub-project Scrum meetings are held at least twice a week. The sub-projects organizes these meetings themselves and use them to discuss things that are relevant only for the members of the sub-project.
 
 Each group decides how to manage their internal affairs. As long as they produce the required artifacts, they can decide for themselves how to organize.
 
@@ -164,9 +164,52 @@ Since there are three product owners in the multi-project, three sprint review m
   At the sprint review meetings, the work done in the sprint is presented to the customers.
   \begin{description}
     \item[GUI] At this meeting the external customers are presented with the work of the GUI groups. Only the GUI groups participate as pigs at this meeting.
-    \item[\db and \bd] \db and \bd each hold a separate sprint review meeting where they show the groups in the other sub-projects what they have done in a sprint. The external customers are not present at these meetings, so that they are not bored with internal details. The \gui sprint planning meeting is separated from the \db and \bd sprint planning meeting by a few days, such that the product owners have time to organize, and make the requirements propagate from \gui to the other sub-projects.  
+    \item[\db and \bd] \db and \bd each hold a separate sprint review meeting where they show the groups in the other sub-projects what they have done in a sprint. The external customers are not present at these meetings, so that they are not bored with internal details. The \gui sprint planning meeting is separated from the \db and \bd sprint planning meeting by a few days, such that the product owners have time to organize, and make the requirements propagate from \gui to the other sub-projects.
   \end{description}
 \end{description}
+
+The sprint timeline is shown in \figureref{fig:gantt_dates}. Each sprint has approximately 8 full days per man. The exact sprint meeting dates are as follows:
+\begin{itemize}
+  \item Sprint 1
+  \begin{itemize}
+    \item \gui{}, \db{}, and \bd{} sprint planning meetings: February 15
+    \item \gui{}, \db{}, and \bd{} sprint review meetings: March 10
+  \end{itemize}
+  \item Sprint 2
+  \begin{itemize}
+    \item Sprint 2 \gui{}, \db{}, and \bd{} planning meetings: March 12
+    \item Sprint 2 \gui{}, \db{}, and \bd{} review meetings: April 8
+  \end{itemize}
+  \item Sprint 3
+  \begin{itemize}
+    \item Sprint 3 \gui{} planning meeting: April 8
+    \item Sprint 3 \db{} and \bd{} planning meetings: April 15
+    \item Sprint 3 \gui{}, \db{}, and \bd{} review meetings: April 27
+  \end{itemize}
+  \item Sprint 4
+  \begin{itemize}
+    \item Sprint 4 \gui{} planning meeting: April 27
+    \item Sprint 4 \db{} and \bd{} planning meetings: May 4
+    \item Sprint 4 \gui{}, \db{}, and \bd{} review meetings: May 20
+  \end{itemize}
+\end{itemize}
+Notice that the \gui{} sprint planning meetings in the first two sprints are not separated from the \db{} and \bd{} planning meetings, as this delay was introduced after sprint 2.
+
+\begin{figure}[ht]
+  \centering
+  \tikzsetnextfilename{gantt_dates}
+  \begin{tikzpicture}
+    \begin{ganttchart}[x unit=1mm, time slot format=isodate]{2015-02-10}{2015-05-30}
+      \gantttitlecalendar{month=name}\\
+      \ganttgroup{Sprint 1}{2015-02-15}{2015-03-10}\\
+      \ganttgroup{Sprint 2}{2015-03-12}{2015-04-08}\\
+      \ganttgroup{Sprint 3}{2015-04-15}{2015-04-27}\\
+      \ganttgroup{Sprint 4}{2015-05-04}{2015-05-20}\\
+      \ganttmilestone[milestone left shift=-0.9, milestone right shift=1.9]{Project Deadline}{2015-05-27}
+    \end{ganttchart}
+  \end{tikzpicture}
+  \caption{\label{fig:gantt_dates} }
+\end{figure}
 
 \subsection{Office Hours}
 A vital part of working agile involves being able to easily communicate with all members of the multi-project. To ensure this all groups must be reachable on e-mail all weekdays 09:00--15:00, and preferably be in the group rooms. An exception for this is when there are courses.
