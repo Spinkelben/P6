@@ -1,11 +1,17 @@
 \chapter{Recommendations for Future Developers}\label{chap:future_dev_recommendations}
 \todo{kapitel til alt hvad vi syntes de næste skal vide hvis de ikke har læst resten af rapporten}
 
-\todo{De bør få et ordentligt testmiljø op!}
-
 \section{Process Recommendations}
 \todo{Hvordan de bør styre procesen næste år. Anbefalet en samlet, unified backlog!}
 
-\section{Recommandations for Jenkins}
-\todo{Hvad der kan gøres for at forbedre jenkins fremover. Referer til den nuværende jenkin struktur appendix}
-For future students: How to make new libraries published (server file /srv/jenkins/project\_version\_codes/libversion)
+\section{Recommendations for Continuous Integration}
+We have made many improvements to continuous integration and the continuous integration platform Jenkins. There are, however, still improvements to be made: 
+
+\begin{description}
+  \item[Automatic Deployment of Scripts] Currently most scripts used on the server are not automatically updated. Whenever a change is made to them in the Git repository, they have to be manually updated on the server. This is time consuming and error prone. They should instead be automatically deployed.
+  \item[Automatic Monkey Test Failure Notifications] When a monkey test fails, the responsible developers are not automatically notified. Instead they have to manually check the builds or manually subscribe to an RSS feed to get notifications. Monkey tests should be updated so that when a failure occurs the responsible developers are automatically notified, as is the case for other jobs.
+  \item[Prevent Push of Snapshots] We have implemented a pre-receive Git hook that prevents developers from pushing dynamics dependency versions and local snapshots of libraries, because these can be error prone. We have not prevented the pushing of snapshot versions. Snapshots are the newest version of a library in-between releases and can contain errors. Since we only store the most recent snapshot, using a snapshot version can result in a library version being updated erroneous. Therefore references to snapshot versions should not be pushed to the remote.
+  \item[Testing] There are virtually no tests for the various GIRAF apps and libraries. While we have made improvements to test automation, the code for the apps and libraries is written in such a way that it is very difficult to test. The code should be updated to make testing easy for developers.
+\end{description}
+
+We have added these items to the backlog.
