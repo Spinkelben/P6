@@ -86,8 +86,9 @@ run_monkey() {
     PACKAGE=$2
     BASE_OUTPUT_NAME=$3
     SEED=1
-    NO_EVENTS=1000
-    DELAY=10 # in ms
+    NO_EVENTS=90000
+    DELAY=10 # in ms. 90 000 events with a 10 ms delay is a 15 minute test.
+
 
     $ANDROID_HOME/platform-tools/adb -s $1 shell am broadcast -a org.thisisafactory.simiasque.SET_OVERLAY --ez enable true(*@\label{run_monkey_parallel:go_away_monkey_true}@*)
 
