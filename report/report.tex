@@ -32,19 +32,20 @@
 
 \bookmark[page=3,level=0]{Title Page}
 \input{frontmatter/titlepage.tex}
+\bookmark[page=5,level=0]{Title Page}
 \input{frontmatter/resume.tex}
 \clearpage{}
 \input{frontmatter/signatures.tex}
-\bookmark[page=5,level=0]{Preface}
+\bookmark[page=7,level=0]{Preface}
 \input{frontmatter/preface.tex}\par
 \begingroup % Next chapter on same page.
 \let\cleardoublepage\relax
-\bookmark[page=5,level=0]{Reading Guide}
+\bookmark[page=7,level=0]{Reading Guide}
 \input{frontmatter/reading_guide.tex}
 \endgroup
 
 % Table of contents.
-\bookmark[page=7,level=0]{Contents}
+\bookmark[page=9,level=0]{Contents}
 \microtypesetup{protrusion=false} % Protrusion may interfere with the dotted lines in the TOC.
 \ohead{{\MakeUppercase\leftmark}} % UGLY HACK. The correct way should be to store the old value, set new value, then restore old value!
 \tableofcontents

@@ -352,3 +352,8 @@
   \settocstylefeature{entryhook}{\sffamily}
   \settocstylefeature[-1]{entryhook}{\Large\sffamily\bfseries}
   \settocstylefeature[1]{entryhook}{\small\sffamily}
+  % If page numbers in TOC are more than 3 digits.
+  \makeatletter
+  \renewcommand{\@pnumwidth}{3em} 
+  \renewcommand{\@tocrmarg}{4em}
+  \makeatother
