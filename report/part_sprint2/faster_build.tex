@@ -205,7 +205,6 @@ Developers must be able to test their changes in the dependent projects locally 
 \end{figure}
 
 \section{Configuring the Projects to Publish}\label{sec:conf_project_to_publish}
-\todo{Ligger jeg rigtigt?}
 Each library project has to be configured to publish, locally and to Artifactory. This configuration is done in the build files. Instead of having to repeat the same information in the build file for every library project, we make a Gradle plugin which defines all properties needed for publishing, called the \mono{giraf-lib-gradle-plugin}. The plugin contains the URL to the snapshot and release repositories, the path to a credentials file (to Artifactory), and configurations for local publishing. It also declares a rename task, which renames the output file, such that Jenkins knows its name when it is to upload it. At last, it makes the \mono{publishToMavenLocal} task dependent on the \mono{build} task, as it would be a hassle to manually make sure to build first. With this plugin we only have to apply it in the build files to make them publish to Artifactory.\todo{Tilføj kode til appendiks?}
 
 Because the credentals file is stored on the build server, it is also not possible for the developers to publish libraries themselves; each build must pass on Jenkins before it is released.
