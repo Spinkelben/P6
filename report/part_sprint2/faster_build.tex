@@ -316,10 +316,9 @@ We measure the time of building the launcher after having implemented binary dep
 
 As mentioned in the previous section, we discovered a bug with the Android Emulator plugin on Jenkins after implementing binary dependencies that resulted in the very fast startups shown in \figureref{fig:launcher_build_times_1}. We therefore compare the build times with the emulator starting correctly (and therefore slowly).
 
-\figureref{fig:launcher_build_times_2} shows three bars. \emph{Old slow} shows the build times before the new dependency system with the emulator working correctly. \emph{New limited targets} shows the build times with the build targets \code{check connectedCheck assembleRelease}. When running the same build targets as before, there is an improvement in the build times, as the dependencies \emph{Local-db}, \emph{Giraf-component}, and \emph{Oasis-lib} are not built. \emph{Barcode-scanner} is still built, as it is not a library used for any other projects than the launcher. It can be seen that the build time for \emph{Launcher} has increased dramatically. This is because there is now a UI test that takes a significant amount of time \todo{Redo test without UI test}. This test was not present when we did the initial timing of the entire launcher project.
-\kimnote{Give me some numbers. e.g. "We decreased the build time with 60\%" (Not counting the GUI tests). It would be good if you could somehow compare build times without the increased test cases. }
+\figureref{fig:launcher_build_times_2} shows three bars. \emph{Old slow} shows the build times before the new dependency system with the emulator working correctly. \emph{New few targets} shows the build times with the build targets \code{check connectedCheck assembleRelease}. When running the same build targets as before, there is an improvement in the build times of 43.6 \%, as the dependencies \emph{Local-db}, \emph{Giraf-component}, and \emph{Oasis-lib} are not built. \emph{Barcode-scanner} is still built, as it is not a library used for any other projects than the launcher. The time build time for \emph{Launcher} has increased. This is because additional work has been done on the Launcher by other groups in parallel with us making the dependency changes.
 
-While the build times seem to have improved, each app job on Jenkins now uploads an APK to Google Play. \emph{New all targets} in \figureref{fig:launcher_build_times_2} shows the build time of the launcher app when running all targets. The overall build time has thus increased from the original build time of the launcher project. Therefore we have not managed to decrease the build times of projects, but we have nonetheless made improvements. Had we not made these improvements the build times would be even longer.
+The complete build time with the added Gradle tasks (\emph{New all targets}) is, as expected, more than when running fewer targets. The time for the Barcode-scanner and Launcher has increased because they run additional tasks. Regardless of the additional targets the total build time is 13.7 \% less than with Git submodules.
 
 \begin{figure}
 \centering
@@ -328,11 +327,11 @@ While the build times seem to have improved, each app job on Jenkins now uploads
   \begin{axis}[
     xbar stacked,
     scale only axis,
-    width=\textwidth-\widthof{New limited targets}-0.1cm,
+    width=\textwidth-\widthof{New few targets}-0.1cm,
     axis y line*= none, axis x line*= bottom,
     %xmajorgrids = true,
     ytick = data,
-    yticklabels = {Old slow, New limited targets, New all targets},
+    yticklabels = {Old slow, New few targets, New all targets},
     yticklabel style={inner sep=0pt, align=right, xshift=-0.1cm},
     tick align = outside,
     %xtick pos = left,
@@ -360,10 +359,10 @@ While the build times seem to have improved, each app job on Jenkins now uploads
     {(0.28,0) (0.0,1) (0.0,2)};
     \addlegendentry{Metadata}
     \addplot[colorFshade, fill=colorF] coordinates
-    {(7.711,0) (22.843,1) (38.731,2)};
+    {(7.711,0) (18.274,1) (36.135,2)};
     \addlegendentry{Barcode-scanner}
     \addplot[colorEshade, fill=colorE] coordinates
-    {(8.393,0) (161.036,1) (356.664,2)};
+    {(8.393,0) (100.277,1) (206.314,2)};
     \addlegendentry{Launcher}
     \addplot[colorDshade, fill=colorD] coordinates
     {(17.315,0) (0.0,1) (0.0,2)};
