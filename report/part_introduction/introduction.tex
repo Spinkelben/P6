@@ -12,7 +12,7 @@ This is followed by a discussion of how to organize the groups. The semester coo
 In this meeting, we also distribute different roles of the group. These are described in more detail in \chapterref{chap:sw_dev_method}. Our group undertake the responsibility for Jenkins \cite{JenkinsWebsite}, which is the tool used for continuous integration.
 
 \section{Project Goals}
-In an initial meeting with one of the external customers, we identify that the most important desire for the GIRAF project is that it the existing apps become more complete. The external customer sees no need for new apps, but instead that bugs get fixed in the current apps so that they become usable. In addition, the customer wants the apps to be similar in the user interface such that it feels more like a suite of related apps. It is the overall goal of the project to accommodate these desires from the customer.
+In an initial meeting with one of the external customers, we identify that the most important desire for the GIRAF project is that it the existing apps become complete. The external customer sees no need for new apps, but instead that bugs get fixed in the current apps so that they become usable. In addition, the customer wants the apps to be similar in the user interface such that it feels more like a suite of related apps. It is the overall goal of the project to accommodate these desires from the customer.
 
 The goal of our group is to improve build automation and the testing facilities of the project. This can help discover bugs in the code, which is important regarding the overall goal of the project.
 
@@ -22,20 +22,3 @@ In \chapterref{chap:sw_dev_method}, we describe the software development method 
 The next parts of the report describes the four sprints. This includes descriptions of the user stories we solve and the technical work we make. In sprint 1, we describe the reasoning behind the initial development method and the setup of continuous integration. In sprint 2, we improve the build automation further by refactoring how internal libraries are referenced in projects. In the next sprint, sprint 3, we analyze and evaluate the development method. In sprint 4, we improve the test environment by testing on physical devices instead of emulators  and prepare the handover of the project to next year's students.
 
 \chapterref{chap:evaluation} evaluates what we have experienced during this project and finally, in \chapterref{chap:future_dev_recommendations}, we present a number of recommendations for future developers of the GIRAF project.
-
-\tikzsetnextfilename{gantt_dates}
-\begin{tikzpicture}
-	\begin{ganttchart}[x unit=1.14mm, time slot format=isodate]{2015-02-10}{2015-05-28}
-    \gantttitlecalendar{month=name}\\
-
-    \ganttgroup{Sprint 1}{2015-02-15}{2015-03-10}\\
-    \ganttgroup{Sprint 2}{2015-03-12}{2015-04-08}\\
-    \ganttgroup{Sprint 3}{2015-04-15}{2015-04-27}\\
-    \ganttgroup{Sprint 4}{2015-05-04}{2015-05-20}
-
-  \end{ganttchart}
-\end{tikzpicture}
-
-\todo{Find the good spot for this figure}
-\kimnote{I love this figure. Consider placing it together in the section meeting dates and then add sprint end etc. You should also talk about the "holes" between sprint, where the GUI do sprint planning.}
-Each sprint has approximately 8 full days per man.
