@@ -77,3 +77,51 @@ The build time of the Launcher app with the targets \code{check connectedCheck a
     %columns/Task/.append style={monotext},
     columns={Milliseconds,Task}, 
    ]{part_appendix/newdependencysystem_fulltargets.csv}
+
+\section{Before Tablets}
+The build time of the Launcher app before using tablets can be seen in in the first table below.
+
+\pgfplotstabletypeset[
+    font=\footnotesize,
+    begin table=\begin{longtable},
+    end table=\end{longtable},
+    every head row/.style={before row=\toprule,after row=\midrule},
+    every last row/.style={after row=\bottomrule\caption{Running time of tasks before tablet usage}},
+    col sep=semicolon,
+    %monotext/.style={%
+    %    postproc cell content/.append style={/pgfplots/table/@cell content/.add={\mono{}{}}},
+    %}
+    columns/Task/.style={
+        string type,
+        column type=l%,
+        %postproc cell content/.append style={
+        %    /pgfplots/table/@cell content/.add={\}{\EUR{}},
+    },%},
+    columns/Milliseconds/.style={string type, column type=r},
+    %columns/Task/.append style={monotext},
+    columns={Milliseconds,Task}, 
+   ]{part_appendix/emulator.csv}
+
+\section{After Tablets}
+The build time of the Launcher app after using tablets can be seen in in the first table below.
+
+\pgfplotstabletypeset[
+    font=\footnotesize,
+    begin table=\begin{longtable},
+    end table=\end{longtable},
+    every head row/.style={before row=\toprule,after row=\midrule},
+    every last row/.style={after row=\bottomrule\caption{Running time of tasks after tablet usage}},
+    col sep=semicolon,
+    %monotext/.style={%
+    %    postproc cell content/.append style={/pgfplots/table/@cell content/.add={\mono{}{}}},
+    %}
+    columns/Task/.style={
+        string type,
+        column type=l%,
+        %postproc cell content/.append style={
+        %    /pgfplots/table/@cell content/.add={\}{\EUR{}},
+    },%},
+    columns/Milliseconds/.style={string type, column type=r},
+    %columns/Task/.append style={monotext},
+    columns={Milliseconds,Task}, 
+   ]{part_appendix/tablet.csv}

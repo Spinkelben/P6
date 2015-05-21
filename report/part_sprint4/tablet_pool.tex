@@ -287,6 +287,8 @@ done (*@\label{disconnect_devices:loop_end}@*)
 \section{Evaluation of Build Times With Tablets}
 We measure the time it takes to build the Launcher job with an emulator and with tablets. The times can be seen in \figureref{fig:launcher_build_times_3}. As can be seen, building with tablets immediately cuts off roughly two minutes of the build time, as there is no need to start an emulator. In addition building the different components take slightly less time, since testing is not performed on an emulator. The server is also faster because it does not run an emulator concurrently when building jobs. This can be hard to see in the figure. The Launcher component, for example, takes 455 seconds with an emulator, but 406 seconds with a tablet. With the tablets the Launcher job is 29.3 \% faster than when building with an emulator.
 
+The exact timings of each task can be seen \appendixref{app:build_times}.
+
 \begin{figure}
 \centering
 \tikzsetnextfilename{launcher_timings_tablets}
