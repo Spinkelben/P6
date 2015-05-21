@@ -1,6 +1,6 @@
 %!TEX root = ../report.tex
 \chapter{Sprint Planning}\label{chap:s4_sprintplanning}
-This sprint planning proceeds ordinarily as specified by the development method: We first have a sprint planning in the subproject followed by sprint planning in the group.
+This sprint planning proceeds ordinarily\kimnote{delete this word.} as specified by the development method: We first have a sprint planning in the subproject followed by sprint planning in the group.
 
 \begin{chapterorganization}
   \item in \sectionref{sec:S4_bd} we describe the user stories we commit ourselves to during the \bd sprint planning meeting;
@@ -8,12 +8,12 @@ This sprint planning proceeds ordinarily as specified by the development method:
 \end{chapterorganization}
 
 \section{\bdtitle Sprint Planning}\label{sec:S4_bd}
-During the \bd sprint planning we choose to work on four user stories and one technical work item. They are labeled with a number in parentheses for reference. In the previous sprint we specified precisely the backlog items used and how to formulate user stories (see \sectionref{sec:processspecs}).
+During the \bd sprint planning we choose to work on four user stories and one technical work item\kimnote{What is this, this has not been introduced. Consider defining it in your method section}. They are labeled with a number in parentheses for reference. In the previous sprint we specified precisely the backlog items used and how to formulate user stories (see \sectionref{sec:processspecs}).
 
 Each user story now has a number of \emph{conditions of satisfaction}. These conditions of satisfaction are listed as bullets below each user story. The conditions have been elicited by asking our customers and our product owner.
 
 \begin{description}
-  \item[(1)] As a developer I want libraries to have higher priority than other jobs in the build scheduling in Jenkins so that libraries are not bottlenecked when several people are reliant on them.
+  \item[(1)] As a developer I want libraries to have higher priority than other jobs in the build scheduling in Jenkins so that libraries are not bottlenecked when several people are reliant on them\kimnote{how can they be bottlenecked by people relying on them? What they relying mean in this context?}.
   \begin{itemize}
     \item Jobs must not be starved
     \item Libraries must be prioritized higher than other job types
@@ -26,9 +26,9 @@ Each user story now has a number of \emph{conditions of satisfaction}. These con
   \begin{itemize}
     \item Users should not have to install additional software onto their computers
     \item Users should be able to merely run a program that automatically downloads and installs all apps on a device
-    \item After running the program, the device must contain the newest version of all apps
+    \item After running the program, the device must contain the newest version of all apps 
   \end{itemize}
-  \item[(4)] As a future developer I want to know what is in Jenkins and how it is structured so that it it is easy to start working with
+  \item[(4)] As a future developer I want to know what is in Jenkins and how it is structured so that it it\kimnote{no double words, this is not rap music! ;)} is easy to start working with \kjimnote{with what?, maybe "it"}
   \begin{itemize}
     \item Document how to configure projects
     \item Document configuration of authentication
@@ -47,7 +47,7 @@ The following is the technical work item we work on in sprint 4. This technical 
 \end{description}
 
 \section{Group Sprint Planning}\label{sec:S4_group}
-At our internal sprint planning we divide the chosen backlog items into tasks and estimate them. For this sprint, we have a total of 70 half days of work. \tableref{tab:sprint4_tasks} shows the tasks we have committed to solve for this sprint. Tasks with a plus (+) are tasks that have been added during the sprint as they were discovered. Tasks with an estimation of 0 have been estimated as such, because they take virtually no time. There are three tasks in the sprint backlog which are not directly related to any backlog item.
+At our internal sprint planning we divide the chosen backlog items into tasks and estimate them. For this sprint, we have a total of 70 half days of work. \tableref{tab:sprint4_tasks} shows the tasks we have committed to solve for this sprint. Tasks with a plus (+) are tasks that have been added during the sprint as they were discovered. Tasks with an estimation of 0 have been estimated as such, because they take virtually no time. There are three tasks in the sprint backlog which are not directly related to any backlog item\kimnote{which and why?}.
 
 In addition to the tasks related to solving our chosen backlog items, we also work on report related tasks to finish our report, such as introduction, conclusion, etc. The total amount of time estimated for report tasks during this sprint is 56.
 
