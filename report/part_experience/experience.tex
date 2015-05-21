@@ -1,7 +1,7 @@
 \chapter{Evaluation of the Multi-Project}\label{chap:evaluation}
 \todo{Chapter introduction}
 
-There are several layers to evaluate: The technical work, i.e.\ the user stories we completed as well as other tasks we completed by necessity; the development process followed in the group; the accomplishments of the multi-project as a whole, i.e.\ all individual groups collective progress; and finally the process surrounding the entire multi-project. \todo{Maybe a figure to illustrate the structure of this, going from the inner-most layer to outer-most?}
+There are several layers to evaluate: The technical work, i.e.\ the user stories we completed as well as other tasks we completed by necessity; the development process followed in the group; the accomplishments of the multi-project as a whole, i.e.\ all individual groups' collective progress; and finally the process surrounding the entire multi-project. \todo{Maybe a figure to illustrate the structure of this, going from the inner-most layer to outer-most?}
 
 \begin{chapterorganization}
   \item in \sectionref{conc:userstories} we evaluate the technical work we have done this semester in terms of what user stories we selected and completed;
@@ -11,6 +11,23 @@ There are several layers to evaluate: The technical work, i.e.\ the user stories
 \end{chapterorganization}
 
 \section{Group Work on User Stories}\label{conc:userstories}
+
+During this project we have accomplished a number of backlog items. The result of all this work is that the build environment, the continuous integrations server in particular, is significantly improved from what we inherited. When we started the continuous integration server was just a regular build server. We changed the configuration such that the server automatically builds the new version whenever changes are pushed to the master branch. We also run any unit and UI tests after the build process, and we only consider the build successful if all the tests pass. If the build was successful we also publish the new version. If it is an app, it is published on the alpha track on the Google Play Store, if it is an library the commit message decides whether to publish a major or minor release, a path or a development snapshot. Before all these changes, developers manually had to start the builds on the server and no test were run. We have enabled email notifications so whenever a build fails, the developer responsible for the bad build gets a notification email with a link to the failed build.
+ 
+Automated build
+Automated test
+Email notification
+Auto upload of Alpha releases
+Monkey, Screenshot
+Faster build
+Install all apps
+code coverage
+Libraries
+Guide UI, Android Test, Process, CI, Jenkins
+Library Priority
+Debug Test
+Download and Install all apps Local
+
 \todo{Kort: Hvad har vi lavet?}
 \todo{Fyldestgørende status på det vi har arbejdet med (jenkins mm.)}
 \todo{Beskriv at udviklingsmiljøet mm.\ er meget bedre nu.}
