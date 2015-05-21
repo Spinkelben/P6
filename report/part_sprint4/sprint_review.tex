@@ -1,16 +1,14 @@
 %!TEX root = ../report.tex
 \chapter{Sprint Review}\label{chap:sprint4_end}
-Overall this sprint went well. We did not accomplish all of our tasks, but that was expected as we had more work than we time. We prioritized tasks related to user stories, and therefore we still managed to complete all of our user stories. The tasks which were postponed are related to finishing the parts of the report which are not directly related to the work we did this sprint e.g. introduction and evaluation. We had a server breakdown 14\textsuperscript{th} of May and it was restored on the 18\textsuperscript{th} of May to the state it was in the morning of the 13\textsuperscript{th} of May. So the server was down two days and we lost an additional days work. There was no loss of code, because of the way Git works, the developers still had the code on their machines. The changes to the configuration of Jenkins during that period was lost however. We did not make many changes, to Jenkins during this period so it was quickly restored once the server was up again. We however recommend that there be made separate backups of the configuration to somewhere other than the server to prevent issues in the future.
+Overall this sprint went well. We did not accomplish all of our tasks, but that was expected as we had more work than we had time. We prioritized tasks related to user stories, and therefore we still managed to complete all of our user stories. The tasks which were postponed are related to finishing the parts of the report which are not directly related to the work we did this sprint e.g. introduction and evaluation. 
 \section{Sprint Goals}\label{sec:s4_goals}
-Prioritize libs
-
-debug
-
-Download
-
-Future proof
-
-Faster build
-
-Monkey
+\begin{description}
+    \item[Prioritizing Libraries (1)] We have changed the build queue in Jenkins to be a prioritized queue, which uses a scheduling that builds more libraries than apps, but still prevents starvation.
+    \item[Run monkey tests on debug builds (2)] We have changed our monkey tests scripts such that the tests now are performed on debug builds of the apps instead of relese builds. 
+    \item[Easy download and install (3)] We have made a Powershell and a Bash script which downloads the newest build of every app from the ftp server and installs them on the a connected tablet in an automated manner. 
+    \item[Document Jenkins configuration (4)] We have created a document which details how the jobs are configured as well as which files are important, what they are, and where they are. We believe this guide to be very useful for the developers of next year.
+    \item[Screenshot of monkey test (5)] The monkey tests were supposed to be generating screenshots already, it just did not work for some reason. When we were doing other reconfigurations of the monkey tests we found an easy way to make it work. Now screenshots are saved from each device.
+    \item[Decrease build times on Jenkins (6)] We have improved the build times on Jenkins. Now we have a pool of tablet available for testing, such that we do not have to start a emulator, this saves us time every build. We have shaved about thirty percent off the build time.
+\end{description}
 \section{Multi-Project Sprint Review}\label{sec:s4_multiprj_review}
+The multi-project sprint review went well. There were some stress leading up to the sprint review however, because of server troubles. The sprint review were held on the 20\textsuperscript{th} of May. We had a server breakdown on the 14\textsuperscript{th} of May and it was restored on the 18\textsuperscript{th} of May to the state it was in the morning of the 13\textsuperscript{th} of May. So the server was down two days and we lost an additional days work. There was no loss of code, because of the way Git works, the developers still had the code locally. The changes to the configuration of Jenkins during that period was lost however. We did not make many changes, to the Jenkins configuration during this period so it was quickly restored once the server was up again. We however recommend that there be made separate backups of the configuration to somewhere other than the server to prevent issues in the future.
