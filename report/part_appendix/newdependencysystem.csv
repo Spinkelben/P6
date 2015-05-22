@@ -1,4 +1,3 @@
-Milliseconds;Task
 115000ms;emulator
 357ms;barcodescanner:preBuild
 210ms;barcodescanner:compileDebugAidl
