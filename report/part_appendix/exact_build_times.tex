@@ -2,22 +2,25 @@
 \label{app:build_times}
 
 \section{Before New Dependency System}
-The run targets are: \code{check}, \code{connectedCheck}, and \code{assembleRelease}. The time of all tasks can be seen below. Notice that the emulator time for both the fast and slow are included, with the slow in parentheses.
+The run targets are: \code{check}, \code{connectedCheck}, and \code{assembleRelease}. The time of all tasks can be seen in \listingref{lst:full_data_old_dep_system}. Notice that the emulator time for both the fast and slow are included, with the slow in parentheses.
 
-\lstinputlisting[]{part_appendix/olddependencysystem.csv}
+\lstinputlisting[caption=Running time of tasks of old dependency system,label=lst:full_data_old_dep_system]{part_appendix/olddependencysystem.csv}
 
 \section{After New Dependency System}
-The build time of the Launcher app with the targets \code{check}, \code{connectedCheck}, and \code{assembleRelease} can be seen in in the first table below.
-\lstinputlisting[]{part_appendix/newdependencysystem.csv}
-The build time with the targets \code{clean}, \code{check}, \code{connectedCheck}, \code{increaseVersionCode}, \code{assembleRelease}, and \code{publishApkRelease} can be seen in the second table below.
-\lstinputlisting[]{part_appendix/newdependencysystem_fulltargets.csv}
+The build time of the Launcher app with the targets \code{check}, \code{connectedCheck}, and \code{assembleRelease} can be seen in in \listingref{lst:full_data_new_dep_system_1}.
+
+The build time with the targets \code{clean}, \code{check}, \code{connectedCheck}, \code{increaseVersionCode}, \code{assembleRelease}, and \code{publishApkRelease} can be seen in \listingref{lst:full_data_new_dep_system_2}.
+
+\lstinputlisting[caption=Running time of tasks of new dependency system with limited targets,label=lst:full_data_new_dep_system_1]{part_appendix/newdependencysystem.csv}
+
+\lstinputlisting[caption=Running time of tasks of new dependency system with full targets,label=lst:full_data_new_dep_system_2]{part_appendix/newdependencysystem_fulltargets.csv}
 
 \section{Before Tablets}
-The build time of the Launcher app before using tablets can be seen in in the first table below.
+The build time of the Launcher app before using tablets can be seen in \listingref{lst:before_tablets}.
 
-\lstinputlisting[]{part_appendix/emulator.csv}
+\lstinputlisting[caption=Running time of tasks before using tablets,label=lst:before_tablets]{part_appendix/emulator.csv}
 
 \section{After Tablets}
-The build time of the Launcher app after using tablets can be seen in in the first table below.
+The build time of the Launcher app after using tablets can be seen in \listingref{lst:after_tablets}.
 
-\lstinputlisting[]{part_appendix/tablet.csv}
+\lstinputlisting[caption=Running time of tasks after using tablets,label=lst:after_tablets]{part_appendix/tablet.csv}
