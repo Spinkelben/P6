@@ -12,7 +12,7 @@ We recommend that the developers of next year continue using Scrum as their deve
 
 We also recommend that there is arranged some social gatherings, outside of the project. In our experience the gatherings are more successful if they are lightweight, otherwise they need to be planned in greater detail and it is hard to find someone who wants to be responsible for the planning. Examples of gatherings could be eating lunch together every Friday, or agreeing to attend the Friday bar. It is easier to work together if you know the people you are working with.
 
-We suggest that there continues to be roles distributed among groups. It is very important that groups, which fulfill roles that have a large amount of interaction with other groups, take that responsibility seriously and are available in person during the day. Otherwise that can be a source of frustration for the other groups. Examples of roles with many interactions are \emph{Git}, \emph{Product Owner} and \emph{Server} roles\kimnote{-roles}.
+We suggest that there continues to be roles distributed among groups. It is very important that groups, which fulfill roles that have a large amount of interaction with other groups, take that responsibility seriously and are available in person during the day. Otherwise that can be a source of frustration for the other groups. Examples of roles with many interactions are \emph{Git}, \emph{Product Owner} and \emph{Server}.
 
 \section{Recommendations for Continuous Integration}\label{sec:ci_recommendations}
 We have made many improvements to continuous integration and the continuous integration platform Jenkins. There are, however, still improvements to be made:
@@ -23,6 +23,5 @@ We have made many improvements to continuous integration and the continuous inte
   \item[Prevent Push of Snapshots] We have implemented a pre-receive Git hook that prevents developers from pushing dynamic dependency versions and local snapshots of libraries, because these can be error prone. We have not prevented the pushing of snapshot versions. Snapshots are the newest version of a library in-between releases and can contain errors. Since we only store the most recent snapshot, using a snapshot version can result in a library version being updated erroneous. Therefore references to snapshot versions should not be pushed to the remote.
   \item[Testing] There are virtually no tests for the various GIRAF apps and libraries. While we have made improvements to test automation, the code for the apps and libraries is written in such a way that it is very difficult to test. The code should be updated to make testing easy for developers.
 \end{description}
-\kimnote{FYI: When you list future work, then it will often become a subject at the exam. (You should not change this)}
 
-These items can be found in the backlog.
+These items can be found in the product backlog.
