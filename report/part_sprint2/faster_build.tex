@@ -311,13 +311,13 @@ When we started to work on improving build times, a new version of the Android E
 At first this change did not affect us, since building times when building submodules were sufficiently long for the emulator to have started fully regardless. However, as we improve building times with binary dependencies, we start getting errors because of the not yet started emulator. We submit a bug report for the plugin\footnote{\url{https://issues.jenkins-ci.org/browse/JENKINS-27702}} and a pull request removing the \code{-no-boot-anim} flag for the compiler\footnote{\url{https://github.com/jenkinsci/android-emulator-plugin/pull/49}}. Removing the \code{-no-boot-anim} flag will result in slightly longer loading times for the emulator, but is necessary to detect that the emulator has started fully.
 
 \section{Evaluation of Build Times with Binary Dependencies}\label{sec:faster_build_evaluation}
-We measure the time of building the launcher after having implemented binary dependencies. To make a fair comparison, we run the launcher with the same Gradle tasks as previously measured (\code{check connectedCheck assembleRelease}), whereas in fact we now run every app with \code{clean check connectedCheck increaseVersionCode assembleRelease publishApkRelease}. The \code{increaseVersionCode} and \code{publishApkRelease} tasks make it possible to publish apps to Google Play. In addition, the \code{clean} task is run initially to ensure that a previous build does not affect the current build.
+We measure the time of building the launcher after having implemented binary dependencies. To make a fair comparison, we run the launcher with the same Gradle tasks as previously measured (\code{check}, \code{connectedCheck}, \code{assembleRelease}), whereas in fact we now run every app with \code{clean}, \code{check}, \code{connectedCheck}, \code{increaseVersionCode}, \code{assembleRelease}, \code{publishApkRelease}. The \code{increaseVersionCode} and \code{publishApkRelease} tasks make it possible to publish apps to Google Play. In addition, the \code{clean} task is run initially to ensure that a previous build does not affect the current build.
 
 As mentioned in the previous section, we discovered a bug with the Android Emulator plugin on Jenkins after implementing binary dependencies that resulted in the very fast startups shown in \figureref{fig:launcher_build_times_1}. We therefore compare the build times with the emulator starting correctly (and therefore slowly).
 
-\figureref{fig:launcher_build_times_2} shows three bars. \emph{Old slow} shows the build times before the new dependency system with the emulator working correctly. \emph{New few tasks} shows the build times with the build targets \code{check connectedCheck assembleRelease}. When running the same build tasks as before, there is an improvement in the build times of 43.6 \%, as the dependencies \emph{Local-db}, \emph{Giraf-component}, and \emph{Oasis-lib} are not built. \emph{Barcode-scanner} is still built, as it is not a library used for any other projects than the launcher. The build time for \emph{Launcher} has increased. This is because additional work has been done on the Launcher by other groups in parallel with us making the dependency changes.
+\figureref{fig:launcher_build_times_2} shows three bars. \emph{Old} shows the build times before the new dependency system with the emulator working correctly. \emph{New (subset of tasks)} shows the build times with the build targets \code{check}, \code{connectedCheck}, \code{assembleRelease}. When running the same build tasks as before, there is an improvement in the build times of 43.6 \%, as the dependencies \emph{Local-db}, \emph{Giraf-component}, and \emph{Oasis-lib} are not built. \emph{Barcode-scanner} is still built, as it is not a library used for any other projects than the launcher. The build time for \emph{Launcher} has increased. This additional time is the time it takes to install the test APK on the emulator, which was previously performed during \emph{Giraf-component}.
 
-The complete build time with the added Gradle tasks (\emph{New all tasks}) is, as expected, more than when running fewer targets. The time for the Barcode-scanner and Launcher has increased because they run additional tasks. On comparable configurations, we achieve a significant time reduction of 43.6 \% but some of these gains are eaten by the increased work added by the extra tasks and the resulting reduction of build time is just 13.7 \%.
+The complete build time with the added Gradle tasks (\emph{New (all tasks)}) is, as expected, higher than when running fewer targets. The time for the Barcode-scanner and Launcher has increased because they run additional tasks. On comparable configurations, we achieve a significant time reduction of 43.6 \% but some of these gains are eaten by the increased work added by the extra tasks and the resulting reduction of build time is just 13.7 \%.
 
 \begin{figure}
 \centering
@@ -326,11 +326,11 @@ The complete build time with the added Gradle tasks (\emph{New all tasks}) is, a
   \begin{axis}[
     xbar stacked,
     scale only axis,
-    width=\textwidth-\widthof{New few tasks}-0.1cm,
+    width=\textwidth-\widthof{New (subset of tasks)}-0.1cm,
     axis y line*= none, axis x line*= bottom,
     %xmajorgrids = true,
     ytick = data,
-    yticklabels = {Old slow, New few tasks, New all tasks},
+    yticklabels = {Old, New (subset of tasks), New (all tasks)},
     yticklabel style={inner sep=0pt, align=right, xshift=-0.1cm},
     tick align = outside,
     %xtick pos = left,
@@ -354,6 +354,15 @@ The complete build time with the added Gradle tasks (\emph{New all tasks}) is, a
     \addplot[colorCshade, fill=colorC] coordinates
     {(115.000,0) (115.000,1) (115.000,2)};
     \addlegendentry{Emulator}
+    \addplot[colorBshade, fill=colorB] coordinates
+    {(105.782,0) (0.0,1) (0.0,2)};
+    \addlegendentry{Giraf-component}
+    \addplot[colorAshade, fill=colorA] coordinates
+    {(159.739,0) (0.0,1) (0.0,2)};
+    \addlegendentry{Oasis-lib}
+    \addplot[colorDshade, fill=colorD] coordinates
+    {(17.315,0) (0.0,1) (0.0,2)};
+    \addlegendentry{Local-db}
     \addplot[colorGshade, fill=colorG] coordinates
     {(0.28,0) (0.0,1) (0.0,2)};
     \addlegendentry{Metadata}
@@ -363,22 +372,10 @@ The complete build time with the added Gradle tasks (\emph{New all tasks}) is, a
     \addplot[colorEshade, fill=colorE] coordinates
     {(8.393,0) (100.277,1) (206.314,2)};
     \addlegendentry{Launcher}
-    \addplot[colorDshade, fill=colorD] coordinates
-    {(17.315,0) (0.0,1) (0.0,2)};
-    \addlegendentry{Local-db}
-    \addplot[colorBshade, fill=colorB] coordinates
-    {(105.782,0) (0.0,1) (0.0,2)};
-    \addlegendentry{Giraf-component}
-    \addplot[colorAshade, fill=colorA] coordinates
-    {(159.739,0) (0.0,1) (0.0,2)};
-    \addlegendentry{Oasis-lib}
   \end{axis}
 \end{tikzpicture}
 \caption{Comparison of Launcher timings}\label{fig:launcher_build_times_2}
 \end{figure}
-
-\kimnote{I am a bit puzzled about the launcher build times. In Figure 9.1 the Launcher takes very short time, the same is seen in figure 9.5 under "Old slow". In figure 9.5 at the two upper bars the Launcher now takes more the 20 times longer to build then it use to. I think it would be beneficial for you to comment on this drastic development.}
-
 
 \section{Non-Emulator Testing}\label{sec:non-emulator_testing}
 As presented in the previous section, it takes a long time for the Android emulator to start. In addition, the emulator takes memory and CPU time from the actual build process, which is likely to make the build slower. We look at how to test Android applications and libraries sufficiently without using an emulator. Overall, we consider two ways of doing this: Testing on a physical device (connected by USB) and on the Java Virtual Machine (JVM).
