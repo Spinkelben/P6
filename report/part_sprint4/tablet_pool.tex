@@ -91,7 +91,7 @@ To disable it again, the port property is simply set to \code{-1} instead of the
 
 To make it easy for developers to enable and disable wireless ADB (and by that add a device to the tablet pool), we develop an Android app to do this, shown in \figureref{fig:jenkins_wireless_screenshot}. By making it easy to join the tablet pool, we expect that developers are likely to use this feature when they do not use the device.
 
-The app does, however, not support safe disconnection from the testing pool. If groups disconnect their devices, they may do it during a build. The build will then result in failure due to premature disconnection. We add this as a user story to the product backlog to find and implement a solution to this issue. \todo{Denne paragraf er ny: Læs}
+The app does, however, not support safe disconnection from the testing pool. If groups disconnect their devices, they may do it during a build. The build will then result in failure due to premature disconnection. We add this as a user story to the product backlog to find and implement a solution to this issue.
 
 \figcustomwidth{jenkins_wireless_screenshot}{Wiresless ADB app}{Wireless ADB app}{\textwidth}
 
