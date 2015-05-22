@@ -54,6 +54,15 @@ To understand which parts of the dependencies that take time, we measure the ind
     \addplot[colorCshade, fill=colorC] coordinates
     {(115.000,0) (18.000,1)};
     \addlegendentry{Emulator}
+    \addplot[colorBshade, fill=colorB] coordinates
+    {(105.782,0) (105.782,1)};
+    \addlegendentry{Giraf-component}
+    \addplot[colorAshade, fill=colorA] coordinates
+    {(159.739,0) (159.739,1)};
+    \addlegendentry{Oasis-lib}
+    \addplot[colorDshade, fill=colorD] coordinates
+    {(17.315,0) (17.315,1)};
+    \addlegendentry{Local-db}
     \addplot[colorGshade, fill=colorG] coordinates
     {(0.28,0) (0.28,1)};
     \addlegendentry{Metadata}
@@ -62,21 +71,11 @@ To understand which parts of the dependencies that take time, we measure the ind
     \addlegendentry{Barcode-scanner}
     \addplot[colorEshade, fill=colorE] coordinates
     {(8.393,0) (8.393,1)};
-    \addlegendentry{Launcher}
-    \addplot[colorDshade, fill=colorD] coordinates
-    {(17.315,0) (17.315,1)};
-    \addlegendentry{Local-db}
-    \addplot[colorBshade, fill=colorB] coordinates
-    {(105.782,0) (105.782,1)};
-    \addlegendentry{Giraf-component}
-    \addplot[colorAshade, fill=colorA] coordinates
-    {(159.739,0) (159.739,1)};
-    \addlegendentry{Oasis-lib}
+    \addlegendentry{Launcher}    
   \end{axis}
 \end{tikzpicture}
-\caption{Timings during build of the Launcher project before and after updating emulator plugin}\label{fig:launcher_build_times_1}
+\caption{Timings during build of the Launcher project before and after updating emulator plugin. The Metadata dependency takes so little time that it cannot be seen.}\label{fig:launcher_build_times_1}
 \end{figure}
-\kimnote{The Seconds label is not visiable. Os: Det står efter ref til figur hvorfor}
 
 As a preparation step, we first update the Android Emulator Jenkins plugin \parencite{jenkins-emulator-plugin} to a new version with improved emulator stability. We do this to ensure that we do not work on improving parts which are already improved in the most recent version of the plugin. After updating, we measure the build times again. As shown in \figureref{fig:launcher_build_times_1} (fast emulator), the emulator startup time is significantly decreased. Because of this, the emulator startup time is no longer the primary concern, and we focus on decreasing the dependency build times.
 
