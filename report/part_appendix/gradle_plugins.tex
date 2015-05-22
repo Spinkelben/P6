@@ -11,148 +11,148 @@ import java.util.regex.Pattern
 
 class DeployPlugin implements Plugin<Project> {
 
-    def manifestFilePath = 'src/main/AndroidManifest.xml'
-    def versionCodesFilePath = '/srv/jenkins/project_version_codes/versionCodes.properties'
-    def keyStorePath = '/srv/jenkins/google_play_keys/keystore.properties'
+  def manifestFilePath = 'src/main/AndroidManifest.xml'
+  def versionCodesFilePath = '/srv/jenkins/project_version_codes/versionCodes.properties'
+  def keyStorePath = '/srv/jenkins/google_play_keys/keystore.properties'
 
-    void apply(Project project) {
-        //Create play account extension
-        project.extensions.create ('playAcc', GooglePlayAccount)
+  void apply(Project project) {
+    //Create play account extension
+    project.extensions.create ('playAcc', GooglePlayAccount)
 
-        project.task('renameApk') << {
-            // Set custom apk name
-            project.android.applicationVariants.all { variant ->
-                def versionCode = getVersionCode(project, applicationId)['value']
+    project.task('renameApk') << {
+      // Set custom apk name
+      project.android.applicationVariants.all { variant ->
+        def versionCode = getVersionCode(project, applicationId)['value']
 
-                def applicationId = project.android.applicationVariants.applicationId[0]
-                def name
-                variant.outputs.each { output ->
-                    def apkDirectory = output.outputFile.parentFile
-                    def manifestParser = new com.android.builder.core.DefaultManifestParser()
+        def applicationId = project.android.applicationVariants.applicationId[0]
+        def name
+        variant.outputs.each { output ->
+          def apkDirectory = output.outputFile.parentFile
+          def manifestParser = new com.android.builder.core.DefaultManifestParser()
 
-                    if (output.zipAlign) {
-                        name = applicationId + "_v" + manifestParser.getVersionName(project.android.sourceSets.main.manifest.srcFile) + "b" + versionCode + "_" + variant.buildType.name.toLowerCase() + "_aligned.apk"
-                        output.outputFile = new File(apkDirectory, name)
-                    }
+          if (output.zipAlign) {
+            name = applicationId + "_v" + manifestParser.getVersionName(project.android.sourceSets.main.manifest.srcFile) + "b" + versionCode + "_" + variant.buildType.name.toLowerCase() + "_aligned.apk"
+            output.outputFile = new File(apkDirectory, name)
+          }
 
-                    name = applicationId + "_v" + manifestParser.getVersionName(project.android.sourceSets.main.manifest.srcFile) + "b" + versionCode + "_" + variant.buildType.name.toLowerCase() + "_unaligned.apk"
-                    output.packageApplication.outputFile = new File(apkDirectory, name)
-                }
-            }
+          name = applicationId + "_v" + manifestParser.getVersionName(project.android.sourceSets.main.manifest.srcFile) + "b" + versionCode + "_" + variant.buildType.name.toLowerCase() + "_unaligned.apk"
+          output.packageApplication.outputFile = new File(apkDirectory, name)
         }
-        // Autoincrement version code in android manifest
-        project.task('increaseVersionCode') << {
-            def applicationId = project.android.applicationVariants.applicationId[0]
-            // Open version codes property file
-            if (project.file(versionCodesFilePath).exists() != true) {
-                throw new GradleException("No version code file found. Only jenkins should run this task")
-            }
-
-            // Open manifest file and find versionCode
-            def manifestFile = project.file(manifestFilePath)
-            def pattern = Pattern.compile("versionCode=\"(\\d+)\"")
-            def manifestText = manifestFile.getText()
-            def matcher = pattern.matcher(manifestText)
-            matcher.find()
-
-            def newVersion = getVersionCode(project, applicationId)
-            def versionCode = newVersion['value']
-            if (!newVersion['created']) {
-                // Increment version code if not new
-                versionCode++
-                // Write version code to manifest
-                def manifestContent = matcher.replaceAll("versionCode=\"" + versionCode + "\"")
-                manifestFile.write(manifestContent)
-                // Increment version code from version codes properties file
-                def versionCodesFile = project.file(versionCodesFilePath)
-                def versionPattern = Pattern.compile(applicationId + "=(\\d+)")
-                def versionCodesText = versionCodesFile.getText()
-                def versionMatcher = versionPattern.matcher(versionCodesText)
-                versionMatcher.find()
-                def newVersionCodesText = versionMatcher.replaceAll(applicationId + "=" + versionCode)
-                versionCodesFile.write(newVersionCodesText)
-            }
-        }
-
-        //Make release config generation depend on renaming
-        project.tasks.whenTaskAdded { task ->
-            if (task.name == 'generateReleaseBuildConfig') {
-                task.dependsOn 'renameApk'
-            }
-        }
-
-        // Set keystore path
-        project.android {
-            signingConfigs {
-                release {
-                    Properties props = new Properties()
-                    if (project.rootProject.file(keyStorePath).exists())
-                    {
-                        props.load(new FileInputStream(project.rootProject.file(keyStorePath)))
-                        storeFile project.rootProject.file(props['storeFile'])
-                        storePassword props['storePassword']
-                        keyAlias props['keyAlias']
-                        keyPassword props['keyPassword']
-                    }
-                }
-            }
-        }
-
-        project.android {
-            buildTypes {
-                release {
-                    signingConfig signingConfigs.release
-                    zipAlignEnabled = true
-                }
-            }
-        }
-
-        project.android.dexOptions.preDexLibraries = !project.getRootProject().hasProperty('disablePreDex')
+      }
     }
+    // Autoincrement version code in android manifest
+    project.task('increaseVersionCode') << {
+      def applicationId = project.android.applicationVariants.applicationId[0]
+      // Open version codes property file
+      if (project.file(versionCodesFilePath).exists() != true) {
+        throw new GradleException("No version code file found. Only jenkins should run this task")
+      }
 
-    // Creates a new app in the version code file
-    def makeNewApp(manifestFile, versionCodesFile, manifestMatcher, applicationId) {
-        def versionCode = 1
+      // Open manifest file and find versionCode
+      def manifestFile = project.file(manifestFilePath)
+      def pattern = Pattern.compile("versionCode=\"(\\d+)\"")
+      def manifestText = manifestFile.getText()
+      def matcher = pattern.matcher(manifestText)
+      matcher.find()
 
+      def newVersion = getVersionCode(project, applicationId)
+      def versionCode = newVersion['value']
+      if (!newVersion['created']) {
+        // Increment version code if not new
+        versionCode++
         // Write version code to manifest
-        def manifestContent = manifestMatcher.replaceAll("versionCode=\"" + versionCode + "\"")
+        def manifestContent = matcher.replaceAll("versionCode=\"" + versionCode + "\"")
         manifestFile.write(manifestContent)
-
-        // Add version code to version codes properties file
+        // Increment version code from version codes properties file
+        def versionCodesFile = project.file(versionCodesFilePath)
+        def versionPattern = Pattern.compile(applicationId + "=(\\d+)")
         def versionCodesText = versionCodesFile.getText()
-        def newVersionCodesText = versionCodesText + "\n" + applicationId + "=" + versionCode
+        def versionMatcher = versionPattern.matcher(versionCodesText)
+        versionMatcher.find()
+        def newVersionCodesText = versionMatcher.replaceAll(applicationId + "=" + versionCode)
         versionCodesFile.write(newVersionCodesText)
+      }
     }
 
-    def getVersionCode(project, applicationId) {
-        // Load version codes properties
-        if (project.rootProject.file(versionCodesFilePath).exists()) {
-            Properties versionsProp = new Properties()
-            versionsProp.load(new FileInputStream(project.rootProject.file(versionCodesFilePath)))
-            // If version code already exists
-            if (versionsProp[applicationId] == null) {
-                // no version code was found for this project, make a new one!
-                def versionCodesFile = project.file(versionCodesFilePath)
-                def manifestFile = project.file(manifestFilePath)
-                def pattern = Pattern.compile("versionCode=\"(\\d+)\"")
-                def manifestText = manifestFile.getText()
-                def matcher = pattern.matcher(manifestText)
-                makeNewApp(manifestFile, versionCodesFile, matcher, applicationId)
-                return [value: 1, created: true]
-            } else {
-                // Load version code. Increment as the incrementation task is run after thus task
-                return [value: Integer.parseInt(versionsProp[applicationId]), created: false]
-            }
-        }
-        else {
-            return [value: 1, created: true]
-        }
+    //Make release config generation depend on renaming
+    project.tasks.whenTaskAdded { task ->
+      if (task.name == 'generateReleaseBuildConfig') {
+        task.dependsOn 'renameApk'
+      }
     }
+
+    // Set keystore path
+    project.android {
+      signingConfigs {
+        release {
+          Properties props = new Properties()
+          if (project.rootProject.file(keyStorePath).exists())
+          {
+            props.load(new FileInputStream(project.rootProject.file(keyStorePath)))
+            storeFile project.rootProject.file(props['storeFile'])
+            storePassword props['storePassword']
+            keyAlias props['keyAlias']
+            keyPassword props['keyPassword']
+          }
+        }
+      }
+    }
+
+    project.android {
+      buildTypes {
+        release {
+          signingConfig signingConfigs.release
+          zipAlignEnabled = true
+        }
+      }
+    }
+
+    project.android.dexOptions.preDexLibraries = !project.getRootProject().hasProperty('disablePreDex')
+  }
+
+  // Creates a new app in the version code file
+  def makeNewApp(manifestFile, versionCodesFile, manifestMatcher, applicationId) {
+    def versionCode = 1
+
+    // Write version code to manifest
+    def manifestContent = manifestMatcher.replaceAll("versionCode=\"" + versionCode + "\"")
+    manifestFile.write(manifestContent)
+
+    // Add version code to version codes properties file
+    def versionCodesText = versionCodesFile.getText()
+    def newVersionCodesText = versionCodesText + "\n" + applicationId + "=" + versionCode
+    versionCodesFile.write(newVersionCodesText)
+  }
+
+  def getVersionCode(project, applicationId) {
+    // Load version codes properties
+    if (project.rootProject.file(versionCodesFilePath).exists()) {
+      Properties versionsProp = new Properties()
+      versionsProp.load(new FileInputStream(project.rootProject.file(versionCodesFilePath)))
+      // If version code already exists
+      if (versionsProp[applicationId] == null) {
+        // no version code was found for this project, make a new one!
+        def versionCodesFile = project.file(versionCodesFilePath)
+        def manifestFile = project.file(manifestFilePath)
+        def pattern = Pattern.compile("versionCode=\"(\\d+)\"")
+        def manifestText = manifestFile.getText()
+        def matcher = pattern.matcher(manifestText)
+        makeNewApp(manifestFile, versionCodesFile, matcher, applicationId)
+        return [value: 1, created: true]
+      } else {
+        // Load version code. Increment as the incrementation task is run after thus task
+        return [value: Integer.parseInt(versionsProp[applicationId]), created: false]
+      }
+    }
+    else {
+      return [value: 1, created: true]
+    }
+  }
 }
 
 class GooglePlayAccount {
-    String accountEmail = '845822318110-g2fur4jtaa6g1jek6n4m5i3jbpmfi6em@developer.gserviceaccount.com'
-    String keyPath = '/var/lib/jenkins/google_play_keys/google_play_api_key.p12'
+  String accountEmail = '845822318110-g2fur4jtaa6g1jek6n4m5i3jbpmfi6em@developer.gserviceaccount.com'
+  String keyPath = '/var/lib/jenkins/google_play_keys/google_play_api_key.p12'
 }
 \end{gradlecode}
 
@@ -166,76 +166,76 @@ import org.gradle.api.publish.maven.MavenPublication
 
 class LibraryPlugin implements Plugin<Project> {
 
-    def artifactUrlSnapshots = 'http://cs-cust06-int.cs.aau.dk/artifactory/libraries-snapshots'
-    def artifactUrlReleases = 'http://cs-cust06-int.cs.aau.dk/artifactory/libraries-releases'
-    def artifactCredentialsPath = '/srv/jenkins/credentials/artifactory.properties'
+  def artifactUrlSnapshots = 'http://cs-cust06-int.cs.aau.dk/artifactory/libraries-snapshots'
+  def artifactUrlReleases = 'http://cs-cust06-int.cs.aau.dk/artifactory/libraries-releases'
+  def artifactCredentialsPath = '/srv/jenkins/credentials/artifactory.properties'
 
-    void apply(Project project) {
-        // Create giraf plugin extension
-        GirafLibrary girafLib = project.extensions.create ('girafLibrary', GirafLibrary)
+  void apply(Project project) {
+    // Create giraf plugin extension
+    GirafLibrary girafLib = project.extensions.create ('girafLibrary', GirafLibrary)
 
-        // Set version name
-        if(!project.hasProperty('versionName')) {
-            project.ext.set('versionName', '0.0-SNAPSHOT')
-        }
-        // Apply plugins needed for libraries
-        project.afterEvaluate {
-            // Read artifactory credentials
-            Properties props = new Properties()
-            if (project.rootProject.file(artifactCredentialsPath).exists()) {
-                props.load(new FileInputStream(project.rootProject.file(artifactCredentialsPath)))
-
-                project.publishing {
-                    publications {
-                        repositories.maven {
-                            if(project.versionName.endsWith('-SNAPSHOT')) {
-                                url artifactUrlSnapshots
-                            } else {
-                                url artifactUrlReleases
-                            }
-                            credentials {
-                                username props['username']
-                                password props['password']
-                            }
-                        }
-                    }
-                }
-            }
-            // Add publication even when no credentials file exists. It is used for local publishing.
-            project.publishing {
-                publications {
-                    maven(MavenPublication) {
-                        groupId 'dk.aau.cs.giraf'
-                        artifactId project.girafLibrary.libraryName
-                        version project.versionName
-                        artifact 'build/outputs/aar/library.aar'
-                    }
-                }
-            }
-            // Add rename dependency
-            project.tasks.findByName('generateReleaseBuildConfig').dependsOn(project.tasks.findByName('renameLib'))
-
-            project.tasks.findByName('publishToMavenLocal').dependsOn project.tasks.findByName('build')
-
-            project.android.dexOptions.preDexLibraries = !project.getRootProject().hasProperty('disablePreDex')
-        }
-
-        project.task('renameLib') << {
-            // Set library output name
-            project.android.libraryVariants.all { variant ->
-                variant.outputs.each { output ->
-                    def outputFile = output.outputFile
-                    if (outputFile != null && outputFile.name.endsWith('.aar')) {
-                        def fileName = "library.aar"
-                        output.outputFile = new File(outputFile.parent, fileName)
-                    }
-                }
-            }
-        }
+    // Set version name
+    if(!project.hasProperty('versionName')) {
+      project.ext.set('versionName', '0.0-SNAPSHOT')
     }
+    // Apply plugins needed for libraries
+    project.afterEvaluate {
+      // Read artifactory credentials
+      Properties props = new Properties()
+      if (project.rootProject.file(artifactCredentialsPath).exists()) {
+        props.load(new FileInputStream(project.rootProject.file(artifactCredentialsPath)))
+
+        project.publishing {
+          publications {
+            repositories.maven {
+              if(project.versionName.endsWith('-SNAPSHOT')) {
+                url artifactUrlSnapshots
+              } else {
+                url artifactUrlReleases
+              }
+              credentials {
+                username props['username']
+                password props['password']
+              }
+            }
+          }
+        }
+      }
+      // Add publication even when no credentials file exists. It is used for local publishing.
+      project.publishing {
+        publications {
+          maven(MavenPublication) {
+            groupId 'dk.aau.cs.giraf'
+            artifactId project.girafLibrary.libraryName
+            version project.versionName
+            artifact 'build/outputs/aar/library.aar'
+          }
+        }
+      }
+      // Add rename dependency
+      project.tasks.findByName('generateReleaseBuildConfig').dependsOn(project.tasks.findByName('renameLib'))
+
+      project.tasks.findByName('publishToMavenLocal').dependsOn project.tasks.findByName('build')
+
+      project.android.dexOptions.preDexLibraries = !project.getRootProject().hasProperty('disablePreDex')
+    }
+
+    project.task('renameLib') << {
+      // Set library output name
+      project.android.libraryVariants.all { variant ->
+        variant.outputs.each { output ->
+          def outputFile = output.outputFile
+          if (outputFile != null && outputFile.name.endsWith('.aar')) {
+            def fileName = "library.aar"
+            output.outputFile = new File(outputFile.parent, fileName)
+          }
+        }
+      }
+    }
+  }
 }
 
 class GirafLibrary {
-    String libraryName
+  String libraryName
 }
 \end{gradlecode}
