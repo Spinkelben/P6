@@ -205,7 +205,7 @@ Developers must be able to test their changes in the dependent projects locally 
 \end{figure}
 
 \section{Configuring the Projects to Publish}\label{sec:conf_project_to_publish}\todo{Nyt: Læs}
-Each library project has to be configured to publish, locally and to Artifactory. This configuration is done in the build files. Instead of having to repeat the same information in the build file for every library project, we make a Gradle plugin which defines all properties needed for publishing, called the \mono{giraf-lib-gradle-plugin}. Part of the plugin can be seen in \listingref{lst:gradle_plugin_library}. The full code can be seen in \appendixref{app:gradle_plugins}.
+Each library project has to be configured to publish binaries. This configuration is done in the build files. Instead of having to repeat the same information in the build file for every library project, we make a Gradle plugin which defines all properties needed for publishing, called the \mono{giraf-lib-gradle-plugin}. Part of the plugin can be seen in \listingref{lst:gradle_plugin_library}. The full code can be seen in \appendixref{app:gradle_plugins}.
 
 When a build is started on Jenkins the property \code{versionName} is set. When a library is built locally this property is not set. The plugin therefore sets the version name to \code{0.0-SNAPSHOT} (lines \ref{gradle_plugin_library:versionnameif}--\ref{gradle_plugin_library:snapshot}). On line \ref{gradle_plugin_library:check_props} the plugin checks if a file containing login credentials for Artifactory exists and then loads it on line \ref{gradle_plugin_library:load_props}. The repository to publish to is then configured on lines \ref{gradle_plugin_library:repo_conf_start}--\ref{gradle_plugin_library:repo_conf_end}.
 
@@ -251,7 +251,7 @@ class LibraryPlugin implements Plugin<Project> {
 }
 \end{gradlecode}
 
-Because the credentials file is stored on the build server, it is also not possible for the developers to publish libraries to Artifactory themselves; each build must pass on Jenkins before it is released.
+Because the credentials file is stored on the build server, it is also not possible for the developers to publish libraries to Artifactory themselves; each build must pass in Jenkins before it is released.
 
 \section{Automating Dependency Management}\label{sec:automating_vm}
 With the dependency workflow defined, we integrate it with continuous integration. As earlier mentioned, we want to automate as much as possible to ease the work of the developers. For dependency management, Gradle already does a lot for us: It automatically locates and downloads declared dependencies and creates tasks for publishing new ones to the artifact repository.
