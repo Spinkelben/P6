@@ -76,6 +76,7 @@ To understand which parts of the dependencies that take time, we measure the ind
 \end{tikzpicture}
 \caption{Timings during build of the Launcher project before and after updating emulator plugin}\label{fig:launcher_build_times_1}
 \end{figure}
+\kimnote{The Seconds label is not visiable.}
 
 As a preparation step, we first update the Android Emulator Jenkins plugin \parencite{jenkins-emulator-plugin} to a new version with improved emulator stability. We do this to ensure that we do not work on improving parts which are already improved in the most recent version of the plugin. After updating, we measure the build times again. As shown in \figureref{fig:launcher_build_times_1} (fast emulator), the emulator startup time is significantly decreased. Because of this, the emulator startup time is no longer the primary concern, and we focus on decreasing the dependency build times.
 
@@ -376,6 +377,9 @@ The complete build time with the added Gradle tasks (\emph{New all tasks}) is, a
 \end{tikzpicture}
 \caption{Comparison of Launcher timings}\label{fig:launcher_build_times_2}
 \end{figure}
+
+\kimnote{I am a bit puzzled about the launcher build times. In Figure 9.1 the Launcher takes very short time, the same is seen in figure 9.5 under "Old slow". In figure 9.5 at the two upper bars the Launcher now takes more the 20 times longer to build then it use to. I think it would be beneficial for you to comment on this drastic development.}
+
 
 \section{Non-Emulator Testing}\label{sec:non-emulator_testing}
 As presented in the previous section, it takes a long time for the Android emulator to start. In addition, the emulator takes memory and CPU time from the actual build process, which is likely to make the build slower. We look at how to test Android applications and libraries sufficiently without using an emulator. Overall, we consider two ways of doing this: Testing on a physical device (connected by USB) and on the Java Virtual Machine (JVM).

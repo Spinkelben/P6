@@ -46,7 +46,7 @@ Having installed the dummy database inserter app onto a device, it must be start
 
 We therefore make a script, seen in \listingref{lst:start_wait_dummy_db_inserter}, that starts the dummy database inserter app and waits for it to finish by busy waiting. It does so by first starting the app in line \ref{dummydb:1}. It then runs a while loop (lines \ref{dummydb:begin}--\ref{dummydb:end}) that uses \code{adb shell ps} to list all processes running on the Android device, and then piping that to \code{grep} to check for the specific app. The loop runs for as long as the output is not empty.
 
-Busy waiting is generally to be avoided, as it wastes CPU time \parencite[ch.2]{tanenbaum2007}. An alternative would be to block the process and have the tablet notify the process that it has finished. However, this is difficult and time consuming to implement. To avoid too much waste, we insert a sleep of two seconds, thus blocking the process and freeing up CPU time.\todo{Vigtigt: Læs denne paragraf}
+Busy waiting is generally to be avoided, as it wastes CPU time \parencite[ch.2]{tanenbaum2007}. An alternative would be to block the process and have the tablet notify the process that it has finished. However, this is difficult and time consuming to implement. To avoid too much waste, we insert a sleep of two seconds, thus blocking the process and freeing up CPU time.
 
 \begin{lstlisting}[language=bash,showstringspaces=false,caption=Start and wait for dummy database inserter,label=lst:start_wait_dummy_db_inserter]
 /srv/android-sdk-linux//platform-tools/adb shell am start -n dk.aau.cs.giraf.dummydbinserter/dk.aau.cs.giraf.dummydbinserter.MainActivity (*@\label{dummydb:1}@*)
