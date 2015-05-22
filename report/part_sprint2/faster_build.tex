@@ -71,7 +71,7 @@ To understand which parts of the dependencies that take time, we measure the ind
     \addlegendentry{Barcode-scanner}
     \addplot[colorEshade, fill=colorE] coordinates
     {(8.393,0) (8.393,1)};
-    \addlegendentry{Launcher}    
+    \addlegendentry{Launcher}
   \end{axis}
 \end{tikzpicture}
 \caption{Timings during build of the Launcher project before and after updating emulator plugin. The Metadata dependency takes so little time that it cannot be seen.}\label{fig:launcher_build_times_1}
@@ -205,9 +205,9 @@ Developers must be able to test their changes in the dependent projects locally 
 \end{figure}
 
 \section{Configuring the Projects to Publish}\label{sec:conf_project_to_publish}\todo{Nyt: Læs}
-Each library project has to be configured to publish binaries. This configuration is done in the build files. Instead of having to repeat the same information in the build file for every library project, we make a Gradle plugin which defines all properties needed for publishing, called the \mono{giraf-lib-gradle-plugin}. Part of the plugin can be seen in \listingref{lst:gradle_plugin_library}. The full code can be seen in \appendixref{app:gradle_plugins}.
+Each library project has to be configured to publish binary files. This configuration is set in the build files. Instead of having to repeat the same information in the build file for every library project, we make a Gradle plugin which defines all properties needed for publishing, called the \mono{giraf-lib-gradle-plugin}. The \code{apply} method of the plugin, which is invoked when the plugin is applied in the build file, can be seen in \listingref{lst:gradle_plugin_library}. The full code can be seen in \appendixref{app:gradle_plugins}.
 
-When a build is started on Jenkins the property \code{versionName} is set. When a library is built locally this property is not set. The plugin therefore sets the version name to \code{0.0-SNAPSHOT} (lines \ref{gradle_plugin_library:versionnameif}--\ref{gradle_plugin_library:snapshot}). On line \ref{gradle_plugin_library:check_props} the plugin checks if a file containing login credentials for Artifactory exists and then loads it on line \ref{gradle_plugin_library:load_props}. The repository to publish to is then configured on lines \ref{gradle_plugin_library:repo_conf_start}--\ref{gradle_plugin_library:repo_conf_end}.
+When a build is started on Jenkins, the \code{versionName} property is set to the version of the library to release, e.g.\ \code{5.2.3}. When a library is built locally, this property is not set. The plugin therefore sets the version name to \code{0.0-SNAPSHOT} (lines \ref{gradle_plugin_library:versionnameif}--\ref{gradle_plugin_library:snapshot}). On line \ref{gradle_plugin_library:check_props}, the plugin checks if a file containing login credentials for Artifactory exists and then loads it on line \ref{gradle_plugin_library:load_props}. The repository to publish to is then configured on lines \ref{gradle_plugin_library:repo_conf_start}--\ref{gradle_plugin_library:repo_conf_end}.
 
 \begin{gradlecode}[caption=Part of Gradle Plugin to publish libraries,label=lst:gradle_plugin_library]
 class LibraryPlugin implements Plugin<Project> {
