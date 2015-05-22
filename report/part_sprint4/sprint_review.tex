@@ -1,7 +1,11 @@
 %!TEX root = ../report.tex
 \chapter{Sprint Review}\label{chap:sprint4_end}
-\kimnote{No chapter organization?}
-Overall this sprint went well\kimnote{delete this sentence}. We accomplished all the selected tasks. The report tasks which were postponed are related to finishing the parts of the report which are not directly related to the work we did this sprint. As written, these reports tasks will be completed in the week between sprint end and project deadline.
+ We accomplished all the selected tasks. The report tasks which were postponed are related to finishing the parts of the report which are not directly related to the work we did this sprint. As written, these reports tasks will be completed in the week between sprint end and project deadline.
+
+\begin{chapterorganization}
+    \item in \sectionref{sec:s4_goals} we evaluate how the sprint went and wether we reached our goals on a group level.
+    \item in \sectionref{sec:s4_multiprj_review} we evaluate how the sprint went on the multi-project level.
+\end{chapterorganization}
 
 \section{Sprint Goals}\label{sec:s4_goals}
 \begin{description}
@@ -9,7 +13,7 @@ Overall this sprint went well\kimnote{delete this sentence}. We accomplished all
     \item[Run monkey tests on debug builds (2)] We have changed our monkey tests scripts such that the tests now are performed on debug builds of the apps instead of release builds.
     \item[Easy download and install (3)] We have made a Powershell and a Bash script which downloads the newest build of every app from the FTP server and install them on the a connected tablet in an automated manner without additional software on one's device.
     \item[Document Jenkins configuration (4)] We have created a document which details how the jobs are configured as well as which files are important, what they are, and where they are. Additionally the document contains details about the authentication system and recommendations to that. We believe this guide is useful for the future developers.
-    \item[Screenshot of monkey test (5)] The monkey tests were supposed to take a screenshot already, it just did not work for some reason. When we were doing other reconfigurations of the monkey tests we found an easy way to make it work. Now a screenshot is saved from each device after a monkey test has finished, including if it crashed. \kimnote{I did not read the chapter about this, but sentences such as "just did not work for some reason" will have to be explained.}
+    \item[Screenshot of monkey test (5)] We have a user story which required some other changes to how the monkey tests are run. When we made those changes it did not require that much effort to also make the monkey test capture screenshots. Now a screenshot is saved from each device after a monkey test has finished, including if it crashed.
     \item[Decrease build times on Jenkins (6)] We have improved the build times on Jenkins. Now we have a pool of tablets available for testing, such that we do not have to start a emulator. This saves time every build. We have decreased the build time by approximately \SI{30}{\percent}.
 \end{description}
 \section{Multi-Project Sprint Review}\label{sec:s4_multiprj_review}
