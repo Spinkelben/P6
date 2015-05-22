@@ -76,7 +76,7 @@ To understand which parts of the dependencies that take time, we measure the ind
 \end{tikzpicture}
 \caption{Timings during build of the Launcher project before and after updating emulator plugin}\label{fig:launcher_build_times_1}
 \end{figure}
-\kimnote{The Seconds label is not visiable.}
+\kimnote{The Seconds label is not visiable. Os: Det står efter ref til figur hvorfor}
 
 As a preparation step, we first update the Android Emulator Jenkins plugin \parencite{jenkins-emulator-plugin} to a new version with improved emulator stability. We do this to ensure that we do not work on improving parts which are already improved in the most recent version of the plugin. After updating, we measure the build times again. As shown in \figureref{fig:launcher_build_times_1} (fast emulator), the emulator startup time is significantly decreased. Because of this, the emulator startup time is no longer the primary concern, and we focus on decreasing the dependency build times.
 
