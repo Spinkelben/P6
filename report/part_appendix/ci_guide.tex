@@ -2,17 +2,14 @@
 The objective of this guide is to describe how to use continuous integration (compared to for example feature branches) and why we do it in the Giraf project. First, we present a number of guidelines. These are followed by clarification and argumentation about why they are useful.
 
 To do continuous integration, follow these guidelines:
-\begin{multicols}{2}
 \begin{itemize}
   \item Integrate with the master branch at least daily.
   \item Write automated test for your code.
   \item It is OK to integrate features which do not yet work (but disable them with boolean flags or throw \mono{NotImplementedException}).
-  \columnbreak
   \item Everything on the master branch must compile and pass all tests.
   \item Test locally before integrating.
   \item Failing builds must be resolved as fast as possible.
 \end{itemize}
-\end{multicols}
 
 \section{Why Continuous Integration}
 There are several reasons that we use continuous integration:
