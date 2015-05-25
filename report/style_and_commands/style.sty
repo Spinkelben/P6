@@ -347,10 +347,11 @@
 % TOC.
   \usepackage{tocstyle} % MUST be loaded after pdfpages!
   \usetocstyle{KOMAlike}
-  \setcounter{tocdepth}{1}
+  \setcounter{tocdepth}{0}
   \settocstylefeature{pagenumberhook}{\sffamily}
   \settocstylefeature{entryhook}{\sffamily}
   \settocstylefeature[-1]{entryhook}{\Large\sffamily\bfseries}
+  \settocstylefeature[0]{entryhook}{\sffamily}
   \settocstylefeature[1]{entryhook}{\small\sffamily}
   % If page numbers in TOC are more than 3 digits.
   \makeatletter
