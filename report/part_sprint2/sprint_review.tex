@@ -2,32 +2,32 @@
 \chapter{Sprint Review}\label{chap:sprint2_end}
 
 \begin{chapterorganization}
-  \item in \sectionref{sec:s2_goals} we evaluate how the sprint went and whether we reached our goals on a group level.
+  \item in \sectionref{sec:s2_goals} we evaluate how the sprint went and whether we solve our user stories.
   \item in \sectionref{sec:s2_multiprj_review} we evaluate how the sprint went on the multi-project level.
 \end{chapterorganization}
 
 \section{Sprint Goals}\label{sec:s2_goals}
 \begin{description}
-    \item[Set up Monkey Testing] We did not manage to finish the setup of automatic monkey tests, due to unexpected technical difficulties. Therefore the monkey test user story remains in the Product backlog.
-    \item[Faster Build] We had initially created some tasks aimed at reducing the time spent on testing, especially the emulator start up time. However short after the sprint began, a patch was released to the Jenkins Android Emulator Plugin, which reduced the emulator start up time drastically. As such we down-prioritized the emulator related tasks. Later, we found out that it was a bug that was causing the build to start before the emulator finished booting. We have therefore ignored an important part of the build process in this sprint. This means that the build times increased significantly again after fixing the bug.
+    \item[Set up Monkey Testing] We did not manage to finish the setup of automatic monkey tests, due to unexpected technical difficulties. Therefore the monkey test user story remains in the product backlog.
+    \item[Faster Build] We had initially created some tasks aimed at reducing the time spent on testing, especially the emulator start up time. However, shortly after the sprint began, a patch was released to the Jenkins Android Emulator Plugin, which reduced the emulator start up time drastically. As such we down-prioritized the emulator related tasks. Later, we found out that it was a bug that was causing the build to start before the emulator finished booting. We have therefore ignored an important part of the build process in this sprint. This means that the build times increased significantly again after fixing the bug.
 
-    We have replaced submodule dependencies with binary files. This greatly improves the build time, as the dependencies do not have to be built every time a project is built.
+    We have replaced submodule dependencies with binary files. This greatly improves the build time, as the dependencies do not have to be built every time a project is built. Overall we have improved the build times slightly. The Launcher app build time specifically has been improved by \SI{13.7}{\percent}.
     \item[Uploading of Apps to Google Play] We have successfully enabled automatic upload of GIRAF apps to Google Play. Every time an app successfully builds on Jenkins the app is automatically uploaded and released on Google Play on the alpha track. From there, the Google Play group can easily upgrade an alpha release to a beta or production release.
     \item[Test Case Installation] Every night the newest build of each app is installed on an emulator to identify any installation problems.
-    \item[Code Coverage] Code coverage reports are generated for all project and the result are published on Jenkins. Detailed statistics are available on the job page, and the percentage of lines of code covered for every project is visible on the job overview page. 
+    \item[Code Coverage] Code coverage reports are generated for all project and the result are published on Jenkins. Detailed statistics are available on the job page, and the percentage of lines of code covered for every project is visible on the job overview page.
 \end{description}
 
 We did not schedule enough time for writing the report this sprint. We had to catch up on an unfinished backlog with report items from sprint 1. We did estimate and schedule how much time was needed to complete the report for sprint 1. Our estimations proved accurate. However, we completely neglected to estimate and allocate any time for writing report about sprint 2, so we will be taking extra time in the next sprint for report writing in order to catch up.
 
 \section{Multi-Project Sprint Review}\label{sec:s2_multiprj_review}
-Again, a common meeting among all groups is held to evaluate and reflect upon the process in this sprint.
+A common meeting among all groups is held to evaluate and reflect upon the process in this sprint.
 
 It was noticed that chickens during the meetings of this sprint had been too noisy at times. We pointed out that chickens should find alternative means of communicating during meetings, and hope this will be enough. Otherwise, we will point it out during future meetings.
 
 Also, some groups repeatedly did not show up to sprint meetings. We decided to find out the reasons behind it, knowing we cannot force them to show up. One group responded that they simply forgot the meetings, but will be more careful of remembering meetings in the future.
 
-Two days between the \gui and the other two sprint planning meetings, suggested at the sprint 1 multi-project review, was implemented in this sprint. The feedback was positive and people were happy with this approach. As such we continue with it.
+Two days between the \gui and the other two sprint planning meetings, suggested at the sprint 1 multi-project review, was introduced in this sprint. The feedback was positive and people were happy with this approach. As such we continue with it.
 
-A suggestion was made allowing a product owner from \db and \bd to participate as pigs in the \gui sprint planning meeting. This seems like a good idea as they may have some useful input. We will add this to the development method. 
+A suggestion was made allowing a product owner from \db and \bd to participate as pigs in the \gui sprint planning meeting. This seems like a good idea as they may have some useful input. We add this to the development method.
 
 It was suggested by the semester coordinator to add a feature freeze. The suggestion did not come as a result of any concrete issues, but rather as a general suggestion. The suggestion was, however, quickly dismissed. Instead, we pleaded people to use common sense regarding implementing last minute changes before a sprint end. We also reminded people that they should talk to affected groups before making a change and make daily integration.

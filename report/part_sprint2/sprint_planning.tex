@@ -1,9 +1,9 @@
 %!TEX root = ../report.tex
 \chapter{Sprint Planning}\label{chap:s2_sprintplanning}
-This is the first sprint in which each subproject holds a separate sprint planning meeting. We attended the public parts of all sprint planning meetings, and of course also the internal part of the sprint planning meeting of our subproject. Our help was requested for the \db sprint planning process.
+This is the first sprint in which each subproject holds a separate sprint planning meeting. We attend the public parts of all sprint planning meetings, and of course also the internal part of the sprint planning meeting of our subproject. Our help is requested for the \db sprint planning process.
 
 \begin{chapterorganization}
-  \item in \sectionref{sec:S2_db} we elaborate on the help we provided for the sprint planning of the \db subproject;
+  \item in \sectionref{sec:S2_db} we elaborate on the help we provide for the sprint planning of the \db subproject;
   \item in \sectionref{sec:S2_bd} we describe the result, i.e.\ the selected user stories, of the \bd sprint planning meeting;
   \item in \sectionref{sec:S2_group} we describe our own group sprint planning and lists our tasks with reference to a user story.
 \end{chapterorganization}
@@ -11,25 +11,25 @@ This is the first sprint in which each subproject holds a separate sprint planni
 %We describe the sprint planning of our own \bd subproject. We merely attended the \gui sprint planning.
 
 \section{\dbtitle Sprint Planning}\label{sec:S2_db}
-While we attended the first part of the \db sprint planning meeting as customers, we were asked to attend the second part as well, which is normally reserved for only the \db groups. We were asked since the initial part of the sprint planning meeting did no go so well --- too much time was spent discussing irrelevant things, since the product backlog was ``too close'' to external user needs, rather than internal user needs. In addition the \db POs were not entirely confident in running the later part of the meeting.
+While we attended the first part of the \db sprint planning meeting as customers, we are asked to attend the second part as well, which is normally reserved for only the \db groups. We are asked since the initial part of the sprint planning meeting did no go so well --- too much time was spent discussing irrelevant things, since the product backlog was ``too close'' to external customers' needs, rather than internal user needs. In addition the \db POs are not entirely confident in running parts of the meeting.
 
-At the beginning of the second part of the meeting, we clarified how the remaining part was going to go: Groups are to pick user stories for this sprint, so that they have enough work for the sprint. They can estimate the user stories at the meeting, or they can do so separately and report back to the PO. The user stories were not altered to be ``developer friendly'' at the meeting, since there was not time for that. Instead we suggested that the POs do this for the next sprint planning. We did not influence the user stories they picked for their release backlog.
+At the beginning of the second part of the meeting, we clarify how the remaining part is going to go: Groups are to pick user stories for this sprint, so that they have enough work for the sprint. They can estimate the user stories at the meeting, or they can do so separately and report back to the PO. The user stories are not altered to be ``developer friendly'' at the meeting, since there is no time for that. Instead we suggest that the POs do this for the next sprint planning. We do not influence the user stories they pick for their release backlog.
 
 \section{\bdtitle Sprint Planning}\label{sec:S2_bd}
-At the \bd sprint planning we chose to work on the following user stories in this sprint. They are labeled with a number in parentheses for reference.
+At the \bd sprint planning we choose to work on the following user stories in this sprint. They are labeled with a number in parentheses for reference.
 
 \begin{description}
-  \item[Auto Upload Alpha and Beta Releases of Apps (1)] Apps should automatically be uploaded to Google Play when they build successfully to an alpha channel. They should be able to be uploaded to a beta or release channel at the sprint end.
+  \item[Auto Upload Alpha and Beta Releases of Apps (1)] Apps should automatically be uploaded to the Google Play alpha channel when they build successfully. They must be uploaded to a beta or release channel at the sprint end.
   \item[Faster Build (2)] Builds are slow. Builds should be sped up --- by how much is not specified.
   \item[Set up Monkey Testing (3)] Monkey testing for each app should be run automatically.
-  \item[Test Case Installation (4)] A test that automatically installs all apps on a single device. At the end of sprint 1 the GUI groups had issues installing some apps on a device when other apps were already installed due to some conflict. To avoid this situation in future sprints, the GUI groups requested a test to catch such errors.
+  \item[Test Case Installation (4)] A test that automatically installs all apps on a single device. At the end of sprint 1 the GUI groups had issues installing some apps on a device when other apps were already installed due to a conflict. To avoid this situation in future sprints, the GUI groups requested a test to catch such errors.
   \item[Code Coverage (5)] Jobs on Jenkins should provide code coverage metrics for the tested code.
 \end{description}
 
 \section{Group Sprint Planning}\label{sec:S2_group}
-At our internal sprint planning we divided the chosen user stories into tasks and estimated those. For this sprint we have a total of 58 half days of work. \tableref{tab:sprint2_tasks} shows the tasks we have for this sprint. Estimations in parentheses are the result of estimations being updated to due new priorities. Tasks with a plus (+) are tasks that have been added during the sprint as they were discovered.
+At our internal sprint planning we divide the chosen user stories into tasks and estimate those. For this sprint we have a total of 58 half days of work. \tableref{tab:sprint2_tasks} shows the tasks we have for this sprint. Estimations in parentheses are the result of estimations being updated. Tasks with a plus (+) are tasks that are added during the sprint as they are discovered.
 
-We made tasks for finishing the report of the previous sprint estimated for 30 half days. The original total amount of work estimated for both the report and user stories is 62. While this is 4 units more of work than we have available, many of the report tasks are estimated as being 1, but in fact take less time. Therefore an additional 4 units of work is acceptable. This does, however, leave little to no time for writing the report of this sprint.
+We made tasks for finishing the report of the previous sprint estimated for 30 half days. The original total amount of work estimated for both the report and user stories is 62. While this is 4 units more of work than we have available, many of the report tasks are estimated as being 1, but in fact take less time. Therefore an additional 4 units of work is acceptable.
 
 The task \emph{make Jenkins job for beta releases} was also rejected during the sprint, as we discovered there was no need to fulfill this task. The Google Play group can easily ``upgrade'' an alpha release to a beta release or actual release.
 
@@ -44,12 +44,12 @@ The task \emph{make Jenkins job for beta releases} was also rejected during the 
     Upload newest APKs to Google Play as alpha                     & 1      & 1 \\
     Put Gradle plugins on Jenkins (+)                              & 1 \& 2 & 1 \\
     Publish AAR files to Artifactory automatically from Jenkins (+)& 2      & 6 \\
-    Put meta-data-lib on Jenkins (+)                               & 2      & 1 \\
+    Put metadata-lib on Jenkins (+)                                & 2      & 1 \\
     Make Gradle download binaries from Artifactory (+)             & 2      & 2 \\
+    Set up Artifactory                                             & 2      & 1 \\
     Move APKs to ftp server                                        & 3      & 1 \\
     Make test that installs all available APKs                     & 4      & 1 \\
     CoCo code coverage                                             & 5      & 8 \\
-    Set up Artifactory                                             & 2      & 1 \\
     \midrule
     \textbf{Down-prioritized tasks} & & \\
     \midrule
