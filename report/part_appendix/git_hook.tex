@@ -2,7 +2,7 @@
 \section{Post-receive hook}
 \label{sec:app_git_hook_post}
 
-\begin{pythoncode}[caption=Post-receive git hook for managing library releases and triggering Jenkins]
+\begin{pythoncode}[caption=Post-receive git hook for managing library releases and triggering Jenkins (written in Python)]
 #!/usr/bin/python
 
 import os
@@ -192,7 +192,7 @@ if __name__ == "__main__":
 \end{pythoncode}
 \section{Pre-receive hook}
 \label{sec:app_git_hook_pre}
-\begin{pythoncode}[caption=Pre-receive git hook for checking for common mistakes]
+\begin{pythoncode}[caption=Pre-receive git hook for checking for common mistakes (written in Python)]
 #!/usr/bin/python
 import fileinput
 import subprocess
