@@ -7,7 +7,8 @@ This chapter describes our work on the technical work item \us{Decrease Job Buil
   \item in \sectionref{sec:pool_of_tablets} we setup a pool of tablets to be tested and we describe the scripts that perform this task;
   \item in \sectionref{sec:wireless_adb} we enable testing on the tablets, and create an app to the tablets that automates this process as much as possible;
   \item in \sectionref{sec:jenkins_physical_devices} we describe the configuration of Jenkins such that it only starts an emulator if there are no connected devices;
-  \item in \sectionref{sec:adapting_job_flow} we present the updated flow for jobs in Jenkins in order to successfully run tests on tablets. This includes running scripts to connect to devices, uninstall old APKs, build and install the necessary APKs, and disconnect devices.
+  \item in \sectionref{sec:adapting_job_flow} we present the updated flow for jobs in Jenkins in order to successfully run tests on tablets. This includes running scripts to connect to devices, uninstall old APKs, build and install the necessary APKs, and disconnect devices;
+  \item in \sectionref{sec:build_times_tablet_eval} we evaluate the build times of the Launcher project with an emulator and with a tablet.
 \end{chapterorganization}
 
 \section{Selecting a Non-Emulator Test Method}\label{sec:selecting_nonemu_method}
@@ -296,7 +297,7 @@ List of devices attached
 047f671ee24b2839        device
 emulator-5554   device
 \end{lstlisting}
-will result in the output \code{047f671ee24b2839}
+will result in the output \code{047f671ee24b2839}.
 
 \begin{lstlisting}[float=tbp,language=bash,caption=Bash script that gets the serial numbers of all connected devices,label=lst:get_serial_numbers]
 #!/bin/bash
@@ -314,7 +315,7 @@ do
 done (*@\label{disconnect_devices:loop_end}@*)
 \end{lstlisting}
 
-\section{Evaluation of Build Times With Tablets}
+\section{Evaluation of Build Times With Tablets}\label{sec:build_times_tablet_eval}
 We measure the time it takes to build the Launcher job with an emulator and with tablets. The times can be seen in \figureref{fig:launcher_build_times_3}. As can be seen, building with tablets immediately cuts off roughly two minutes of the build time, as there is no need to start an emulator. In addition building the different components take slightly less time, since testing is not performed on an emulator. The server is also faster because it does not run an emulator concurrently when building jobs. This can be hard to see in the figure. The Launcher component, for example, takes 455 seconds with an emulator, but 406 seconds with a tablet. With the tablet the Launcher job is 29.3 \% faster than when building with an emulator.
 
 The exact timings of each task can be seen \appendixref{app:build_times}.
