@@ -1,14 +1,14 @@
-\chapter*{Resume}
+\chapter*{Summary}
 Graphical Interface Resources for Autistic Folk (GIRAF) is a software suite developed by \nth{6} semester students from Software Engineering at Aalborg University. The development is a collaborative effort among groups of these students. The GIRAF software aims to assist citizens with Autism Spectrum Disorders (ASD) by easing their and their caregivers' everyday activities. GIRAF consists of Android apps meant for direct usage by the citizens with ASD, their caregivers, and some for administrative purposes.
 
 One of the great challenges and learning goals of this project is to successfully work together on a large software system. Collaboration among groups is an important part, as this eases and accelerates the development. There are 15 groups with 1--4 students, working in \emph{Scrum of Scrums}. The development on the software system is split into four sprints, each with a sprint planning and a sprint review meeting. At the sprint planning meeting, each group selects a fitting number of items from the product backlog, which they complete during the sprint. We, group sw609f15, are responsible for the overall software development method. We primarily work on continuous integration and the build environment supporting the software system.
 
 In sprint 1, we set up the basic automated build in Jenkins. This includes running automated tests and generating documentation nightly. Additionally, we discuss various Git merging strategies related to continuous integration.
 
-In sprint 2, we add a number of automated tests to compensate for missing unit tests in the individual projects, including monkey testing. We make the continuous integration server create and publish test coverage reports for developers. We change the way internal dependencies are managed together with the Git-responsible group by replacing cumbersome Git submodules with a Maven repository.
+In sprint 2, we add a number of automated tests to compensate for missing unit tests in the individual GIRAF projects, including monkey testing. We make the continuous integration server create and publish test coverage reports for developers. We change the way internal dependencies are managed together with the Git-responsible group by replacing cumbersome Git submodules with a Maven repository.
 
 In sprint 3, we evaluate and refine the development method based on the experiences we have had during the previous sprints. We do this in collaboration with another group. In addition, we make monkey tests use a local test database with dummy data to avoid downloading the full database.
 
-In sprint 4, we further improve the test environment by replacing the emulator with physical devices, enabling us to test on a wide range of devices. This also decreases the overall time it takes to build project.
+In sprint 4, we further improve the test environment by replacing the emulator with physical devices, enabling us to test on a wide range of devices. This also decreases the overall time it takes to build a job in Jenkins.
 
 In conclusion, we significantly improve the build environment --- in particular the continuous integration platform. The developers now have a simple-to-use development environment, which aids in improving the stability of the software. In addition, we define and refine the development method followed by all groups in the development of GIRAF\@. The GIRAF project is in a significantly more stable state than before, and there is now a uniform experience across all apps.
