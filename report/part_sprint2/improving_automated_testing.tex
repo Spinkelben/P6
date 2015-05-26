@@ -89,7 +89,7 @@ We have a user story which states that Jenkins should provide code coverage metr
 
 Now we generate code coverage reports for debug builds locally and in Jenkins. We would also like to publish the code coverage results in Jenkins. There exists a Jenkins plugin \parencite{jacoco-jenkins-plugin} for this purpose. This plugin is easy to setup, provides detailed coverage statistics, and an overview with the percentage of lines of code covered. We use this plugin for publishing the code coverage metrics in Jenkins. An example of the Jenkins overview screen with code coverage metrics can be seen in \figureref{fig:jenkins-overview-coco}.
 
-\begin{figure}[htbp]
+\begin{figure}[tbp]
     \includegraphics[width=\textwidth]{graphics/jenkins-overview-coco.pdf}
     \caption{Screenshot of a section of the build overview screen which shows the code coverage column}
     \label{fig:jenkins-overview-coco}
@@ -101,7 +101,7 @@ Jenkins compiles and builds the Giraf projects but does nothing with the generat
 Before the APKs can be published to Google Play, they need to be signed with a signature. The Android plugin for Gradle has functionality for automatic signing of APKs, and we will use this to sign. A keystore file is used to sign, and we are not interested in everybody having this file as it serves as a proof of identification. We save the file on the server, which means that it becomes impossible to build release versions of the apps locally. When uploading a new app to Google Play, the version code of the new app must be greater than the version code of the app already in the app store. Incrementing the version code is not done per default, so we need to set up the build to increase the version code every time an app is successfully built.
 
 We have written a Gradle plugin handling this with the major part of this seen in \listingref{lst:gradle_versioncode}. The full plugin can be seen in \appendixref{app:gradle_plugins}. The plugin keeps a \mono{.properties} file with the current version code for all apps. Upon executing the \code{increaseVersionCode} Gradle task, it reads the version code (line \ref{gradlevs:8}) from the properties file and increments it (line \ref{gradlevs:12}). Then it writes it to the app manifest file, such that the build following will use the new version code. Finally, it updates the property file with the new version code, such that the next build will use this version code. If no current version code is found in the properties file, we assume the app is new and starts at version code \mono{1}, and as such we do not increment it.
-\begin{gradlecode}[caption=Part of our Gradle plugin for updating version code (written in Groovy),label=lst:gradle_versioncode]
+\begin{gradlecode}[float=tbp,caption=Part of our Gradle plugin for updating version code (written in Groovy),label=lst:gradle_versioncode]
 project.task('increaseVersionCode') << {
     // [...]
     // Check to see if properties file exists.
@@ -144,7 +144,7 @@ dk.aau.cs.giraf.launcher_v2.3b21_release_aligned.apk
 
 The APK with the highest build number is the newest. Running the script in \listingref{lst:find_newest_apk} with the application id \code{dk.aau.cs.giraf.launcher} will find the APK in line 4 (with version number \mono{v2.3b21}).\todo{nyt! læs}
 
-\begin{lstlisting}[language=bash,showstringspaces=false,caption=Bash script that finds the newest APK for a particular application id,label=lst:find_newest_apk]
+\begin{lstlisting}[float=tbp,language=bash,showstringspaces=false,caption=Bash script that finds the newest APK for a particular application id,label=lst:find_newest_apk]
 #!/bin/bash
 NEWEST_BUILD="$(find /srv/ftp/newest_apks/ -name "$1*release_aligned.apk" | sed 's/.*b//' | sed 's/_release_aligned.apk//' | awk '$0>x{x=$0};END{print x}')"
 find /srv/ftp/newest_apks/ -name "$1*b${NEWEST_BUILD}_release_aligned.apk"
@@ -162,7 +162,7 @@ To install the newest version of all, we have to find the APKs on the server. Th
 
 The application names are then sent to \mono{find\_newest\_apk.sh}, as seen previously in \listingref{lst:find_newest_apk}.
 
-\begin{lstlisting}[language=bash,showstringspaces=false,caption=Bash script that finds the newest available APK for all apps,label=lst:find_all_newest_apks]
+\begin{lstlisting}[float=tbp,language=bash,showstringspaces=false,caption=Bash script that finds the newest available APK for all apps,label=lst:find_all_newest_apks]
 #!/bin/bash
 PACKAGE_NAMES="$(find /srv/ftp/newest_apks/ -name "*release_aligned.apk" | sed 's:.*/::' | sed 's:_v.*::' | sort | uniq)"
 
@@ -176,7 +176,7 @@ When the newest available APK for each app has been found, they are installed on
 
 If the installation of any app fails on the device, the Jenkins job will fail.
 
-\begin{lstlisting}[language=bash,showstringspaces=false,caption=Bash script that installs the given APKs to an Android device,label=lst:install_apks_on_android_device]
+\begin{lstlisting}[float=tbp,language=bash,showstringspaces=false,caption=Bash script that installs the given APKs to an Android device,label=lst:install_apks_on_android_device]
 #!/bin/bash
 for a in $@
 do

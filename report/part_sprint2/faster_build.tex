@@ -117,7 +117,7 @@ An additional problem is that all projects are forced to use the most recent ver
 
 Instead, we need a structure which allows projects to reference their dependencies as pre-built libraries while being able to reproduce any build in history. For inspiration, we look at how dependency management is done in the five most starred Android projects on Github\footnote{As of April \nth{15}, these are \emph{ioshed}, \emph{ViewPagerIndicator}, \emph{retrofit}, \emph{EventBus}, and \emph{PhotoView}.}. In all of these projects, dependencies are handled by Gradle and Maven. Maven is a build tool similar to Gradle, but its dependency management mechanisms are supported in many build tools, including Gradle. Dependencies are declared in the build configuration file, for example in a Gradle file, each of which uniquely identified with a group (package), name, and version number. \listingref{lst:dependency_declaration} shows how a dependency (the \emph{gson} library) is declared in a Gradle file. When the project is built, the build system automatically searches for the dependencies on the declared repositories and downloads them. Because the version code (\mono{2.0} in this case) is used to identify dependencies, and the build file is under version control, it is possible reproduce builds.
 
-\begin{gradlecode}[caption={Dependency declaration in Gradle},label={lst:dependency_declaration}]
+\begin{gradlecode}[float=tbp,caption={Dependency declaration in Gradle},label={lst:dependency_declaration}]
 repositories {
   mavenCentral()
 }
@@ -209,7 +209,7 @@ Each library project has to be configured to publish binary files. This configur
 
 When a build is started in Jenkins, the \code{versionName} property is set to the version of the library to release, e.g.\ \code{5.2.3}. When a library is built locally, this property is not set. The plugin therefore sets the version name to \code{0.0-SNAPSHOT} (lines \ref{gradle_plugin_library:versionnameif}--\ref{gradle_plugin_library:snapshot}). In line \ref{gradle_plugin_library:check_props}, the plugin checks if a file containing login credentials for Artifactory exists and then loads it in line \ref{gradle_plugin_library:load_props}. The repository to publish to is then configured in lines \ref{gradle_plugin_library:repo_conf_start}--\ref{gradle_plugin_library:repo_conf_end}.
 
-\begin{gradlecode}[caption=Part of Gradle Plugin to publish libraries (in Groovy language),label=lst:gradle_plugin_library]
+\begin{gradlecode}[float=tbp,caption=Part of Gradle Plugin to publish libraries (in Groovy language),label=lst:gradle_plugin_library]
 class LibraryPlugin implements Plugin<Project> {
   // ...
 
