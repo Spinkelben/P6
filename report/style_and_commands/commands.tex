@@ -70,10 +70,9 @@
   % Sprints.
   \newcounter{sprintcounter}%\addtocounter{sprintcounter}{1}
   \newcommand{\sprint}[1]{%
-    \clearpage{}
+    \cleardoublepage{}
     \stepcounter{sprintcounter}
-    \part*{Sprint \arabic{sprintcounter}}
-    \addcontentsline{toc}{part}{Sprint \arabic{sprintcounter}}
+    \part*{Sprint \arabic{sprintcounter}\addcontentsline{toc}{part}{Sprint \arabic{sprintcounter}}}%    
   }
 
   % Chapter grouping.
