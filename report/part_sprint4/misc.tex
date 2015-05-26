@@ -41,7 +41,7 @@ The Unix script can be seen in \listingref{lst:download_install_apks_unix}. We c
 
 Because the scripts do not require any additional software and because they download and install all applications automatically, this solution comply with the conditions of satisfaction of the user story.
 
-\begin{lstlisting}[language=bash,caption=Bash script that downloads and installs newest APKs,label=lst:download_install_apks_unix]
+\begin{lstlisting}[float=tbp,language=bash,caption=Bash script that downloads and installs newest APKs,label=lst:download_install_apks_unix]
 #!/bin/bash
 ftp -i -n ftp://ftpuser:9scWKbP@cs-cust06-int.cs.aau.dk/newest_releases/ << EOF (*@\label{download_install_apks:ftp_start}@*)
     binary (*@\label{download_install_apks:binary}@*)
