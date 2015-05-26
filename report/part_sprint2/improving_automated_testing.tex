@@ -145,6 +145,7 @@ dk.aau.cs.giraf.launcher_v2.3b21_release_aligned.apk
 The APK with the highest build number is the newest. Running the script in \listingref{lst:find_newest_apk} with the application id \code{dk.aau.cs.giraf.launcher} will find the APK in line 4 (with version number \mono{v2.3b21}).\todo{nyt! læs}
 
 \begin{lstlisting}[language=bash,showstringspaces=false,caption=Bash script that finds the newest APK for a particular application id,label=lst:find_newest_apk]
+#!/bin/bash
 NEWEST_BUILD="$(find /srv/ftp/newest_apks/ -name "$1*release_aligned.apk" | sed 's/.*b//' | sed 's/_release_aligned.apk//' | awk '$0>x{x=$0};END{print x}')"
 find /srv/ftp/newest_apks/ -name "$1*b${NEWEST_BUILD}_release_aligned.apk"
 \end{lstlisting}
@@ -162,6 +163,7 @@ To install the newest version of all, we have to find the APKs on the server. Th
 The application names are then sent to \mono{find\_newest\_apk.sh}, as seen previously in \listingref{lst:find_newest_apk}.
 
 \begin{lstlisting}[language=bash,showstringspaces=false,caption=Bash script that finds the newest available APK for all apps,label=lst:find_all_newest_apks]
+#!/bin/bash
 PACKAGE_NAMES="$(find /srv/ftp/newest_apks/ -name "*release_aligned.apk" | sed 's:.*/::' | sed 's:_v.*::' | sort | uniq)"
 
 for p in $PACKAGE_NAMES
@@ -174,7 +176,8 @@ When the newest available APK for each app has been found, they are installed on
 
 If the installation of any app fails on the device, the Jenkins job will fail.
 
-\begin{lstlisting}[language=bash,showstringspaces=false,caption=Script that installs the given APKs to an Android device,label=lst:install_apks_on_android_device]
+\begin{lstlisting}[language=bash,showstringspaces=false,caption=Bash script that installs the given APKs to an Android device,label=lst:install_apks_on_android_device]
+#!/bin/bash
 for a in $@
 do
     INSTALL_OUTPUT="$($ANDROID_HOME/platform-tools/adb install $a)"(*@\label{apkinstall:3}@*)

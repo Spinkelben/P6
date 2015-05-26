@@ -49,6 +49,7 @@ We therefore make a script, seen in \listingref{lst:start_wait_dummy_db_inserter
 Busy waiting is generally to be avoided, as it wastes CPU time \parencite[ch.2]{tanenbaum2007}. An alternative would be to block the process and have the tablet notify the process that it has finished. However, this is time consuming to implement. To avoid too much waste of time, we insert a sleep of two seconds, thus blocking the process and freeing up CPU time.
 
 \begin{lstlisting}[language=bash,showstringspaces=false,caption=Bash script which starts and waits for dummy database inserter,label=lst:start_wait_dummy_db_inserter]
+#!/bin/bash
 /srv/android-sdk-linux//platform-tools/adb shell am start -n dk.aau.cs.giraf.dummydbinserter/dk.aau.cs.giraf.dummydbinserter.MainActivity (*@\label{dummydb:1}@*)
 
 IS_RUNNING="$(/srv/android-sdk-linux//platform-tools/adb shell ps | grep dk.aau.cs.giraf.dummydbinserter)"
