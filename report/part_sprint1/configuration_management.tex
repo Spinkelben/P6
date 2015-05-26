@@ -109,10 +109,10 @@ For the first sprint, we choose to implement the direct commit strategy, primari
 
 \subsection{Continuous Build and Deployment}\label{sec:auto_deploy}
 We want a build job to be started automatically when changes are made to the code. We do this by setting up a post-receive Git hook that invokes Jenkins. Jenkins then automatically builds jobs that have code pushed to their master branch. The hook can be seen in \listingref{lst:hook_script_first}. \code{curl} sends an HTTP GET request to Jenkins with the needed information to start a build on a job associated with a particular repository. \mono{http://cs-cust06-int.cs.aau.dk/git-ro/\$(basename \$(pwd))} is the link for the repository to update. Since we use the same Git hook script in all repositories, and there are several repositories, the name of the repository that invokes the hook is found by \code{\$(basename \$(pwd))}. Finally a message is displayed to the user that pushed to tell them that Jenkins will start building.
-\begin{lstlisting}[language=bash,showstringspaces=false,caption=Post-receive Git hook bash script that starts a job on Jenkins upon a push to a Git repository,label=lst:hook_script_first]
+
+\begin{lstlisting}[float=tbp,language=bash,showstringspaces=false,caption=Post-receive Git hook Bash script that starts a job on Jenkins upon a push to a Git repository,label=lst:hook_script_first]
 #!/bin/bash
 curl -s http://localhost/jenkins/git/notifyCommit?url= http://cs-cust06-int.cs.aau.dk/git-ro/$(basename $(pwd)) > /dev/null
-
 echo "Thank you for your push. Jenkins will be serving you in a moment."
 \end{lstlisting}
 
@@ -152,7 +152,7 @@ There are some important considerations when choosing to lint the source code au
 
 We set up automated lint checking in Jenkins on all jobs. The warnings are presented in the build overview screen, as seen in \figureref{fig:jenkins-overview}. We hope that having a low number of lint warnings will be incentive enough for each group to fix warnings.
 
-\begin{figure}[htbp]
+\begin{figure}[tbp]
     \includegraphics[width=\textwidth]{graphics/jenkins-overview.pdf}
     \caption{Screenshot of a section of the build overview screen, which shows the lint warning column}
     \label{fig:jenkins-overview}
