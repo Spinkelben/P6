@@ -166,3 +166,95 @@
   \raisebox{.1\height}{$#1+$}\cr
   \smash{\raisebox{-.6\height}{$#1-$}}\cr}}
 \makeatother
+
+% A post it note % http://tex.stackexchange.com/questions/159679/sticky-notes-image
+
+\usepackage{xparse}
+\usepackage{fancypar}
+
+\definecolor{myyellow}{RGB}{242,226,149}
+
+\makeatletter
+\pgfdeclareshape{stickyfront}{
+  \inheritsavedanchors[from=rectangle] % this is nearly a rectangle
+  \inheritanchorborder[from=rectangle]
+  \inheritanchor[from=rectangle]{center}
+  \inheritanchor[from=rectangle]{north}
+  \inheritanchor[from=rectangle]{south}
+  \inheritanchor[from=rectangle]{west}
+  \inheritanchor[from=rectangle]{east}
+  % ... and possibly more
+  \backgroundpath{% this is new
+  % store lower right in xa/ya and upper right in xb/yb
+  \southwest \pgf@xa=\pgf@x \pgf@ya=\pgf@y
+  \northeast \pgf@xb=\pgf@x \pgf@yb=\pgf@y
+  % compute corner of ‘‘flipped page’’
+  \pgf@xc=\pgf@xb \advance\pgf@xc by-20pt % this should be a parameter
+  \pgf@yc=\pgf@ya \advance\pgf@yc by+20pt
+  % construct main path
+  \pgfpathmoveto{\pgfpoint{\pgf@xa}{\pgf@ya}}
+  \pgfpathlineto{\pgfpoint{\pgf@xa}{\pgf@yb}}
+  \pgfpathlineto{\pgfpoint{\pgf@xb}{\pgf@yb}}
+  \pgfpathlineto{\pgfpoint{\pgf@xb}{\pgf@yc}}
+  \pgfpathlineto{\pgfpoint{\pgf@xc}{\pgf@ya}}
+  \pgfpathclose
+  % add little corner
+  \pgfpathmoveto{\pgfpoint{\pgf@xc}{\pgf@ya}}
+  \pgfpathlineto{\pgfpoint{\pgf@xc}{\pgf@yc}}
+  \pgfpathlineto{\pgfpoint{\pgf@xb}{\pgf@yc}}
+  \pgfpathlineto{\pgfpoint{\pgf@xc}{\pgf@yc}}
+  }
+}
+\makeatother
+
+\makeatletter
+\pgfdeclareshape{stickyback}{
+  \inheritsavedanchors[from=rectangle] % this is nearly a rectangle
+  \inheritanchorborder[from=rectangle]
+  \inheritanchor[from=rectangle]{center}
+  \inheritanchor[from=rectangle]{north}
+  \inheritanchor[from=rectangle]{south}
+  \inheritanchor[from=rectangle]{west}
+  \inheritanchor[from=rectangle]{east}
+  % ... and possibly more
+  \backgroundpath{% this is new
+  % store lower right in xa/ya and upper right in xb/yb
+  \southwest \pgf@xa=\pgf@x \pgf@ya=\pgf@y
+  \northeast \pgf@xb=\pgf@x \pgf@yb=\pgf@y
+  % compute corner of ‘‘flipped page’’
+  \pgf@xc=\pgf@xa \advance\pgf@xc by+20pt % this should be a parameter
+  \pgf@yc=\pgf@ya \advance\pgf@yc by+20pt
+  % construct main path
+  \pgfpathmoveto{\pgfpoint{\pgf@xa}{\pgf@yc}}
+  \pgfpathlineto{\pgfpoint{\pgf@xa}{\pgf@yb}}
+  \pgfpathlineto{\pgfpoint{\pgf@xb}{\pgf@yb}}
+  \pgfpathlineto{\pgfpoint{\pgf@xb}{\pgf@ya}}
+  \pgfpathlineto{\pgfpoint{\pgf@xc}{\pgf@ya}}
+  \pgfpathclose
+  }
+}
+\makeatother
+
+\NewDocumentCommand\StickyNoteFront{O{6cm}mO{6cm}}{%
+\begin{tikzpicture}
+\node[
+stickyfront,
+draw,
+inner xsep=7pt,
+fill=myyellow,
+inner ysep=10pt
+] {\parbox[t][#1][c]{#3}{#2}};
+\end{tikzpicture}%
+}
+
+\NewDocumentCommand\StickyNoteBack{O{6cm}mO{6cm}}{%
+\begin{tikzpicture}
+\node[
+stickyback,
+draw,
+inner xsep=7pt,
+fill=myyellow,
+inner ysep=10pt
+] {\parbox[t][#1][c]{#3}{#2}};
+\end{tikzpicture}%
+}

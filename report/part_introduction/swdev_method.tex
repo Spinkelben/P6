@@ -112,9 +112,22 @@ $$\text{As a $\langle{}$\emph{type of user}$\rangle{}$, I want $\langle{}$\emph{
 
 If the user story is suggested by developer, the source of the user story should be noted in case there are questions about it.
 
-A user story must be sufficiently small for it to be completed in one sprint \parencite{cohn2009}. A user story must also have \emph{conditions of satisfaction}. These are high-level acceptance tests for the user story and must be true for the user story to be completed. A user story can have multiple conditions of satisfaction \cite{cohn2009}. Backlog items are prioritized by the product owner (possibly with help from the customers) \cite{larman2003}.
+A user story must be sufficiently small for it to be completed in one sprint \parencite{cohn2009}. A user story must also have \emph{conditions of satisfaction}. These are high-level acceptance tests for the user story and must be true for the user story to be completed. A user story can have multiple conditions of satisfaction \cite{cohn2009}. Backlog items are prioritized by the product owner (possibly with help from the customers) \cite{larman2003}. An example of a user story can be seen in \figureref{fig:user_story_ex}. \todo{Nyt: eksempel på user story}
 
-\todo{indsæt eksempel på US + SAT}
+\begin{figure}
+  \centering
+  \begin{subfigure}[t]{0.47\textwidth}
+    \centering
+    \StickyNoteFront{\ECFAugie{} \large As a developer\\\\ I want monkey tests to run on the debug version of apps\\\\ so that they can be tested on a test database.}
+    \caption{Front with user story}
+  \end{subfigure}
+  \begin{subfigure}[t]{0.47\textwidth}
+    \centering
+    \StickyNoteBack{\ECFAugie{} \large Monkey tests must run on debug APKs}
+    \caption{Back with conditions of satisfaction}
+  \end{subfigure}
+  \caption{Example user story}\label{fig:user_story_ex}
+\end{figure}
 
 \subsection{Roles}
 Two roles from Scrum are used in the multi-project:
