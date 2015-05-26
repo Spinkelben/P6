@@ -64,7 +64,7 @@ All tablets connected need static IP addresses as well as port forwarding to the
 
 We pipe this to \code{grep} which extracts the MAC addresses. Following we pipe it to \code{awk} which makes the MAC address lowercase.
 
-At lines \ref{discover:iplist_begin}--\ref{discover:iplist_end} we generate a list of MAC addresses with an assigned IP address. First, the \mono{functions.sh}-library is imported, and we define a callback function \code{config\_cb()}, which is called by \code{config\_load} in line \ref{discover:iplist_end} every time a configuration line is parsed. In the callback we first check if the configuration type is \mono{host}, and then a new callback function \code{option\_cb()} is defined, which is called for every option of the configuration type \code{host}. If the option name is \mono{mac} we append it to a list of the MAC addresses.
+At lines \ref{discover:iplist_begin}--\ref{discover:iplist_end} we generate a list of MAC addresses with an assigned IP address. First, the \mono{functions.sh} library is imported, and we define a callback function \code{config\_cb()}, which is called by \code{config\_load} in line \ref{discover:iplist_end} every time a configuration line is parsed. In the callback we first check if the configuration type is \mono{host}, and then a new callback function \code{option\_cb()} is defined, which is called for every option of the configuration type \code{host}. If the option name is \mono{mac} we append it to a list of the MAC addresses.
 
 \lstinputlisting[float=tb,language=bash,caption=Shell script that discovers new devices and assigns a static IP address and port forward by calling the script below,label=lst:discover_devices]{part_sprint4/discover_devices.script}
 
