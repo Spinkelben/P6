@@ -27,6 +27,6 @@ do
   if [ "$?" != "0" ]
   then
     # We found a new device. Call this script to setup static IP and port forward:
-    /bin/setup_static_ip.sh $x  (*@\label{discover:assign_ipport}@*)
+    /bin/setup_staticip_portforward.sh $x  (*@\label{discover:assign_ipport}@*)
   fi
 done
