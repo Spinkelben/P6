@@ -62,6 +62,7 @@ The inherited build project has no build automation. As a part of the automated 
 \end{tikzpicture}
 \caption{The direct commit strategy}\label{fig:commit_stratagy_a}
 \end{subfigure}\\
+
 \begin{subfigure}[b]{\linewidth}
 \centering
 \begin{tikzpicture}
@@ -113,6 +114,7 @@ We want a build job to be started automatically when changes are made to the cod
 \begin{lstlisting}[float=tbp,language=bash,showstringspaces=false,caption=The post-receive Git hook. It is a Bash script that starts a job on Jenkins upon a push to a Git repository.,label=lst:hook_script_first]
 #!/bin/bash
 curl -s http://localhost/jenkins/git/notifyCommit?url= http://cs-cust06-int.cs.aau.dk/git-ro/$(basename $(pwd)) > /dev/null
+
 echo "Thank you for your push. Jenkins will be serving you in a moment."
 \end{lstlisting}
 
@@ -120,9 +122,7 @@ In Jenkins there is a job called \emph{deployment} which builds all other jobs a
 
 \subsection{Continuous Test}
 \label{sec:test_automation}
-Now that the automatic test setup is created, we examine the different types of automatic tests we can use on Android.
-
-Because one of the ideas behind automated build is to give the developer fast feedback on the state of the code, the build and test process should be fast. The Extreme Programming (XP) development method states 10 minutes as a guideline for how much time a build should take \parencite{beck2004}. While we think this is a reasonable time, not all parts of the system can be thoroughly tested in that time. In such cases, Martin Fowler suggests that the fastest and general tests should be whenever a commit is pushed to the master branch, and slower tests can be triggered for later execution \parencite{fowlerCI}. We call these kinds of tests \emph{delayed tests}.
+Now that the automatic test setup is created, we examine the different types of automatic tests we can use on Android. Because one of the ideas behind automated build is to give the developer fast feedback on the state of the code, the build and test process should be fast. The Extreme Programming (XP) development method states 10 minutes as a guideline for how much time a build should take \parencite{beck2004}. While we think this is a reasonable time, not all parts of the system can be thoroughly tested in that time. In such cases, Martin Fowler suggests that the fastest and general tests should be whenever a commit is pushed to the master branch, and slower tests can be triggered for later execution \parencite{fowlerCI}. We call these kinds of tests \emph{delayed tests}.
 
 \subsubsection{Unit Testing}
 During the initial investigation of the inherited code base we found some existing unit tests in one of the GIRAF apps. The unit tests runs in an emulated Android environment, or on actual Android devices if any are connected to the computer. These tests utilize the Android unit testing framework included in the Android framework \parencite{AndroidUnit}. We decide to postpone any further investigation into unit testing frameworks. Instead, we focus on getting the existing unit tests to run, both locally and in Jenkins. The tests were immediately runnable through Android Studio 0.4.6. However, Android Studio does something behind the scenes when it runs the tests, and therefore we cannot run them from the command line, which means that we cannot run them in Jenkins. However, the most recent Android studio, version 1.0.2, uses Gradle exclusively to run the tests. This means that when the apps are migrated to the new version, we are able to run the tests with Jenkins. The other GIRAF apps did not have any tests, so we create test projects, with examples of tests to verify that Jenkins can run the tests. This makes it easier for the other groups to start writing tests, as there is then a unit testing framework in place, as well as an example test.

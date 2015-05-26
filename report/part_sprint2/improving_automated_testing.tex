@@ -172,9 +172,7 @@ do
 done
 \end{lstlisting}
 
-When the newest available APK for each app has been found, they are installed on an Android device. This script is seen in \listingref{lst:install_apks_on_android_device}. Line \ref{apkinstall:3} tries to install an APK and stores the output in \code{INSTALL\_OUTPUT}. The output is stored, as \code{adb install} gives an error code of \mono{0}, even if it fails. We therefore have to read the output to check if an error occurred so that Jenkins will report the job as a failure. This is done at line \ref{apkinstall:success} where we check that the output contains the string \code{success}. The \code{i} option makes \code{grep} case insensitive. At lines \ref{apkinstall:begin}--\ref{apkinstall:end} the script exits with \code{1} if the output does not contain \code{success}.
-
-If the installation of any app fails on the device, the Jenkins job will fail.
+When the newest available APK for each app has been found, they are installed on an Android device. This script is seen in \listingref{lst:install_apks_on_android_device}. Line \ref{apkinstall:3} tries to install an APK and stores the output in \code{INSTALL\_OUTPUT}. The output is stored, as \code{adb install} gives an error code of \mono{0}, even if it fails. We therefore have to read the output to check if an error occurred so that Jenkins will report the job as a failure. This is done at line \ref{apkinstall:success} where we check that the output contains the string \code{success}. The \code{i} option makes \code{grep} case insensitive. At lines \ref{apkinstall:begin}--\ref{apkinstall:end} the script exits with \code{1} if the output does not contain \code{success}. If the installation of any app fails on the device, the Jenkins job will fail.
 
 \begin{lstlisting}[float=tbp,language=bash,showstringspaces=false,caption=Bash script that installs the given APKs to an Android device,label=lst:install_apks_on_android_device]
 #!/bin/bash

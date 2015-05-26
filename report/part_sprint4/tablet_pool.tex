@@ -52,7 +52,9 @@ We want to create a pool of available tablets, such that groups in an easy way c
 \section{Creating a Pool of Test Tablets}\label{sec:pool_of_tablets}
 In order to transform a common wireless router into a device that maintains a pool of tablets, we flash it with a custom firmware. A custom firmware allows us to access the device as root user and reprogram parts of it. We tried flashing with the \emph{DD-WRT} \parencite{ddwrt} firmware, an open source router firmware. However, we found no build of the firmware that worked properly on our device. Either SSH or some crucial programs did not work (also documented in the DD-WRT forums by other users), or the build was known to brick the router. We therefore choose to flash with \emph{OpenWRT} \parencite{openwrt}, another open source router firmware. We choose OpenWRT because it is compatible with our device and have scripting support. After flashing with OpenWRT, we setup the basic system settings and configure the Wi-Fi network as one normally will in any home router.
 
-All tablets connected need static IP addresses as well as port forwarding to them. Therefore, we also need to partially disable the DHCP server on the router. A DHCP server automatically assigns any connecting client with a temporary IP address. We disable this, which means that any connecting client will not get an IP address. Now, we create a script which searches for any connected clients without an assigned IP address, and then assigns IP addresses to them, as seen in \listingref{lst:discover_devices}. It does this by retrieving a list of connected MAC addresses (line \ref{discover:maclist}). \code{iwinfo wlan0 assoclist} outputs a list of devices connected to the wireless interface \mono{wlan0} of the router. An example of this list can be seen here:
+All tablets connected need static IP addresses as well as port forwarding to them. Therefore, we also need to partially disable the DHCP server on the router. A DHCP server automatically assigns any connecting client with a temporary IP address. We disable this, which means that any connecting client will not get an IP address.
+
+Now, we create a script which searches for any connected clients without an assigned IP address, and then assigns IP addresses to them, as seen in \listingref{lst:discover_devices}. It does this by retrieving a list of connected MAC addresses (line \ref{discover:maclist}). \code{iwinfo wlan0 assoclist} outputs a list of devices connected to the wireless interface \mono{wlan0} of the router. An example of this list can be seen here:
 \begin{lstlisting}[language={}]
 60:36:DD:06:6F:9E  -46 dBm / -95 dBm (SNR 49)  0 ms ago
         RX: 144.4 MBit/s, MCS 15, 20MHz, short GI        966 Pkts.
@@ -61,8 +63,9 @@ All tablets connected need static IP addresses as well as port forwarding to the
 1C:66:AA:5B:56:C2  -27 dBm / -95 dBm (SNR 68)  1240 ms ago
         RX: 65.0 MBit/s, MCS 7, 20MHz                   1902 Pkts.
         TX: 58.5 MBit/s, MCS 6, 20MHz                    609 Pkts.
+        
+// ...
 \end{lstlisting}
-
 We pipe this to \code{grep} which extracts the MAC addresses. Following we pipe them to \code{awk} which makes the MAC addresses lowercase.
 
 At lines \ref{discover:iplist_begin}--\ref{discover:iplist_end} we generate a list of MAC addresses with an assigned IP address. First, the \mono{functions.sh} library is imported, and we define a callback function \code{config\_cb()}, which is called by \code{config\_load} in line \ref{discover:iplist_end} every time a configuration line is parsed. In the callback we first check if the configuration type is \mono{host}, and then a new callback function \code{option\_cb()} is defined, which is called for every option of the configuration type \code{host}. If the option name is \mono{mac} we append it to a list of the MAC addresses.
@@ -71,8 +74,6 @@ At lines \ref{discover:iplist_begin}--\ref{discover:iplist_end} we generate a li
 
 We now have a list of the MAC addresses of connected devices and a list of MAC addresses with an assigned static IP address. We cross-reference these two lists, and all MAC addresses without an assigned IP address will get one as well as a port forward rule in the firewall (line \ref{discover:assign_ipport}). Since we control the IP addresses and port forwards given, we can safely just assign an incremented IP address and port number. The script called in line \ref{discover:assign_ipport} can be seen in \listingref{lst:assign_ip_and_port}. This script calls the \code{uci} tool, Unified Configuration Interface, which is a way of changing configuration in the OpenWRT system.
 
-
-
 A new device will thus trigger the following changes in the router:
 \begin{enumerate}
   \item We save an entry in the DHCP settings, such that the MAC address of the new device will be linked to the next free IP address (incremented)
@@ -80,7 +81,6 @@ A new device will thus trigger the following changes in the router:
 \end{enumerate}
 
 We have the option to run this script either in a loop, busy-waiting most of the time, or to run the script periodically in a cron job. If the script crashes, a cron job will ensure that it runs again. However, the minumum interval of a cron job is one minute. We find waiting up to a minute reasonable --- it is only the first time connecting. After this first time, the devices will connect and receive their static IP addresses instantly. Because of the stability advantage, we choose to run the script in a cron job every one minute.
-
 
 \lstinputlisting[float=tbp,language=bash,caption=Shell script that sets up static IP address and a port forward for a given MAC address,label=lst:assign_ip_and_port]{part_sprint4/setup_static_ip.script}
 
@@ -247,7 +247,6 @@ To connect to all devices connected to the router we get the information from th
 \begin{lstlisting}[float=tbp,language=bash,caption=Bash script that connects to devices,label=lst:connect_devices]
 #!/bin/bash
 URL="http://172.25.11.91/cgi-bin/devices"
-
 curl --connect-timeout 10 -i --silent $URL | head -1 | grep 200 > /dev/null (*@\label{connect_devices:check_connection}@*)
 
 if [ "$?" -eq "0" ] (*@\label{connect_devices:if_start}@*)
