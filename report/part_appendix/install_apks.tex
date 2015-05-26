@@ -2,7 +2,7 @@
 These scripts are run as part of preparing for testing.
 
 \section{Installing all APKs Script}\label{app:install_apks}
-\begin{lstlisting}[language=bash,caption=Script that install APKs on all connected devices in parallel,label=lst:install_apks_parallel]
+\begin{lstlisting}[language=bash,caption=Bash script that install APKs on all connected devices in parallel,label=lst:install_apks_parallel]
 #!/bin/bash
 install() { (*@\label{install_apks_parallel:install_func_start}@*)
     INSTALL_OUTPUT="$($ANDROID_HOME/platform-tools/adb -s $1 install $2)"
@@ -34,7 +34,7 @@ done (*@\label{install_apks_parallel:loop_end}@*)
 \end{lstlisting}
 
 \section{Starting Dummy Database Insertion Script}\label{app:start_wait_db_inserter_parallel}
-\begin{lstlisting}[language=bash,caption=Script that starts and waits for the dummy database insertion app in parallel on all connected devices,label=lst:start_wait_db_inserter_parallel]
+\begin{lstlisting}[language=bash,caption=Bash script that starts and waits for the dummy database insertion app in parallel on all connected devices,label=lst:start_wait_db_inserter_parallel]
 #!/bin/bash
 dummy_inserter() {
     $ANDROID_HOME/platform-tools/adb -s $1 shell am start -n dk.aau.cs.giraf.dummydbinserter/dk.aau.cs.giraf.dummydbinserter.MainActivity
