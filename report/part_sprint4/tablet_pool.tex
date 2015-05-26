@@ -225,6 +225,7 @@ We start by disconnecting devices to make sure the connections are up to date. I
 To connect to all devices connected to the router we get the information from the HTTP server on the router. The script can be seen in \listingref{lst:connect_devices}. We first check the connection to the server in line \ref{connect_devices:check_connection} by supplying the \code{i} option so that \code{curl} returns the HTTP response header. We then execute \code{grep 200} to check that the request was successful (code 200 means a successful connection). After this, we check the error code of that command in line \ref{connect_devices:if_start}. If the HTTP response code was \code{200}, \code{grep} sets its exit code to \code{0}. We then get the ports of all devices connected to the router in line \ref{connect_devices:get_ports}. Finally, we simply iterate through those ports and connect to them via ADB (lines \ref{connect_devices:connection_loop_start}--\ref{connect_devices:connection_loop_end}).
 
 \begin{lstlisting}[language=bash,caption=Bash script that connects to devices,label=lst:connect_devices]
+#!/bin/bash
 URL="http://172.25.11.91/cgi-bin/devices"
 
 curl --connect-timeout 10 -i --silent $URL | head -1 | grep 200 > /dev/null (*@\label{connect_devices:check_connection}@*)
@@ -246,6 +247,7 @@ fi
 \subsubsection{Uninstallation Script}
 The uninstallation script seen in \listingref{lst:uninstall_apks} uninstalls all GIRAF APKs from all connected devices in parallel. We do it in parallel so that connecting more tablets will not increase the time it takes to uninstall apps. To do it in parallel, we use the GNU parallel tool \parencite{Tange2011a}. In line \ref{lst:uninstall_apks:get_serial_numbers} we get the serial number of all connected devices. In line \ref{lst:uninstall_apks:parallel_loop} we run the parallel tool on the function \code{uninstall}. The variable \code{\$SERIAL\_NUMBER} after the three colons is the array that is iterated in parallel. Each element is then passed to the \code{uninstall} function. The uninstall function gets the packages names of all installed GIRAF apps on the device in line \ref{lst:uninstall_apks:get_package_names}. The two \code{sed} calls at the end make sure they return nothing but the package names, which are to be passed to adb to uninstall the apps. The apps are uninstalled in lines \ref{lst:uninstall_apks:loop_start}--\ref{lst:uninstall_apks:loop_end}. The function is exported in line \ref{lst:uninstall_apks:export} so that parallel can use it.
 \begin{lstlisting}[language=bash,caption=Bash script that uninstalls all installed GIRAF apps on all devices,label=lst:uninstall_apks]
+#!/bin/bash
 uninstall() {
   # Find all installed giraf apps on this device
   PACKAGE_NAMES="$($ANDROID_HOME/platform-tools/adb -s $1 shell pm list packages -f | grep dk.aau.cs.giraf | sed 's/.*apk=//' | sed 's/\s*//g')" (*@\label{lst:uninstall_apks:get_package_names}@*)
@@ -278,11 +280,13 @@ emulator-5554   device
 will result in the output \code{047f671ee24b2839}
 
 \begin{lstlisting}[language=bash,caption=Bash script that gets the serial numbers of all connected devices,label=lst:get_serial_numbers]
+#!/bin/bash
 $ANDROID_HOME/platform-tools/adb devices | grep -w device | grep -vw emulator | sed 's/\s*device//' | sed 's/\s*//g'
 \end{lstlisting}
 \subsubsection{Disconnection Script}
 To disconnect all connected devices in the script shown in \listingref{lst:disconnect_devices}, we simply get the serial number of all connected devices in line \ref{disconnect_devices:get_serial_numbers}. We then run a loop that disconnects those serial numbers (lines \ref{disconnect_devices:loop_start}--\ref{disconnect_devices:loop_end}).
 \begin{lstlisting}[language=bash,caption=Bash script that disconnects all connected devices,label=lst:disconnect_devices]
+#!/bin/bash
 SERIAL_NUMBER="$(/srv/scripts/get_serial_numbers.sh)" (*@\label{disconnect_devices:get_serial_numbers}@*)
 
 for s in $SERIAL_NUMBER (*@\label{disconnect_devices:loop_start}@*)
