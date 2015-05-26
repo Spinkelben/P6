@@ -2,7 +2,7 @@
 We make some changes to the way monkey tests are performed this sprint. We have a user story to make monkey tests use debug apps and take screenshots of crashes. In addition, due to the changes we have made to make build tests run on physical devices, we have to update monkey tests so that they support those changes.
 
 \begin{chapterorganization}
-  \item in \sectionref{sec:monkey_test_debug_app} we make monkey tests run on debug apps rather than release apps;
+  \item In \sectionref{sec:monkey_test_debug_app} we make monkey tests run on debug apps rather than release apps;
   \item in \sectionref{sec:monkey_simiasque} we introduce a new Android application which blocks the monkey from accidentally opening the notification bar and thus getting access to settings such as the WiFi connection;
   \item in \sectionref{sec:monkey_in_parallel} we update monkey tests to be able to run in parallel on all connected devices, because of the addition of physical devices being used by Jenkins now;
   \item in \sectionref{sec:monkey_test_flow} we give a summary of the new monkey test flow.

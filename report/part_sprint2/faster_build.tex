@@ -3,7 +3,7 @@
 The multi-project groups want the build times in Jenkins to be faster. When multiple changes are pushed to the master branch within a short space of time, the triggered build jobs will congest the build queue. This means that even though the build itself may take only a few minutes, the time it takes from push to finished build may be much longer and exceed the 10 minutes advocated by \textcite{beck2004}.
 
 \begin{chapterorganization}
-  \item in \sectionref{sec:measuring_build_times} we measure the time of building the Launcher app to understand which areas of the build process to make faster;
+  \item In \sectionref{sec:measuring_build_times} we measure the time of building the Launcher app to understand which areas of the build process to make faster;
   \item in \sectionref{sec:dependency_management} we present an alternative solution to the current Git submodule dependency system;
   \item in \sectionref{sec:dependency_repository} we choose a dependency repository for storing binaries;
   \item in \sectionref{sec:dependency_workflow} we define the workflow for the multi-project developers when working with the new dependency system;
