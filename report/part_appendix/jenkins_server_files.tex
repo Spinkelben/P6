@@ -73,13 +73,13 @@ Jenkins has a number of files on the server that are of interest. These can be s
   \item[google\_play\_api\_key.p12] The credentials for the Gradle Play Published plugin so that apps can be automatically uploaded to Google Play.
   \item[keystore.properties] Contains credentials for signing APKs.
   \item[MainKeyStore.keystore] The keystore file for signing APKs.
-  \item[libversion] Specifies the next version of each library. The version is automatically handled by a Git hook. Contains the repository to the library which must be manually added, as well as the project name on Jenkins (written jobname). If a project on Jenkins is renamed this must be changed. It is important to add a new entry if additional libraries are made, as it will otherwise not be built.
+  \item[libversion] Specifies the next version of each library. The version is automatically handled by a Git hook. Contains the repository to the library which must be manually added, as well as the project name in Jenkins (written jobname). If a project in Jenkins is renamed this must be changed. It is important to add a new entry if additional libraries are made, as it will otherwise not be built.
   \item[versionCodes.properties] Contains the next version code (not the version code shown to the user, but a strictly increasing integer corresponding to the \code{versionCode} property in the Android manifest file) for each Giraf app. This file is automatically handled.
   \item[artifactory.properties] Contains the credentials for Jenkins to upload libraries to Artifactory.
-  \item[DatabaseCredentials.java] Contains the credentials for the local-db library. It is moved automatically whenever the local-db library is build on Jenkins.
+  \item[DatabaseCredentials.java] Contains the credentials for the local-db library. It is moved automatically whenever the local-db library is build in Jenkins.
 \end{description}
 
-In addition the \mono{jobs/} directory contains each project on Jenkins. In \figureref{fig:jenkins_file_structure} the launcher project is shown. Each project contains the latests builds etc. It also contains the \mono{workspace} directory that has the source code etc.\ of the project.
+In addition the \mono{jobs/} directory contains each project in Jenkins. In \figureref{fig:jenkins_file_structure} the launcher project is shown. Each project contains the latests builds etc. It also contains the \mono{workspace} directory that has the source code etc.\ of the project.
 
 \begin{figure}
   \dirtree{%
