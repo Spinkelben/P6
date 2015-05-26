@@ -1,13 +1,13 @@
 %!TEX root = ../report.tex
 \chapter{Further Improving Build Times}
-This chapter describes our work on the technical work item \us{Decrease Job Build Times on Jenkins}. The developers want more rapid response to builds failing or succeeding. As explained in \sectionref{sec:faster_build_evaluation}, the emulator start-up time is a significant part of the build time, taking approximately two minutes. The emulator is used for running the tests, and as such we have to find an alternative method of running the tests.
+This chapter describes our work on the technical work item \us{Decrease Job Build Times in Jenkins}. The developers want more rapid response to builds failing or succeeding. As explained in \sectionref{sec:faster_build_evaluation}, the emulator start-up time is a significant part of the build time, taking approximately two minutes. The emulator is used for running the tests, and as such we have to find an alternative method of running the tests.
 
 \begin{chapterorganization}
   \item in \sectionref{sec:selecting_nonemu_method} we choose to use non-emulator testing to decrease the emulator time usage during building, and we describe our plan for implementing this;
   \item in \sectionref{sec:pool_of_tablets} we setup a pool of tablets to be tested and we describe the scripts that perform this task;
   \item in \sectionref{sec:wireless_adb} we enable testing on the tablets, and create an app to the tablets that automates this process as much as possible;
   \item in \sectionref{sec:jenkins_physical_devices} we describe the configuration of Jenkins such that it only starts an emulator if there are no connected devices;
-  \item in \sectionref{sec:adapting_job_flow} we present the updated flow for jobs on Jenkins in order to successfully run tests on tablets. This includes running scripts to connect to devices, uninstall old APKs, build and install the necessary APKs, and disconnect devices.
+  \item in \sectionref{sec:adapting_job_flow} we present the updated flow for jobs in Jenkins in order to successfully run tests on tablets. This includes running scripts to connect to devices, uninstall old APKs, build and install the necessary APKs, and disconnect devices.
 \end{chapterorganization}
 
 \section{Selecting a Non-Emulator Test Method}\label{sec:selecting_nonemu_method}
@@ -203,7 +203,7 @@ throws IOException, InterruptedException {
 
 After the call, the standard output is converted to a string, and the method \code{getDeviceNames()} converts the string into a list of device names. If the list is populated, then there are devices connected and the method returns true. The method \code{devicesConnected()} is called during the emulator startup method, after the build environment is set up, but before the emulator has been started. With this addition to the plugin, Jenkins will only start an emulator instance if there are no devices attached. This shortens the build time significantly.
 
-\section{Adapting Job Flow on Jenkins}\label{sec:adapting_job_flow}
+\section{Adapting Job Flow in Jenkins}\label{sec:adapting_job_flow}
 We need to connect to the physical devices before the emulator plugin runs, so that it will not start any emulator. The flow of the new build process is:
 
 \begin{multicols}{2}

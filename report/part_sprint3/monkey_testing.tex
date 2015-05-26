@@ -120,6 +120,6 @@ public class MainActivity extends FragmentActivity {
 }
 \end{javacode}
 
-In this manner, we circumvent the expectations of the apps when running monkey tests. We create jobs on Jenkins which run monkey tests on all apps every night.
+In this manner, we circumvent the expectations of the apps when running monkey tests. We create jobs in Jenkins which run monkey tests on all apps every night.
 
 We did not have time to set up automatic notifications to developers whenever a monkey test fails. While this is unfortunate, it was not part of the monkey test user story. In any case it is an important feature to have so that developers are informed of errors in apps automatically, rather then seeking the information themselves. We add this as a user story to the product backlog. However, they can manually subscribe to an RSS feed of the test status.
