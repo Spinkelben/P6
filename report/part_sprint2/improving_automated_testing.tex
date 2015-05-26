@@ -131,7 +131,18 @@ Now that the APKs have been signed, they need to be uploaded to Google Play. Thi
 \section{Monkey Testing}\label{sec:monkey_testing_s2}
 During sprint 1 we encountered some difficulties related to monkey testing. In order to monkey test apps we need to install those apps on an Android device, but we did not have these apps easily available. As described in \sectionref{sec:upload_google_play} the signed APKs for each app is now stored on the FTP sever. As the FTP server is hosted on the same machine as Jenkins, we can directly access the APKs from the directory. To install we simply need to identify the newest build of each app, as, for now, the old builds are kept as well.
 
-To find the APK for the newest version of a specific app, we use the script seen in \listingref{lst:find_newest_apk}, parsing to it the application id of the app. All APKs containing the given application id is then found. This result is piped to \code{sed 's/.*b//' | sed 's/\_release\_aligned.apk//'} that removes everything but the build number of the files. \code{awk '\$0>x\{x=\$0\};END\{print x\}'} \parencite{stackoverflow-max-number2012} then finds the maximum build number. Finally the path of the newest APK for the given application id is found.\todo{Eksempel på input}
+To find the APK for the newest version of a specific app, we use the script seen in \listingref{lst:find_newest_apk}, parsing to it the application id of the app. All APKs containing the given application id is then found. This result is piped to \code{sed 's/.*b//' | sed 's/\_release\_aligned.apk//'} that removes everything but the build number of the files. \code{awk '\$0>x\{x=\$0\};END\{print x\}'} \parencite{stackoverflow-max-number2012} then finds the maximum build number. Finally the path of the newest APK for the given application id is found.
+
+For example, consider the following APK files:
+
+\begin{lstlisting}[language=bash]
+dk.aau.cs.giraf.launcher_v2.3b18_release_aligned.apk
+dk.aau.cs.giraf.launcher_v2.3b19_release_aligned.apk
+dk.aau.cs.giraf.launcher_v2.3b20_release_aligned.apk
+dk.aau.cs.giraf.launcher_v2.3b21_release_aligned.apk
+\end{lstlisting}
+
+The APK with the highest build number is the newest. Running the script in \listingref{lst:find_newest_apk} with the application id \code{dk.aau.cs.giraf.launcher} will find the apk \code{dk.aau.cs.giraf.launcher\_v2.3b21\_release\_aligned.apk}. \todo{Nyt læs}
 
 \begin{lstlisting}[language=bash,showstringspaces=false,caption=Script that finds the newest APK for a particular application id,label=lst:find_newest_apk]
 NEWEST_BUILD="$(find /srv/ftp/newest_apks/ -name "$1*release_aligned.apk" | sed 's/.*b//' | sed 's/_release_aligned.apk//' | awk '$0>x{x=$0};END{print x}')"
