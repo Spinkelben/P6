@@ -185,13 +185,13 @@ We currently use the Jenkins Android Emulator Plugin to run an emulator during e
 \listingref{lst:deviceCheck} contains the main addition to the plugin: The method which checks for connected devices. The main part of the method is preparing for the call in line \ref{line:runTool}, and parsing the output afterwards. The call is to a method which sends a command to a tool provided by the Android SDK. The call corresponds to writing \code{adb -d devices} in the terminal, which lists all connected devices. The parameters, in order, to the call are:
 
 \begin{itemize}
-  \item A \code{Launcher}, which is an abstraction of an process call, which blocks the calling thread until the operation is completed.
+  \item A \code{Launcher}, which is an abstraction of an process call, which blocks the calling thread until the operation is completed
   \item An environment of variables which the process is run in. The most important variable is the \code{ANDROID\_ADB\_SERVER\_PORT} variable, as it decides which port ADB uses.
-  \item An \code{OutputStream} for standard output. This provides the output of the command.
-  \item An \code{OutputStream} for the error output of the command.
-  \item An \code{AndroidSDK} which contains information about and methods related to the installed Android SDK.
-  \item The tool to run. An Enum with information about the tools provided by the SDK.
-  \item The actual command to send to the tool, formatted as a string. In this case it is \code{-d devices}
+  \item An \code{OutputStream} for standard output. This provides the output of the command
+  \item An \code{OutputStream} for the error output of the command
+  \item An \code{AndroidSDK} which contains information about and methods related to the installed Android SDK
+  \item The tool to run. An Enum with information about the tools provided by the SDK
+  \item The actual command to send to the tool, formatted as a string. In this case it is \code{-d devices}.
   \item The \code{FilePath} to the Jenkins workspace if relevant. In this case it is not, so we just send a \code{null} value.
 \end{itemize}
 
