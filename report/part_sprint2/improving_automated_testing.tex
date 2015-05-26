@@ -85,7 +85,7 @@ The plug-in requires the jobs to be of a special \emph{inheritable} type. We the
 \end{figure}
 
 \section{Code Coverage Reports}\label{sec:s3_linecoverage}
-We have a user story which states that Jenkins should provide code coverage metrics for every project. This user story was suggested by a group who was writing tests for a database project and wanted a measure of their progress. Their main request is for a percentage of lines of code covered. A tool for code coverage report must at least provide this metric. In version 0.10 of the \emph{New Android SDK Build System} \parencite{new-build-android}, support for the JaCoCo \parencite{jacoco-home} Java Code Coverage Library was included. It meets all of our demands for metrics and is nicely integrated into the Android and Gradle build system. To make JaCoCo generate a report, we simply enable it in the \mono{build.gradle} file of the project.
+We have a user story which states that Jenkins should provide code coverage metrics for every GIRAF project. This user story was suggested by a group who was writing tests for a database project and wanted a measure of their progress. Their main request is for a percentage of lines of code covered. A tool for code coverage report must at least provide this metric. In version 0.10 of the \emph{New Android SDK Build System} \parencite{new-build-android}, support for the JaCoCo \parencite{jacoco-home} Java Code Coverage Library was included. It meets all of our demands for metrics and is nicely integrated into the Android and Gradle build system. To make JaCoCo generate a report, we simply enable it in the \mono{build.gradle} file of the project.
 
 Now we generate code coverage reports for debug builds locally and in Jenkins. We would also like to publish the code coverage results in Jenkins. There exists a Jenkins plugin \parencite{jacoco-jenkins-plugin} for this purpose. This plugin is easy to setup, provides detailed coverage statistics, and an overview with the percentage of lines of code covered. We use this plugin for publishing the code coverage metrics in Jenkins. An example of the Jenkins overview screen with code coverage metrics can be seen in \figureref{fig:jenkins-overview-coco}.
 
@@ -96,7 +96,7 @@ Now we generate code coverage reports for debug builds locally and in Jenkins. W
 \end{figure}
 
 \section{Upload of Apps to Google Play}\label{sec:upload_google_play}
-Jenkins compiles and builds the Giraf projects but does nothing with the generated APKs. One of the user stories selected in this sprint is \us{automatic upload of alpha releases to Google Play}.
+Jenkins compiles and builds the GIRAF projects but does nothing with the generated APKs. One of the user stories selected in this sprint is \us{automatic upload of alpha releases to Google Play}.
 
 Before the APKs can be published to Google Play, they need to be signed with a signature. The Android plugin for Gradle has functionality for automatic signing of APKs, and we will use this to sign. A keystore file is used to sign, and we are not interested in everybody having this file as it serves as a proof of identification. We save the file on the server, which means that it becomes impossible to build release versions of the apps locally. When uploading a new app to Google Play, the version code of the new app must be greater than the version code of the app already in the app store. Incrementing the version code is not done per default, so we need to set up the build to increase the version code every time an app is successfully built.
 
