@@ -62,11 +62,11 @@ A new device will thus trigger the following changes in the router:
 We have the option to run this script either in a loop, busy-waiting most of the time, or to run the script periodically in a cron job. If the script crashes, a cron job will ensure that it runs again. However, the minumum interval of a cron job is one minute. We find waiting up to a minute reasonable --- it is only the first time connecting. After this first time, the devices will connect and receive their static IP addresses instantly. Because of the stability advantage, we choose to run the script in a cron job every one minute.
 
 \lstinputlisting[float=tb,language=bash,caption=Shell script that discovers new devices and assigns a static IP address and port forward by calling the script below,label=lst:discover_devices]{part_sprint4/discover_devices.script}
-\lstinputlisting[float=tbp,language=bash,caption=Script that sets up static IP address and a port forward for a given MAC address,label=lst:assign_ip_and_port]{part_sprint4/setup_static_ip.script}
+\lstinputlisting[float=tbp,language=bash,caption=Shell script that sets up static IP address and a port forward for a given MAC address,label=lst:assign_ip_and_port]{part_sprint4/setup_static_ip.script}
 
 Now that tablets can connect to the router in a controlled way, we want to enable Jenkins to request a list of the port numbers of the connected tablets. OpenWRT already runs a small HTTP server for its configuration GUI\@. We create a new script, seen in \listingref{lst:list_devices_ports}, that returns a list of the port numbers of all connected devices. This script is executed when a HTTP GET is requested to \mono{http://$\langle$router-ip$\rangle$/cgi-bin/devices}. We have enabled the HTTP server to be reached from outside the router in the router firewall. The script works by retrieving a list of connected MAC addresses (line \ref{devices:maclist}), cross-referencing this list with a list of the current DHCP leases, which returns the IP addresses of the connected devices (lines \ref{devices:iplistbegin}--\ref{devices:iplistend}). This list of IP addresses is cross-referenced with the firewall configuration, where we search for a port forward for each IP address (lines \ref{devices:portbegin}--\ref{devices:portend}). The ports are returned (line \ref{devices:result}).
 
-\lstinputlisting[float=tbp,language=bash,caption=Script that returns port numbers of connected devices,label=lst:list_devices_ports]{part_sprint4/devices.script}
+\lstinputlisting[float=tbp,language=bash,caption=Shell script that returns port numbers of connected devices,label=lst:list_devices_ports]{part_sprint4/devices.script}
 
 \subsection{Creating Route from Server to Tablet}\label{sec:router_server_tablet}
 Testing the above setup reveals that the server and our router is separated on the network. The only traffic we can get through is ping. We investigated the cause of this with the help of IT Services at Aalborg University, and they moved our router to the same network as the server (determined by its MAC-address). We can now access the router from the server, which means we can access the tablets from the server (because of port forwarding on the router).
@@ -97,7 +97,7 @@ The app does, however, not support safe disconnection from the testing pool. If 
 
 \subsection{Android App Implementation}
 To run the shell script in the app, we execute the code shown in \listingref{lst:android_app_shell}. When we execute \code{su} (line 5), the device shows a dialog which asks the user for root permission. After accepting, every subsequent \code{su} call will be executed without need for permission. The method returns the exit code of the command so it can be handled accordingly by the caller.
-\begin{javacode}[float=tb,label=lst:android_app_shell,caption=Enable wireless ADB in Android]
+\begin{javacode}[float=tb,label=lst:android_app_shell,caption=Enable wireless ADB in Android (written in Java)]
 public static int enableWifiAdb() throws IOException, InterruptedException {
   Process process = null;
   DataOutputStream os = null;
@@ -121,7 +121,7 @@ public static int enableWifiAdb() throws IOException, InterruptedException {
 \end{javacode}
 If the device for some reason is rebooted, we make sure to automatically enable wireless ADB when the device is started. We do this by declaring a \code{BroadcastReceiver}, which is automatically triggered when the device is booted. The receiver is declared in the Android manifest file and implemented as shown in \listingref{lst:android_app_broadcast_receiver}. The \code{onReceive()} method (lines 3--8) is called when the broadcast is received. We set the state of wireless ADB according to the user's preference (lines 20--30). We also set a notification (lines 22 and 27) to show the ADB state to the user, and start a background service which keeps the screen and Wi-Fi on while testing (lines 23 and 28).
 
-\begin{javacode}[float=tb,label=lst:android_app_broadcast_receiver,caption=Android boot broadcast receiver]
+\begin{javacode}[float=tb,label=lst:android_app_broadcast_receiver,caption=Android boot broadcast receiver (written in Java)]
 public class BootReceiver extends BroadcastReceiver {
   @Override
   public void onReceive(Context context, Intent intent) {
@@ -175,7 +175,7 @@ We currently use the Jenkins Android Emulator Plugin to run an emulator during e
   \item The \code{FilePath} to the Jenkins workspace if relevant. In this case it is not, so we just send a \code{null} value.
 \end{itemize}
 
-\begin{javacode}[float=tb, caption=The devicesConnected method which checks for connected devices.,label=lst:deviceCheck]
+\begin{javacode}[float=tb, caption=The devicesConnected method which checks for connected devices (written in Java),label=lst:deviceCheck]
 private boolean devicesConnected(AndroidEmulatorContext emu, PrintStream logger, int adbPort, AbstractBuild<?,?> build)
 throws IOException, InterruptedException {
     final ByteArrayOutputStream deviceList = new ByteArrayOutputStream();
@@ -224,7 +224,7 @@ We start by disconnecting devices to make sure the connections are up to date. I
 \subsubsection{Connection Script}
 To connect to all devices connected to the router we get the information from the HTTP server on the router. The script can be seen in \listingref{lst:connect_devices}. We first check the connection to the server on line \ref{connect_devices:check_connection} by supplying the \code{i} option so that \code{curl} returns the HTTP response header. We then execute \code{grep 200} to check that the request was successful (code 200 means a successful connection). After this, we check the error code of that command on line \ref{connect_devices:if_start}. If the HTTP response code was \code{200}, grep sets its exit code to \code{0}. We then get the ports of all devices connected to the router on line \ref{connect_devices:get_ports}. Finally, we simply iterate through those ports and connect to them via ADB (lines \ref{connect_devices:connection_loop_start}--\ref{connect_devices:connection_loop_end}).
 
-\begin{lstlisting}[language=bash,caption=Script that connects to devices,label=lst:connect_devices]
+\begin{lstlisting}[language=bash,caption=Bash script that connects to devices,label=lst:connect_devices]
 URL="http://172.25.11.91/cgi-bin/devices"
 
 curl --connect-timeout 10 -i --silent $URL | head -1 | grep 200 > /dev/null (*@\label{connect_devices:check_connection}@*)
@@ -245,7 +245,7 @@ fi
 
 \subsubsection{Uninstallation Script}
 The uninstallation script seen in \listingref{lst:uninstall_apks} uninstalls all GIRAF APKs from all connected devices in parallel. We do it in parallel so that connecting more tablets will not increase the time it takes to uninstall apps. To do it in parallel, we use the GNU parallel tool \parencite{Tange2011a}. On line \ref{lst:uninstall_apks:get_serial_numbers} we get the serial number of all connected devices. On line \ref{lst:uninstall_apks:parallel_loop} we run the parallel tool on the function \code{uninstall}. The variable \code{\$SERIAL\_NUMBER} after the three colons is the array that is iterated in parallel. Each element is then passed to the \code{uninstall} function. The uninstall function gets the packages names of all installed GIRAF apps on the device on line \ref{lst:uninstall_apks:get_package_names}. The two \code{sed} calls at the end make sure they return nothing but the package names, which are to be passed to adb to uninstall the apps. The apps are uninstalled on lines \ref{lst:uninstall_apks:loop_start}--\ref{lst:uninstall_apks:loop_end}. The function is exported on line \ref{lst:uninstall_apks:export} so that parallel can use it.
-\begin{lstlisting}[language=bash,caption=Script that uninstalls all installed GIRAF apps on all devices,label=lst:uninstall_apks]
+\begin{lstlisting}[language=bash,caption=Bash script that uninstalls all installed GIRAF apps on all devices,label=lst:uninstall_apks]
 uninstall() {
   # Find all installed giraf apps on this device
   PACKAGE_NAMES="$($ANDROID_HOME/platform-tools/adb -s $1 shell pm list packages -f | grep dk.aau.cs.giraf | sed 's/.*apk=//' | sed 's/\s*//g')" (*@\label{lst:uninstall_apks:get_package_names}@*)
@@ -277,12 +277,12 @@ emulator-5554   device
 \end{lstlisting}
 will result in the output \code{047f671ee24b2839}
 
-\begin{lstlisting}[language=bash,caption=Script that gets the serial numbers of all connected devices,label=lst:get_serial_numbers]
+\begin{lstlisting}[language=bash,caption=Bash script that gets the serial numbers of all connected devices,label=lst:get_serial_numbers]
 $ANDROID_HOME/platform-tools/adb devices | grep -w device | grep -vw emulator | sed 's/\s*device//' | sed 's/\s*//g'
 \end{lstlisting}
 \subsubsection{Disconnection Script}
 To disconnect all connected devices in the script shown in \listingref{lst:disconnect_devices}, we simply get the serial number of all connected devices on line \ref{disconnect_devices:get_serial_numbers}. We then run a loop that disconnects those serial numbers (lines \ref{disconnect_devices:loop_start}--\ref{disconnect_devices:loop_end}).
-\begin{lstlisting}[language=bash,caption=Script that disconnects all connected devices,label=lst:disconnect_devices]
+\begin{lstlisting}[language=bash,caption=Bash script that disconnects all connected devices,label=lst:disconnect_devices]
 SERIAL_NUMBER="$(/srv/scripts/get_serial_numbers.sh)" (*@\label{disconnect_devices:get_serial_numbers}@*)
 
 for s in $SERIAL_NUMBER (*@\label{disconnect_devices:loop_start}@*)

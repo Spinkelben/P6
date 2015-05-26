@@ -101,7 +101,7 @@ Jenkins compiles and builds the Giraf projects but does nothing with the generat
 Before the APKs can be published to Google Play, they need to be signed with a signature. The Android plugin for Gradle has functionality for automatic signing of APKs, and we will use this to sign. A keystore file is used to sign, and we are not interested in everybody having this file as it serves as a proof of identification. We save the file on the server, which means that it becomes impossible to build release versions of the apps locally. When uploading a new app to Google Play, the version code of the new app must be greater than the version code of the app already in the app store. Incrementing the version code is not done per default, so we need to set up the build to increase the version code every time an app is successfully built.
 
 We have written a Gradle plugin handling this with the major part of this seen in \listingref{lst:gradle_versioncode}. The full plugin can be seen in \appendixref{app:gradle_plugins}. The plugin keeps a \mono{.properties} file with the current version code for all apps. Upon executing the \code{increaseVersionCode} Gradle task, it reads the version code (line \ref{gradlevs:8}) from the properties file and increments it (line \ref{gradlevs:12}). Then it writes it to the app manifest file, such that the build following will use the new version code. Finally, it updates the property file with the new version code, such that the next build will use this version code. If no current version code is found in the properties file, we assume the app is new and starts at version code \mono{1}, and as such we do not increment it.
-\begin{gradlecode}[caption=Part of our Gradle plugin for updating version code,label=lst:gradle_versioncode]
+\begin{gradlecode}[caption=Part of our Gradle plugin for updating version code (written in Groovy),label=lst:gradle_versioncode]
 project.task('increaseVersionCode') << {
     // [...]
     // Check to see if properties file exists.
@@ -133,7 +133,7 @@ During sprint 1 we encountered some difficulties related to monkey testing. In o
 
 To find the APK for the newest version of a specific app, we use the script seen in \listingref{lst:find_newest_apk}, parsing to it the application id of the app. All APKs containing the given application id is then found. This result is piped to \code{sed 's/.*b//' | sed 's/\_release\_aligned.apk//'} that removes everything but the build number of the files. \code{awk '\$0>x\{x=\$0\};END\{print x\}'} \parencite{stackoverflow-max-number2012} then finds the maximum build number. Finally the path of the newest APK for the given application id is found.\todo{Eksempel på input}
 
-\begin{lstlisting}[language=bash,showstringspaces=false,caption=Script that finds the newest APK for a particular application id,label=lst:find_newest_apk]
+\begin{lstlisting}[language=bash,showstringspaces=false,caption=Bash script that finds the newest APK for a particular application id,label=lst:find_newest_apk]
 NEWEST_BUILD="$(find /srv/ftp/newest_apks/ -name "$1*release_aligned.apk" | sed 's/.*b//' | sed 's/_release_aligned.apk//' | awk '$0>x{x=$0};END{print x}')"
 find /srv/ftp/newest_apks/ -name "$1*b${NEWEST_BUILD}_release_aligned.apk"
 \end{lstlisting}
@@ -150,7 +150,7 @@ To install the newest version of all, we have to find the APKs on the server. Th
 
 The application names are then sent to \mono{find\_newest\_apk.sh}, as seen previously in \listingref{lst:find_newest_apk}.
 
-\begin{lstlisting}[language=bash,showstringspaces=false,caption=Script that finds the newest available APK for all apps,label=lst:find_all_newest_apks]
+\begin{lstlisting}[language=bash,showstringspaces=false,caption=Bash script that finds the newest available APK for all apps,label=lst:find_all_newest_apks]
 PACKAGE_NAMES="$(find /srv/ftp/newest_apks/ -name "*release_aligned.apk" | sed 's:.*/::' | sed 's:_v.*::' | sort | uniq)"
 
 for p in $PACKAGE_NAMES

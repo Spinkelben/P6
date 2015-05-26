@@ -10,7 +10,7 @@ We succeed in setting up monkey testing for all GIRAF apps.
 \section{Dummy Database Inserter}\label{sec:dummy_db_inserter}
 To avoid downloading the full database before starting the monkey test, we create a new Android application which inserts dummy data into the database. The application is very simple and the main part is shown in \listingref{lst:dummy_db_ins_main_activity}. It starts a thread in line \ref{dummydb:exec} which inserts the data using a method provided by the database library (line \ref{dummydb:dummy}). When inserted, the application closes. We detect when the applications has closed to know when the data has been inserted. In line \ref{dummydb:exit}, we call \code{System.exit(0)} which ensures that the application is completely closed (killed), as it otherwise would just be in an idle state.
 
-\begin{javacode}[caption=Dummy database inserter \mono{MainActivity},label=lst:dummy_db_ins_main_activity]
+\begin{javacode}[caption=Dummy database inserter \mono{MainActivity} (written in Java),label=lst:dummy_db_ins_main_activity]
 public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +48,7 @@ We therefore make a script, seen in \listingref{lst:start_wait_dummy_db_inserter
 
 Busy waiting is generally to be avoided, as it wastes CPU time \parencite[ch.2]{tanenbaum2007}. An alternative would be to block the process and have the tablet notify the process that it has finished. However, this is time consuming to implement. To avoid too much waste of time, we insert a sleep of two seconds, thus blocking the process and freeing up CPU time.
 
-\begin{lstlisting}[language=bash,showstringspaces=false,caption=Start and wait for dummy database inserter,label=lst:start_wait_dummy_db_inserter]
+\begin{lstlisting}[language=bash,showstringspaces=false,caption=Bash script which starts and waits for dummy database inserter,label=lst:start_wait_dummy_db_inserter]
 /srv/android-sdk-linux//platform-tools/adb shell am start -n dk.aau.cs.giraf.dummydbinserter/dk.aau.cs.giraf.dummydbinserter.MainActivity (*@\label{dummydb:1}@*)
 
 IS_RUNNING="$(/srv/android-sdk-linux//platform-tools/adb shell ps | grep dk.aau.cs.giraf.dummydbinserter)"
@@ -69,7 +69,7 @@ The original code can be seen in \listingref{lst:main_activity_original}. When \
 
 In the modified version of \emph{user manager} that supports monkey testing, seen in \listingref{lst:main_activity_monkey_test}, we add an if-statement (line \ref{main:ismonkey}) that checks if the app is started by a monkey test. If it is, we make a new \code{Helper} (line \ref{main:helper}), which is a database helper that enables us to get all guardians and select the ID of the first guardian (line \ref{main:signin}). Instead of calling \code{getProfileFromExtras()}, we call \code{signInWithGuardianId()} directly. If the app was not started by a monkey test we proceed as normal (lines \ref{main:begin}--\ref{main:end}).
 
-\begin{javacode}[caption=Original User Manager login procedure,label=lst:main_activity_original]
+\begin{javacode}[caption=Original User Manager login procedure (written in Java),label=lst:main_activity_original]
 public class MainActivity extends FragmentActivity {
   // ...
 
@@ -94,7 +94,7 @@ public class MainActivity extends FragmentActivity {
 }
 \end{javacode}
 
-\begin{javacode}[caption=Updated User manager login procedure for monkey testing,label=lst:main_activity_monkey_test]
+\begin{javacode}[caption=Updated User manager login procedure for monkey testing (written in Java),label=lst:main_activity_monkey_test]
 public class MainActivity extends FragmentActivity {
   // ...
 
