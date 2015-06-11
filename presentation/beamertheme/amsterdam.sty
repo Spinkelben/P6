@@ -1,0 +1,26 @@
+\DeclareOptionBeamer{compress}{\beamer@compresstrue}
+\ProcessOptionsBeamer
+
+\mode<presentation>
+
+\definecolor{fnyldebadyld}{cmyk}{0,0.76,0.83,0.05}
+\definecolor{secondarycolor}{cmyk}{0.81,0.08,0,0.45}
+\definecolor{tertiarycolor}{cmyk}{0,0.11,0.35,0}
+
+\useoutertheme[subsection=false,footline=authortitle]{miniframes}
+
+\useinnertheme{circles}
+\usecolortheme{whale}
+\usecolortheme{orchid}
+
+\definecolor{beamer@blendedblue}{rgb}{0.26,0.46,0.62}
+
+\setbeamercolor*{palette secondary}{use=structure,fg=white,bg=beamer@blendedblue}
+ \setbeamercolor*{palette tertiary}{use=structure,fg=white,bg=beamer@blendedblue}
+\setbeamercolor{titlelike}{parent=structure}
+\setbeamercolor{frametitle}{fg=black}
+\setbeamercolor{title}{fg=black}
+\setbeamercolor{item}{fg=black}
+
+\mode
+<all>
