@@ -83,7 +83,30 @@
 %\captionsetup[figure]{font=small,singlelinecheck=off,justification=raggedright}
 
 \title[SOME TITLE]{Some Title}
-\author[\insertframenumber /\inserttotalframenumber]{sw609f15}
+% \author[\insertframenumber /\inserttotalframenumber]{sw609f15}
+\makeatletter
+  \defbeamertemplate*{footline}{myminiframes theme}
+  {%
+    \begin{beamercolorbox}[colsep=1.5pt]{upper separation line foot}
+    \end{beamercolorbox}
+    \hbox{%
+      \begin{beamercolorbox}[wd=.75\paperwidth,ht=2.5ex,dp=1.125ex,%
+        leftskip=.3cm,rightskip=.3cm plus1fil]{title in head/foot}%
+        \leavevmode{\usebeamerfont{title in head/foot}\insertshorttitle}%
+      \end{beamercolorbox}%
+      \begin{beamercolorbox}[wd=.15\paperwidth,ht=2.5ex,dp=1.125ex,%
+        leftskip=.3cm,rightskip=.3cm]{title in head/foot}%
+        {\usebeamerfont{author in head/foot}\usebeamercolor[fg]{author in head/foot}\insertshortauthor}
+      \end{beamercolorbox}%
+      \begin{beamercolorbox}[wd=.1\paperwidth,ht=2.5ex,dp=1.125ex,%
+        leftskip=.3cm,rightskip=.3cm,center]{title in head/foot}%
+        {\usebeamerfont{author in head/foot}\usebeamercolor[fg]{author in head/foot}\insertframenumber/\inserttotalframenumber}%
+      \end{beamercolorbox}%
+    }%
+    \begin{beamercolorbox}[colsep=1.5pt]{lower separation line foot}
+    \end{beamercolorbox}
+  }
+\makeatother
 
 % Adding front slide.
 {
