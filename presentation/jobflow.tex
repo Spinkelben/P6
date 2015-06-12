@@ -1,31 +1,123 @@
-\section[Job Flow]{Job Flow --- Long Title}
+\section[Job Flow]{Job Flow --- Fra commit til release}
 
 % Emneoverskrift. Start jeres del med denne:
 \begin{frame}
   \frametitle{}
   \begin{center}
-    {\Huge Job Flow}
+    {\Huge Job Flow}\\
+    Fra commit til release
   \end{center}
 \end{frame}
 \note{
   \begin{itemize}
-		\item Notes...
+  \item Notes...
   \end{itemize}
 }
 
 % Indhold:
 \begin{frame}
-    \frametitle{Some Slide Title}
-    HUSK AT SKRIVE PÅ DANSK!\\
-    The quality of the training data is determined by:
-    \begin{itemize}
-        \item The number of samples
-        \item Variance
-        \item The distribution of classification
-    \end{itemize}
+    \frametitle{Job Flow}
+    \tikzstyle{b} = [rectangle, draw, fill=beamer@blendedblue, text=white, text width=4em, text centered, rounded corners, minimum height=1em, thick]
+    \tikzstyle{line} = [draw, -latex', thick]
+    \tikzsetnextfilename{jobflow_diagram}
+    \tikzexternaldisable
+    \begin{tikzpicture}[node distance=2.5cm, auto]
+      \node [b] (push) {\texttt{git push}};
+      \node [b, right of=push] (hook) {\small Checks};
+      \begin{scope}[node distance=1.2cm]
+        \node [b, above of=hook] (lib) {\small Lib};
+        \node [b, below of=hook] (app) {\small App};
+        \node [b, above of=lib] (test_lib) {\small Test};
+        \node [b, below of=app] (test_app) {\small Test};
+      \end{scope}
+      \node [b, right of=test_lib] (aar) {\small AAR};
+      \node [b, right of=test_app] (apk) {\small APK};
+      \node [b, right of=aar] (artifactory) {\small Artifactory};
+      \node [b, right of=apk] (gplay) {\small Google Play};
+      \path [line] (push) -- (hook);
+      \path [line] (hook) -- (lib);
+      \path [line] (hook) -- (app);
+      \path [line] (app) -- (test_app);
+      \path [line] (lib) -- (test_lib);
+      \path [line] (test_app) -- (apk);
+      \path [line] (test_lib) -- (aar);
+      \path [line] (aar) -- (artifactory);
+      \path [line] (apk) -- (gplay);
+     \end{tikzpicture}
+     \tikzexternalenable
 \end{frame}
 \note{
-	\begin{itemize}
-		\item Notes...
-	\end{itemize}
+  \begin{itemize}
+  \item Notes...
+  \end{itemize}
+}
+
+\begin{frame}
+    \frametitle{Git Hooks}
+\begin{itemize}
+\item Pre-receive
+    \begin{itemize}
+    \item Opdag fejl før det er for sent
+    \item Statisk kodetjek
+    \end{itemize}
+\item Post-receive
+    \begin{itemize}
+    \item Styring af versionsnumre på libs
+    \item Notificér Jenkins
+    \end{itemize}
+\end{itemize}
+\end{frame}
+\note{
+  \begin{itemize}
+  \item Continuous integration = mange commits
+  \item Dyrt at opdage små fejl sent
+  \begin{itemize}
+  \item Til hjælp for udviklere
+  \item Virker lokalt men ikke på Jenkisn
+  \end{itemize}
+  \item Undgå anti-patterns
+  \item Credentials
+  \end{itemize}
+}
+
+\begin{frame}
+    \frametitle{Build og test}
+\begin{itemize}
+  \item Unit- og UI-test
+    \begin{itemize}
+    \item Email-notifikation
+    \end{itemize}
+  \item Delayed testing
+    \begin{itemize}
+    \item Monkey test
+    \item Installationstest
+    \end{itemize}
+  \item Kodemetrikker
+    \begin{itemize}
+    \item Lint
+    \item Code coverage
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+\note{
+  \begin{itemize}
+    \item Afbryder ved fejl
+  \end{itemize}
+}
+
+\begin{frame}
+    \frametitle{Release}
+    \begin{itemize}
+    \item Versionsnummer på apps
+    \item Deployment
+      \begin{itemize}
+      \item Artifactory
+      \item Google Play
+      \end{itemize}
+    \end{itemize}
+  \end{frame}
+\note{
+  \begin{itemize}
+    \item Todo
+  \end{itemize}
 }
