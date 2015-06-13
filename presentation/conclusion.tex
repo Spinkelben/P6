@@ -29,25 +29,21 @@
   \end{itemize}
 }
 
-\begin{frame}
+\begin{frame}[fragile]
   \frametitle{Omskrivning af apps}
-  \begin{itemize}
-    \item code snippet...
-  \end{itemize}
+\begin{javacode}
+if (ActivityManager.isUserAMonkey())
+  Helper h = new Helper(this);
+
+  guardianId = h.profilesHelper.getGuardians().get(0).getId();
+}
+\end{javacode}
 \end{frame}
 \note{
   \begin{itemize}
     \item Notes...
   \end{itemize}
 }
-
-% \begin{javacode}
-% if (ActivityManager.isUserAMonkey())
-%   Helper h = new Helper(this);
-
-%   guardianId = h.profilesHelper.getGuardians().get(0).getId();
-% }
-% \end{javacode}
 
 \begin{frame}
   \frametitle{Monkey test flow}

@@ -49,6 +49,51 @@
 \usepackage{setspace}
 %\usepackage{multimedia}
 
+% Box colors.
+\definecolor{clframe}{gray}{0.75}
+\definecolor{clshade}{gray}{0.95}
+\definecolor{clcodeshade}{gray}{0.93}
+
+% Code colors.
+\definecolor{javared}{rgb}{0.6,0,0}            % for strings
+\definecolor{javagreen}{rgb}{0.25,0.5,0.35}    % comments
+\definecolor{javapurple}{rgb}{0.6,0,0.5}       % keywords
+\definecolor{javadocblue}{rgb}{0.25,0.35,0.75} % javadoc
+
+\usepackage{listings}
+
+\lstdefinestyle{javastyle}{%
+  language=Java,
+  keywordstyle=\color{javapurple}\bfseries,
+  stringstyle=\color{javared},
+  commentstyle=\color{javagreen},
+  morecomment=[s][\color{javadocblue}]{/**}{*/}
+}
+
+\lstnewenvironment{javacode}[1][]{%
+  \lstset{style=javastyle, #1}
+}{}
+
+\lstset{
+  columns=flexible,
+  escapechar=",
+  escapeinside={(*@}{@*)},
+  basicstyle=\ttfamily\footnotesize,
+  frame=single, backgroundcolor=\color{clshade}, rulecolor=\color{clframe},
+  framerule=\fboxrule, xleftmargin=3.4pt, xrightmargin=3.4pt, belowskip=\smallskipamount,
+  captionpos=b,
+  numbers=left,
+  numberstyle=\scriptsize,
+  numbersep=7pt,
+  tabsize=2,
+  keepspaces=true,
+  showspaces=false,
+  showstringspaces=false,
+  breaklines=true,
+  breakatwhitespace=true,
+  postbreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\color{red}\hookrightarrow\space}}
+}
+
 \setbeamertemplate{navigation symbols}{}
 %\setbeamertemplate{bibliography item}[text]
 
