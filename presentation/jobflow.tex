@@ -54,21 +54,26 @@
 
 \begin{frame}
     \frametitle{Git Hooks}
-\begin{itemize}
-\item Pre-receive
+\begin{columns}[T]
+  \begin{column}[T]{5cm}
+    \texttt{pre-receive}\vspace{0.8em}
     \begin{itemize}
-    \item Opdag fejl før det er for sent
+    \item Fang hyppige fejl
     \item Statisk kodetjek
     \end{itemize}
-\item Post-receive
+  \end{column}
+  \begin{column}[T]{5cm}
+    \texttt{post-receive}\vspace{0.8em}
     \begin{itemize}
-    \item Styring af versionsnumre på libs
+    \item Versionsnumre på libs
     \item Notificér Jenkins
     \end{itemize}
-\end{itemize}
+  \end{column}
+\end{columns}
 \end{frame}
 \note{
   \begin{itemize}
+  \item 1. sprint: Kun trigger
   \item Continuous integration = mange commits
   \item Dyrt at opdage små fejl sent
   \begin{itemize}
@@ -101,7 +106,20 @@
 \end{frame}
 \note{
   \begin{itemize}
+    \item Build tilføjer credentials
+    \item Build + test = max 10 min
+    \item Delayed test: langsomme tests
     \item Afbryder ved fejl
+  \end{itemize}
+}
+
+\begin{frame}
+    \frametitle{TODO}
+    Jeg mangler noget. Evt. noget om gradle og automation? Eller hvad ellers?
+  \end{frame}
+\note{
+  \begin{itemize}
+    \item Todo
   \end{itemize}
 }
 
