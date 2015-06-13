@@ -1,4 +1,4 @@
-\section[Kortere byggetider]{Kortere byggetider --- Long Title}
+\section[Kortere byggetider]{Kortere byggetider}
 
 % Emneoverskrift. Start jeres del med denne:
 \begin{frame}
@@ -16,29 +16,24 @@
 % Indhold:
 \begin{frame}
     \frametitle{Biblioteker som binære filer}
-    HUSK AT SKRIVE PÅ DANSK!\\
-    Ulemper ved sub-modules
+	Git submoduler resulterer i:
     \begin{itemize}
-        \item The number of samples
-        \item Variance
-        \item The distribution of classification
+        \item Overflødig kompilering og test af kode
+        \item Kompleksitet i styring af dependencies
+        \item Svært at kontrollerer hvor biblioteker bliver released
+        \item Den samme dependency kan forekomme flere steder i hvert projekt
     \end{itemize}
 \end{frame}
 \note{
 	\begin{itemize}
-		\item Notes...
+		\item Samarbejde med Git gruppe
 	\end{itemize}
 }
 
 \begin{frame}
     \frametitle{Biblioteker som binære filer}
-    HUSK AT SKRIVE PÅ DANSK!\\
-    Hvordan det fixes...
-    \begin{itemize}
-        \item The number of samples
-        \item Variance
-        \item The distribution of classification
-    \end{itemize}
+    Todo: figur med build tider (jeg kunne ikke finde ud af tikz...)
+    Emulator tager stadig lang tid
 \end{frame}
 \note{
     \begin{itemize}
@@ -48,12 +43,11 @@
 
 \begin{frame}
     \frametitle{Test på fysiske enheder}
-    HUSK AT SKRIVE PÅ DANSK!\\
     Router setup
     \begin{itemize}
-        \item The number of samples
-        \item Variance
-        \item The distribution of classification
+        \item Fast IP til tablet første gang der forbindes
+        \item Automatisk tildeling af porte og port forwarding
+        \item Web server med liste af tilsluttede enheder
     \end{itemize}
 \end{frame}
 \note{
@@ -64,12 +58,13 @@
 
 \begin{frame}
     \frametitle{Test på fysiske enheder}
-    HUSK AT SKRIVE PÅ DANSK!\\
-    Android app
+    Konfigurering af Tablets
     \begin{itemize}
-        \item The number of samples
-        \item Variance
-        \item The distribution of classification
+        \item Tablets har indbygget fjernstyring over WiFi
+        \item Skal slås til hver gang en enhed startes --- app'en sørger for det
+        \item Kræver root adgang
+        \item Forhindre Monkey Test i at tilgå topbaren
+        \item Mangler sikker frakobling
     \end{itemize}
 \end{frame}
 \note{
@@ -80,12 +75,12 @@
 
 \begin{frame}
     \frametitle{Test på fysiske enheder}
-    HUSK AT SKRIVE PÅ DANSK!\\
-    Plugin fix
+    Konfigurering af Jenkins platformen
     \begin{itemize}
-        \item The number of samples
-        \item Variance
-        \item The distribution of classification
+        \item Tilføj et pre-build step der forbinder til enheder
+        \item Modificerer emluator plugin'et til at kontrollere om der er forbundne enheder
+        \item Køre test
+        \item Afbryde forbindelsen igen
     \end{itemize}
 \end{frame}
 \note{
