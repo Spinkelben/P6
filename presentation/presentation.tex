@@ -31,6 +31,8 @@
   \tikzexternalize[prefix=gfx/tikz/]
   %\tikzexternaldisable % Disable by default
   \usepackage{pgfgantt}
+  \usepackage{mdframed}
+  \newmdenv [align=center, backgroundcolor=color3!10, linecolor=color3!50, linewidth=1pt]{mtjbox}
 
 	\usepackage{xcolor}
     \definecolor{color1}{cmyk}{100,50,0,0}   % blue
@@ -38,7 +40,7 @@
     \definecolor{color3}{cmyk}{97,0,75,0}    % blueish green
     \definecolor{color4}{RGB}{204,121,167}    % reddish purple
     \definecolor{color5}{RGB}{230,159,0}   % orange
-   \usepackage{colortbl}
+    \usepackage{colortbl}
 % Misc
 \usepackage{booktabs}
 \usepackage{enumerate}

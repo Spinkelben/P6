@@ -54,9 +54,12 @@
 }
 
 \begin{frame}
-    \frametitle{Udviklingsmetode i multiprojektet --- backlogs}
+    \frametitle{Udviklingsmetode i multiprojektet}
+    \framesubtitle{Backlogs}
     \centering
-    TODO: grafik med arbejdsprodukter.
+    \includegraphics<1>[width=0.8\textwidth]{backlog1.pdf}
+    \includegraphics<2>[width=0.8\textwidth]{backlog2.pdf}
+    \includegraphics<3>[width=0.8\textwidth]{backlog3.pdf}
 \end{frame}
 \note{
 	\begin{itemize}
@@ -67,8 +70,41 @@
 
 \begin{frame}
     \frametitle{Udviklingsmetode i multiprojektet}
-    \centering
-    TODO: grafik med backlog items.
+    \framesubtitle{Typer af backlog items}
+      \begin{mtjbox}[backgroundcolor=color1!5, linecolor=color1!40]
+        Backlog Items
+        \begin{columns}
+          \begin{column}{0.30\textwidth}
+            \begin{mtjbox}
+              Feature
+            \end{mtjbox}
+          \end{column}
+          \begin{column}{0.30\textwidth}
+            \begin{mtjbox}
+              Constraint
+            \end{mtjbox}
+          \end{column}
+          \begin{column}{0.30\textwidth}
+            \begin{mtjbox}
+              Bug
+            \end{mtjbox}
+          \end{column}
+        \end{columns}
+        
+        \begin{columns}
+          \begin{column}{0.49\textwidth}
+            \begin{mtjbox}
+              Knowledge Acquisition
+            \end{mtjbox}
+          \end{column}
+          \begin{column}{0.49\textwidth}
+            \begin{mtjbox}
+              Technical Work
+            \end{mtjbox}
+          \end{column}
+        \end{columns}
+      \end{mtjbox}
+    
 \end{frame}
 \note{
 	\begin{itemize}
@@ -82,12 +118,23 @@
 }
 
 \begin{frame}
-    \frametitle{Udviklingsmetode i multiprojektet --- roller}
-    \centering
-    TODO: grafik med roller.\\
+    \frametitle{Udviklingsmetode i multiprojektet}
+    \framesubtitle{Roller}
+    \begin{columns}[t]
+    \column{.5\textwidth}
+      \begin{mdframed}[align=center, backgroundcolor=color3!10, linecolor=color3!50, linewidth=1pt]
+        Scrum Master
+      \end{mdframed}
+    \column{.5\textwidth}
+      \begin{mdframed}[align=center, backgroundcolor=color3!10, linecolor=color3!50, linewidth=1pt]
+        Product Owner
+      \end{mdframed}
+      \vspace{.6cm}
+      \centering
+      \pause\includegraphics[width=.65\textwidth]{po_illustration.pdf}
+    \end{columns}
     
-    \vspace{.6cm}
-    \includegraphics[width=0.4\textwidth]{po_illustration.pdf}
+    
 \end{frame}
 \note{
 	\begin{itemize}
@@ -97,9 +144,47 @@
 }
 
 \begin{frame}
-    \frametitle{Udviklingsmetode i multiprojektet --- møder}
-    \centering
-    TODO: grafik med møder.\\
+    \frametitle{Udviklingsmetode i multiprojektet}
+    \framesubtitle{Møder}
+    
+    \begin{columns}
+    \begin{column}{0.45\textwidth}
+      \begin{mtjbox}[backgroundcolor=color1!5, linecolor=color1!40]
+        Sprint Planning
+            \begin{mtjbox}
+              GUI
+            \end{mtjbox}\unskip
+            \begin{mtjbox}
+              DB
+            \end{mtjbox}\unskip
+            \begin{mtjbox}
+              B\&D
+            \end{mtjbox}\unskip
+      \end{mtjbox}
+    \end{column}
+    \pause
+    \begin{column}{0.45\textwidth}
+      \begin{mtjbox}[backgroundcolor=color1!5, linecolor=color1!40]
+        Sprint Review
+            \begin{mtjbox}
+              GUI
+            \end{mtjbox}\unskip
+            \begin{mtjbox}
+              DB
+            \end{mtjbox}\unskip
+            \begin{mtjbox}
+              B\&D
+            \end{mtjbox}\unskip
+      \end{mtjbox}
+    \end{column}
+    \end{columns}
+    \pause
+    \begin{mtjbox}[backgroundcolor=color1!5, linecolor=color1!40]
+      Sprint Retrospective Meeting
+      \begin{mtjbox}
+              GUI, DB og B\&D
+            \end{mtjbox}
+    \end{mtjbox}
 \end{frame}
 \note{
 	\begin{itemize}
