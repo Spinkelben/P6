@@ -20,13 +20,18 @@
 \end{frame}
 \note{
 	\begin{itemize}
-    \item {\scriptsize 15 grupper, 3 subprojekter.}
-    \item {\scriptsize En agil metode er et godt valg: ingen udviklererfaring med kode+krav+kunder, og vi har ikke tid til at analysere og forstå den nuværende kodebase. Vi skal bruge tiden på at få den til at virke!}
-    \item {\scriptsize Figur:}
+    \item \textbf{Scrum of Scrums}: 3 niveauer (gruppe, sub-, multi-)
+    \item \textbf{AGIL} METODE godt valg:
     \begin{itemize}
-      \item {\scriptsize Multiprojekt-niveau: Sikre sig at roller, arbejdet og møderne overholdes. 1 ugentligt møde}
-      \item {\scriptsize Subprojekt: Sprint planning, sprint review. Derudover 2-3 møder pr. uge.}
-      \item {\scriptsize Gruppe: Scrum of (Scrums-something). Grupperne skal implementere interfacet Scrum. Hvad de gør, er vi ligeglade med.}
+      \item ingen \textbf{udvikler-erfaring} med kode + krav + kunder
+      \item \textbf{Kun 4 måneder} > ikke tid til at analysere og forstå kodebasen
+      \item Vi skal bruge tiden på at få den til at virke!
+    \end{itemize}
+    \item Figur:
+    \begin{itemize}
+      \item Multiprojekt: Sikre at roller, work products og møderne overholdes.
+      \item Subprojekt: Sprint planning, sprint review, og internt løse større problemer.
+      \item Gruppe: Scrum of (something). Grupperne skal implementere interfacet Scrum. Samarbejde user stories input, estimering mm.
     \end{itemize}
 	\end{itemize}
 }
@@ -68,16 +73,36 @@
 \end{frame}
 \note{
 	\begin{itemize}
-    \item Feature
-    \item Bug
-    \item Constraint
-    \item Knowledge Acquisition
-    \item Technical Work
+    \item \textbf{Vi startede} med 1 type: USER STORIES
+    \item \textbf{Revidering}, databasegrupperne (technical work)
+    \item \textbf{Feature/bug}: funktionelle krav, værdi for kunden.
+    \item \textbf{Constraint}: non-funktionelle krav, ikke tvinge ind i user story. Skrives på bagside, eller egen post-it.
+    \item \textbf{Knowledge Acquisition}: Undersøge ting. Timeboxing muligt: spike fra XP.
+    \item \textbf{Technical Work}: Vigtige opgaver for os udviklere.
+    \item Formulering konsekvent efter revidering: nemmere at sammenligne, mere sigende.
     \item As a <type of user>, I want <some goal> so that <some reason>.
+    \begin{itemize}
+      \item ``type of user'' kan være udvikler, slutbruger eller andet.
+    \end{itemize}
 	\end{itemize}
 }
 
 \begin{frame}
+    \note{
+      \begin{itemize}
+        \item Scrum master: \textbf{os}, som følge af \textbf{ansvar} for udviklingsmetode.
+        \begin{itemize}
+          \item Scrum Master for alle projektgrupper.
+          \item \textbf{Overser metoder}
+          \item \textbf{Guider} grupperne til at følge Scrum
+        \end{itemize}
+        \item Product owner: Skal \textbf{kende kundernes behov}, kontakt med kunder.
+        \begin{itemize}
+          \item Figur:
+          \item GUI har eksterne kunder som kunder. Resten har GUI og hinanden som kunder.
+        \end{itemize}
+      \end{itemize}
+    }
     \frametitle{Udviklingsmetode i multiprojektet}
     \framesubtitle{Roller}
     \begin{columns}[t]
@@ -93,15 +118,8 @@
       \centering
       \pause\includegraphics[width=.65\textwidth]{po_illustration.pdf}
     \end{columns}
-    
-    
 \end{frame}
-\note{
-	\begin{itemize}
-    \item Scrum master: os.
-    \item Product owner: Har kontakten med kunderne. 
-	\end{itemize}
-}
+
 
 \begin{frame}
     \frametitle{Udviklingsmetode i multiprojektet}
@@ -114,13 +132,36 @@
 \end{frame}
 \note{
 	\begin{itemize}
-    \item TODO
+    \item 1/uge: Multiprojektmøde
+    \begin{itemize}
+      \item \textbf{Min. 1 rep.} fra hver gruppe.
+      \item \textbf{Formål:} status, diskuterer \textbf{udviklingsmetode}.
+      \item Så alle ved \textbf{hvad der sker} i projektet.
+      \item 1/uge: har passet fint, tilpas \textbf{kompromis}, ikke tage\textbf{ til møde for at mødes}.
+    \end{itemize}
+    \item 2-3/uge: Subprojekt
+    \begin{itemize}
+      \item Grupper i subprojekt mødes
+      \item diskuterer status på mere \textbf{detaljeret niveau.}
+      \item Oftest ret \textbf{hurtige}. Udmærket med 2-3/uge. Især i \textbf{starten}
+    \end{itemize}
 	\end{itemize}
 }
 
 \begin{frame}
     \frametitle{Udviklingsmetode i multiprojektet}
     \framesubtitle{Sprintmøder}
+    \note{
+      \begin{itemize}
+        \item Alle tre subprojekter: \textbf{eget }sprint planning og review.
+        \item GUI's er \textbf{anderledes}: faktiske \textbf{kunder }er med.
+        \item KLIK
+        \item \textbf{Retrospektiv}
+        \item Slås sammen med \textbf{kommende} ugentlige \textbf{multiprojekt} \textbf{møde}.
+        \item \textbf{Metodeforbedring}, implementerer ændringer og \textbf{rettelser}.
+      \end{itemize}
+    }
+    
     \begin{columns}
     \begin{column}{0.45\textwidth}
       \begin{mtjbox}[backgroundcolor=color1!5, linecolor=color1!40]
@@ -136,7 +177,6 @@
             \end{mtjbox}\unskip
       \end{mtjbox}
     \end{column}
-    \pause
     \begin{column}{0.45\textwidth}
       \begin{mtjbox}[backgroundcolor=color1!5, linecolor=color1!40]
         Sprint Review
@@ -160,11 +200,7 @@
             \end{mtjbox}
     \end{mtjbox}
 \end{frame}
-\note{
-	\begin{itemize}
-    \item TODO
-	\end{itemize}
-}
+
 
 
 % Indhold:
@@ -176,16 +212,18 @@
 \end{frame}
 \note{
 	\begin{itemize}
-		\item Scrum
+		\item \textbf{Internt}: Scrum
     \item Det passer godt ind i multiprojektet.
-    \item Daily Scrum
+    \item \textbf{Scrumboardet}: valgte backlog items > \textbf{opsplitning} i opgaver > \textbf{planning} poker. Enhed: \textbf{halvdage} (tidligere god erfaring)
+    \item \textbf{Daily Scrum}
     \begin{itemize}
+      \item Fortæller om \textbf{fremgang}, problemer, mm
       \item Vælger opgaver fra sprint backloggen
-      \item Opdaterer burndown
+      \item Opdaterer \textbf{burndown}, visuel fremgang
     \end{itemize}
-    \item Scrumboardet (kanban): valgte backlog items > opsplitning i opgaver > planning poker. Enhed: halvdage. 
-    \item Derudover følger vi udvkl.metode i multiprojektet.
-    \item TODO: Hvad gør vi, når vi, som på billedet, er bagefter?
+   
+    \item På burndown: \textbf{Vi er bagefter}:
+    \item \textbf{Prioriterer} resterende opgaver, \textbf{vigtigste fuldført}.
 	\end{itemize}
 }
 
@@ -201,9 +239,10 @@
 \end{frame}
 \note{
   \begin{itemize}
-		\item Vigtig at identificere hvilke ting der skal styres, hvem de styres af, og hvilke redskaber man bruger til at styre dem med.
+		\item Vigtig at identificere \textbf{hvilke ting} der skal styres, \textbf{hvem} de styres af, og \textbf{hvilke redskaber} man bruger til at styre dem med.
     \item Org. context:
-    \item Unik struktur. Vi ønsker at tilfredsstille kunden, men har også andre prioriteter såsom gode, indholdsrige emner, så rapport og karakter også plejes. Vi har desuden ingen autoritet over andre grupper. 
+    \item \textbf{Unik struktur}. Vi ønsker at \textbf{tilfredsstille} kunden, men har også andre \textbf{prioriteter} såsom gode, indholdsrige emner, så \textbf{rapport} og \textbf{karakter} bliver gode.
+    \item Vi kan ikke \textbf{fyre }grupper, \textbf{ingen autoritet}.
   \end{itemize}
 }
 
@@ -220,12 +259,13 @@
 \end{frame}
 \note{
 	\begin{itemize}
-      \item Kundernes krav: styres af produktejer
-      \item Udgivne apps: 
-      \item Udgivne biblioteker
-      \item Gradle og Android Studio
-      \item Kildekode
-      \item Dokumentation af kildekode
+    \item Identificeret og stillet under styring:
+      \item \textbf{Kundernes krav:} varetages af product owners.
+      \item Udgivne \textbf{apps}: automatisk bygning og tests.
+      \item Udgivne \textbf{biblioteker}: automatisk bygning og holdes i et \textbf{Maven }repository.
+      \item \textbf{Gradle og Android Studio:} Build and Deployment grupperne har \textbf{fælles ansvar} for.
+      \item \textbf{Kildekode}: \textbf{Versionsstyres }i git repositories.
+      \item \textbf{Dokumentation}: Genereres automatisk, men det er \textbf{op til udviklerne }at skrive den.
 	\end{itemize}
 }
 
@@ -233,13 +273,22 @@
     \frametitle{Continuous Integration}
     \begin{itemize}
       \item Automatisk testning af apps og biblioteker
-      \item Hyppig indfletning med master branch
+      \item Hyppig merge med master branch
       \item Nyeste dokumentation
       \item Automatisk kørsel af statiske analyser
     \end{itemize}
 \end{frame}
 \note{
 	\begin{itemize}
-    \item TODO
+    \item CI \textbf{binder} tingene under konfigurationsstyring \textbf{sammen}.
+    \item Gennemgå \textbf{bullets} på slides.
+    \item[]
+    \item \textbf{Agil}: giver \textbf{stort ansvar} til udviklerne.
+    \item De \textbf{comitter direkte} til \textbf{master} branch, derfor skal de comitte \textbf{ofte}.
+    \item Vi arbejder nemlig meget i de samme ting.
+    \item[]
+    \item Dette giver konstant \textbf{nye versioner}: skal konfig-styres.
+    \item Alt i alt: \textbf{CI} er inde og \textbf{røre mange af tingene} under konfig-styring.
+    \item Tingene kan siges at blive\textbf{ understøttet af CI}.
 	\end{itemize}
 }
