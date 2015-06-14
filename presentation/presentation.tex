@@ -1,6 +1,7 @@
 \documentclass[12pt, hyperref={bookmarks=false}, show notes]{beamer}
 % Text
 	\usepackage[T1]{fontenc}
+  \usepackage{emerald}
 	\usepackage[utf8]{inputenc}
 	\usepackage[english]{babel}
 	% \usepackage[bitstream-charter]{mathdesign} % Serif font (Charter BT).
@@ -113,6 +114,98 @@
   breaklines=true,
   breakatwhitespace=true,
   postbreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\color{red}\hookrightarrow\space}}
+}
+
+% A post it note % http://tex.stackexchange.com/questions/159679/sticky-notes-image
+
+\usepackage{xparse}
+\usepackage{fancypar}
+
+\definecolor{myyellow}{RGB}{255,243,141}
+
+\makeatletter
+\pgfdeclareshape{stickyfront}{
+  \inheritsavedanchors[from=rectangle] % this is nearly a rectangle
+  \inheritanchorborder[from=rectangle]
+  \inheritanchor[from=rectangle]{center}
+  \inheritanchor[from=rectangle]{north}
+  \inheritanchor[from=rectangle]{south}
+  \inheritanchor[from=rectangle]{west}
+  \inheritanchor[from=rectangle]{east}
+  % ... and possibly more
+  \backgroundpath{% this is new
+  % store lower right in xa/ya and upper right in xb/yb
+  \southwest \pgf@xa=\pgf@x \pgf@ya=\pgf@y
+  \northeast \pgf@xb=\pgf@x \pgf@yb=\pgf@y
+  % compute corner of ‘‘flipped page’’
+  \pgf@xc=\pgf@xb \advance\pgf@xc by-20pt % this should be a parameter
+  \pgf@yc=\pgf@ya \advance\pgf@yc by+20pt
+  % construct main path
+  \pgfpathmoveto{\pgfpoint{\pgf@xa}{\pgf@ya}}
+  \pgfpathlineto{\pgfpoint{\pgf@xa}{\pgf@yb}}
+  \pgfpathlineto{\pgfpoint{\pgf@xb}{\pgf@yb}}
+  \pgfpathlineto{\pgfpoint{\pgf@xb}{\pgf@yc}}
+  \pgfpathlineto{\pgfpoint{\pgf@xc}{\pgf@ya}}
+  \pgfpathclose
+  % add little corner
+  \pgfpathmoveto{\pgfpoint{\pgf@xc}{\pgf@ya}}
+  \pgfpathlineto{\pgfpoint{\pgf@xc}{\pgf@yc}}
+  \pgfpathlineto{\pgfpoint{\pgf@xb}{\pgf@yc}}
+  \pgfpathlineto{\pgfpoint{\pgf@xc}{\pgf@yc}}
+  }
+}
+\makeatother
+
+\makeatletter
+\pgfdeclareshape{stickyback}{
+  \inheritsavedanchors[from=rectangle] % this is nearly a rectangle
+  \inheritanchorborder[from=rectangle]
+  \inheritanchor[from=rectangle]{center}
+  \inheritanchor[from=rectangle]{north}
+  \inheritanchor[from=rectangle]{south}
+  \inheritanchor[from=rectangle]{west}
+  \inheritanchor[from=rectangle]{east}
+  % ... and possibly more
+  \backgroundpath{% this is new
+  % store lower right in xa/ya and upper right in xb/yb
+  \southwest \pgf@xa=\pgf@x \pgf@ya=\pgf@y
+  \northeast \pgf@xb=\pgf@x \pgf@yb=\pgf@y
+  % compute corner of ‘‘flipped page’’
+  \pgf@xc=\pgf@xa \advance\pgf@xc by+20pt % this should be a parameter
+  \pgf@yc=\pgf@ya \advance\pgf@yc by+20pt
+  % construct main path
+  \pgfpathmoveto{\pgfpoint{\pgf@xa}{\pgf@yc}}
+  \pgfpathlineto{\pgfpoint{\pgf@xa}{\pgf@yb}}
+  \pgfpathlineto{\pgfpoint{\pgf@xb}{\pgf@yb}}
+  \pgfpathlineto{\pgfpoint{\pgf@xb}{\pgf@ya}}
+  \pgfpathlineto{\pgfpoint{\pgf@xc}{\pgf@ya}}
+  \pgfpathclose
+  }
+}
+\makeatother
+
+\NewDocumentCommand\StickyNoteFront{O{4cm}mO{4cm}}{%
+\begin{tikzpicture}
+\node[
+stickyfront,
+draw,
+inner xsep=7pt,
+fill=myyellow,
+inner ysep=10pt
+] {\parbox[t][#1][c]{#3}{#2}};
+\end{tikzpicture}%
+}
+
+\NewDocumentCommand\StickyNoteBack{O{4cm}mO{4cm}}{%
+\begin{tikzpicture}
+\node[
+stickyback,
+draw,
+inner xsep=7pt,
+fill=myyellow,
+inner ysep=10pt
+] {\parbox[t][#1][c]{#3}{#2}};
+\end{tikzpicture}%
 }
 
 \setbeamertemplate{navigation symbols}{}
