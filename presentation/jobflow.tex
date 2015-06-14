@@ -17,23 +17,25 @@
 % Indhold:
 \begin{frame}
     \frametitle{Job Flow}
-    \tikzstyle{b} = [rectangle, draw, fill=beamer@blendedblue, text=white, text width=4em, text centered, rounded corners, minimum height=1em, thick]
+    \tikzstyle{b} = [rectangle, draw, fill=beamer@blendedblue, text=white, text width=3em, text centered, rounded corners, minimum height=1em, thick]
     \tikzstyle{line} = [draw, -latex', thick]
-    \tikzsetnextfilename{jobflow_diagram}
-    \tikzexternaldisable
-    \begin{tikzpicture}[node distance=2.5cm, auto]
-      \node [b] (push) {\texttt{git push}};
-      \node [b, right of=push] (hook) {\small Checks};
+    \begin{tikzpicture}[node distance=2cm, auto]
+      \begin{scope}[node distance=2.2cm]
+        \node [b, text width=4em] (push) {\texttt{git push}};
+        \node [b, right of=push] (hook) {\small Checks};
+      \end{scope}
       \begin{scope}[node distance=1.2cm]
         \node [b, above of=hook] (lib) {\small Lib};
         \node [b, below of=hook] (app) {\small App};
-        \node [b, above of=lib] (test_lib) {\small Test};
-        \node [b, below of=app] (test_app) {\small Test};
       \end{scope}
+      \node [b, right of=lib] (test_lib) {\small Test};
+      \node [b, right of=app] (test_app) {\small Test};
       \node [b, right of=test_lib] (aar) {\small AAR};
       \node [b, right of=test_app] (apk) {\small APK};
-      \node [b, right of=aar] (artifactory) {\small Artifactory};
-      \node [b, right of=apk] (gplay) {\small Google Play};
+      \begin{scope}[node distance=2.5cm]
+      \node [b, right of=aar, text width=5em] (artifactory) {\small Artifactory};
+      \node [b, right of=apk, text width=5em] (gplay) {\small Google Play};
+      \end{scope}
       \path [line] (push) -- (hook);
       \path [line] (hook) -- (lib);
       \path [line] (hook) -- (app);
@@ -44,7 +46,6 @@
       \path [line] (aar) -- (artifactory);
       \path [line] (apk) -- (gplay);
      \end{tikzpicture}
-     \tikzexternalenable
 \end{frame}
 \note{
   \begin{itemize}
@@ -59,7 +60,7 @@
     \texttt{pre-receive}\vspace{0.8em}
     \begin{itemize}
     \item Fang hyppige fejl
-    \item Statisk kodetjek
+    \item Statisk tjek
     \end{itemize}
   \end{column}
   \begin{column}[T]{5cm}
@@ -78,7 +79,7 @@
   \item Dyrt at opdage små fejl sent
   \begin{itemize}
   \item Til hjælp for udviklere
-  \item Virker lokalt men ikke på Jenkisn
+  \item Virker lokalt men ikke på Jenkins
   \end{itemize}
   \item Undgå anti-patterns
   \item Credentials
@@ -114,22 +115,13 @@
 }
 
 \begin{frame}
-    \frametitle{TODO}
-    Jeg mangler noget. Evt. noget om gradle og automation? Eller hvad ellers?
-  \end{frame}
-\note{
-  \begin{itemize}
-    \item Todo
-  \end{itemize}
-}
-
-\begin{frame}
     \frametitle{Release}
     \begin{itemize}
     \item Versionsnummer på apps
     \item Deployment
       \begin{itemize}
       \item Artifactory
+      \item FTP-server
       \item Google Play
       \end{itemize}
     \end{itemize}
