@@ -32,7 +32,62 @@
 
 \begin{frame}
     \frametitle{Biblioteker som binære filer}
-    Todo: figur med build tider (jeg kunne ikke finde ud af tikz...)
+    \begin{figure}
+        \centering
+        \tikzsetnextfilename{launcher_timings}
+        \begin{tikzpicture}[]
+        \begin{axis}[
+        xbar stacked,
+        scale only axis,
+        width=\textwidth-\widthof{New (subset of tasks)}-2cm,
+        axis y line*= none, axis x line*= bottom,
+        %xmajorgrids = true,
+        ytick = data,
+        yticklabels = {Old, New (subset of tasks), New (all tasks)},
+        yticklabel style={inner sep=0pt, align=right, xshift=-0.1cm},
+        tick align = outside,
+        %xtick pos = left,
+        bar width=6mm,
+        y=8mm,
+        enlarge y limits={abs=0.625},
+        %nodes near coords,
+        legend style={
+            at={(0.5,-0.55)},
+            legend columns=3,
+            anchor=north,
+            yshift=0ex,
+            xshift=0ex,
+            draw=none,
+            legend cell align=left
+        },
+        area legend,
+        xlabel = {Time (seconds)},
+        xmin = 0
+        ]
+        \addplot[colorCshade, fill=colorC] coordinates
+        {(115.000,0) (115.000,1) (115.000,2)};
+        \addlegendentry{Emulator}
+        \addplot[colorBshade, fill=colorB] coordinates
+        {(105.782,0) (0.0,1) (0.0,2)};
+        \addlegendentry{Giraf-component}
+        \addplot[colorAshade, fill=colorA] coordinates
+        {(159.739,0) (0.0,1) (0.0,2)};
+        \addlegendentry{Oasis-lib}
+        \addplot[colorDshade, fill=colorD] coordinates
+        {(17.315,0) (0.0,1) (0.0,2)};
+        \addlegendentry{Local-db}
+        \addplot[colorGshade, fill=colorG] coordinates
+        {(0.28,0) (0.0,1) (0.0,2)};
+        \addlegendentry{Metadata}
+        \addplot[colorFshade, fill=colorF] coordinates
+        {(7.711,0) (18.274,1) (36.135,2)};
+        \addlegendentry{Barcode-scanner}
+        \addplot[colorEshade, fill=colorE] coordinates
+        {(8.393,0) (100.277,1) (206.314,2)};
+        \addlegendentry{Launcher}
+        \end{axis}
+        \end{tikzpicture}
+    \end{figure}
     Emulator tager stadig lang tid
 \end{frame}
 \note{
