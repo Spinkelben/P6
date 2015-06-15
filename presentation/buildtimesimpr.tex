@@ -88,17 +88,18 @@
         \end{axis}
         \end{tikzpicture}
     \end{figure}
-    Emulator tager stadig lang tid
+    
 \end{frame}
 \note{
     \begin{itemize}
-        \item Notes...
+        \item Emulator tager stadig lang tid
+        \item Byg samlet testpakke og installere den tager tid
     \end{itemize}
 }
 
 \begin{frame}
     \frametitle{Test på fysiske enheder}
-    Router setup
+    \framesubtitle{Router setup}
     \begin{itemize}
         \item Fast IP til tablet første gang der forbindes
         \item Automatisk tildeling af porte og port forwarding
@@ -137,38 +138,46 @@
 \note{
     \begin{itemize}
         \item En emulator kun en android version
+        \item Vi har konfigureret routeren til de her ting
+        \item Forward port til test porten
     \end{itemize}
 }
 
 \begin{frame}
     \frametitle{Test på fysiske enheder}
-    Konfigurering af Tablets
+    \framesubtitle{Konfigurering af tablets}
     \begin{itemize}
         \item Tablets har indbygget fjernstyring over WiFi
         \item Skal slås til hver gang en enhed startes --- app'en sørger for det
         \item Kræver root adgang
-        \item Forhindre Monkey Test i at tilgå topbaren
         \item Mangler sikker frakobling
     \end{itemize}
 \end{frame}
 \note{
     \begin{itemize}
-        \item Notes...
+        \item ...
     \end{itemize}
 }
 
 \begin{frame}
     \frametitle{Test på fysiske enheder}
-    Konfigurering af Jenkins platformen
+    \framesubtitle{Konfigurering af Jenkins platformen}
     \begin{itemize}
-        \item Tilføj et pre-build step der forbinder til enheder
-        \item Modificerer emluator plugin'et til at kontrollere om der er forbundne enheder
-        \item Køre test
-        \item Afbryde forbindelsen igen
+        \item Forbind til enheder
+        \item Kontroller om der er forbundne enheder
+        \item Kør test
+        \item Afbryd forbindelsen
     \end{itemize}
-    Robusthed er et problem
+    
+\end{frame}
+\note{
+    \begin{itemize}
+        \item Fix plugin
+    \end{itemize}
+}
+\begin{frame}
+    \frametitle{Test på fysiske enheder}
     \begin{figure}
-        \vspace{-20pt}
         \centering
         \tikzsetnextfilename{launcher_timings_tablets}
         \begin{tikzpicture}[]
@@ -197,7 +206,7 @@
             legend cell align=left
         },
         area legend,
-        xlabel = {Time (seconds)},
+        xlabel = {Tid (sekunder)},
         xmin = 0
         ]
         \addplot[colorCshade, fill=colorC] coordinates
@@ -213,8 +222,9 @@
         \end{tikzpicture}
     \end{figure}
 \end{frame}
-\note{
+\note
+{
     \begin{itemize}
-        \item Notes...
+        \item Robusthed er et problem
     \end{itemize}
 }
