@@ -20,6 +20,8 @@
 \end{frame}
 \note{
 	\begin{itemize}
+    \item \textbf{Unik struktur}. Vi ønsker at \textbf{tilfredsstille} kunden, men har også andre \textbf{prioriteter} såsom gode, indholdsrige emner, så \textbf{rapport} og \textbf{karakter} bliver gode.
+    \item Vi kan ikke \textbf{fyre }grupper, \textbf{ingen autoritet}.
     \item \textbf{Scrum of Scrums}: 3 niveauer (gruppe, sub-, multi-)
     \item \textbf{AGIL} METODE godt valg:
     \begin{itemize}
@@ -134,87 +136,6 @@
 \end{frame}
 
 
-\begin{frame}
-    \frametitle{Udviklingsmetode i multiprojektet}
-    \framesubtitle{Ugentlige møder}
-
-    \begin{itemize}
-      \item Multiprojekt: 1 gang om ugen
-      \item Subprojekter: Individuelt 2-3 om ugen
-    \end{itemize}
-\end{frame}
-\note{
-	\begin{itemize}
-    \item 1/uge: Multiprojektmøde
-    \begin{itemize}
-      \item \textbf{Min. 1 rep.} fra hver gruppe.
-      \item \textbf{Formål:} status, diskuterer \textbf{udviklingsmetode}.
-      \item Så alle ved \textbf{hvad der sker} i projektet.
-      \item 1/uge: har passet fint, tilpas \textbf{kompromis}, ikke tage\textbf{ til møde for at mødes}.
-    \end{itemize}
-    \item 2-3/uge: Subprojekt
-    \begin{itemize}
-      \item Grupper i subprojekt mødes
-      \item diskuterer status på mere \textbf{detaljeret niveau.}
-      \item Oftest ret \textbf{hurtige}. Udmærket med 2-3/uge. Især i \textbf{starten}
-    \end{itemize}
-	\end{itemize}
-}
-
-\begin{frame}
-    \frametitle{Udviklingsmetode i multiprojektet}
-    \framesubtitle{Sprintmøder}
-    \note{
-      \begin{itemize}
-        \item Alle tre subprojekter: \textbf{eget }sprint planning og review.
-        \item GUI's er \textbf{anderledes}: faktiske \textbf{kunder }er med.
-        \item KLIK
-        \item \textbf{Retrospektiv}
-        \item Slås sammen med \textbf{kommende} ugentlige \textbf{multiprojekt} \textbf{møde}.
-        \item \textbf{Metodeforbedring}, implementerer ændringer og \textbf{rettelser}.
-      \end{itemize}
-    }
-
-    \begin{columns}
-    \begin{column}{0.45\textwidth}
-      \begin{mtjbox}[backgroundcolor=color1!5, linecolor=color1!40]
-        Sprint Planning
-            \begin{mtjbox}
-              GUI
-            \end{mtjbox}\unskip
-            \begin{mtjbox}
-              DB
-            \end{mtjbox}\unskip
-            \begin{mtjbox}
-              B\&D
-            \end{mtjbox}\unskip
-      \end{mtjbox}
-    \end{column}
-    \begin{column}{0.45\textwidth}
-      \begin{mtjbox}[backgroundcolor=color1!5, linecolor=color1!40]
-        Sprint Review
-            \begin{mtjbox}
-              GUI
-            \end{mtjbox}\unskip
-            \begin{mtjbox}
-              DB
-            \end{mtjbox}\unskip
-            \begin{mtjbox}
-              B\&D
-            \end{mtjbox}\unskip
-      \end{mtjbox}
-    \end{column}
-    \end{columns}
-    \pause
-    \begin{mtjbox}[backgroundcolor=color1!5, linecolor=color1!40]
-      Sprint Retrospective Meeting
-      \begin{mtjbox}
-              GUI, DB og B\&D
-            \end{mtjbox}
-    \end{mtjbox}
-\end{frame}
-
-
 
 % Indhold:
 \begin{frame}
@@ -244,43 +165,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%
 %% SCM
 %%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}
-  \frametitle{}
-  \begin{center}
-    {\Huge Konfigurationsstyringsplan}
-  \end{center}
-\end{frame}
-\note{
-  \begin{itemize}
-		\item Vigtig at identificere \textbf{hvilke ting} der skal styres, \textbf{hvem} de styres af, og \textbf{hvilke redskaber} man bruger til at styre dem med.
-    \item Org. context:
-    \item \textbf{Unik struktur}. Vi ønsker at \textbf{tilfredsstille} kunden, men har også andre \textbf{prioriteter} såsom gode, indholdsrige emner, så \textbf{rapport} og \textbf{karakter} bliver gode.
-    \item Vi kan ikke \textbf{fyre }grupper, \textbf{ingen autoritet}.
-  \end{itemize}
-}
 
-\begin{frame}
-    \frametitle{Under Konfigurationsstyring}
-    \begin{itemize}
-      \item Kundernes krav
-      \item Udgivne apps
-      \item Udgivne biblioteker
-      \item Gradle og Android Studio
-      \item Kildekode
-      \item Dokumentation af kildekode
-    \end{itemize}
-\end{frame}
-\note{
-	\begin{itemize}
-    \item Identificeret og stillet under styring:
-      \item \textbf{Kundernes krav:} varetages af product owners.
-      \item Udgivne \textbf{apps}: automatisk bygning og tests.
-      \item Udgivne \textbf{biblioteker}: automatisk bygning og holdes i et \textbf{Maven }repository.
-      \item \textbf{Gradle og Android Studio:} Build and Deployment grupperne har \textbf{fælles ansvar} for.
-      \item \textbf{Kildekode}: \textbf{Versionsstyres }i git repositories.
-      \item \textbf{Dokumentation}: Genereres automatisk, men det er \textbf{op til udviklerne }at skrive den.
-	\end{itemize}
-}
 
 \begin{frame}
     \frametitle{Continuous Integration}
