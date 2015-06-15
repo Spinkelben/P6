@@ -25,23 +25,7 @@
 \end{frame}
 \note{
   \begin{itemize}
-    \item Notes...
-  \end{itemize}
-}
-
-\begin{frame}[fragile]
-  \frametitle{Omskrivning af apps}
-\begin{javacode}
-if (ActivityManager.isUserAMonkey())
-  Helper h = new Helper(this);
-
-  guardianId = h.profilesHelper.getGuardians().get(0).getId();
-}
-\end{javacode}
-\end{frame}
-\note{
-  \begin{itemize}
-    \item Notes...
+    \item \textbf{Kompenserer} for manglende tests
   \end{itemize}
 }
 
@@ -58,7 +42,29 @@ if (ActivityManager.isUserAMonkey())
 \end{frame}
 \note{
   \begin{itemize}
+    \item Vis \textbf{setup}
     \item Kør demo sammen
+    \item \textbf{Vis} WiFi app
+    \item \textbf{Hold} tablet op
+  \end{itemize}
+}
+
+\begin{frame}[fragile]
+  \frametitle{Omskrivning af apps}
+\begin{javacode}
+if (ActivityManager.isUserAMonkey())
+  Helper h = new Helper(this);
+
+  guardianId = h.profilesHelper.getGuardians().get(0).getId();
+}
+else {
+  Bundle extras = getIntent().getExtras();
+}
+\end{javacode}
+\end{frame}
+\note{
+  \begin{itemize}
+    \item Notes...
   \end{itemize}
 }
 
@@ -89,13 +95,13 @@ if (ActivityManager.isUserAMonkey())
 \end{frame}
 \note{
   \begin{itemize}
-    \item Notes...
+    \item \textbf{Hjælper} udviklere med at give kunden det de ønsker
   \end{itemize}
 }
 
 % Indhold:
 \begin{frame}
-  \frametitle{Anbefaldinger}
+  \frametitle{Anbefalinger}
   \begin{itemize}
     \item Ændr subprojektstruktur
     \item Automatisering 
@@ -103,7 +109,7 @@ if (ActivityManager.isUserAMonkey())
       \item Script deployment
       \item Monkey test notifikationer
     \end{itemize}
-    \item Sikker tabletfraforbindelse
+    \item Sikker tabletfrakobling
     \item Skriv tests
   \end{itemize}
 \end{frame}
